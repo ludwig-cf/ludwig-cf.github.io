@@ -39,12 +39,18 @@ If your browser supports JavaScript, be sure it is enabled.</b>
 
 A lattice Boltzmann code for complex fluids.
 
-<h3>Repository<h3>
-Please go to the main git repository for details of the code
+<h3>Repository</h3>
+Please go to the main git repository for the code
 <a href = "https://github.com/ludwig-cf/ludwig">
            https://github.com/ludwig-cf/ludwig</a>
 
-<h3> Contents </h3>
+<h3> Documentation </h3>
+
+<ul>
+<li> Building and testing </li>
+<li> <a href = "./input.html">Input file options</a> </li>
+<li> Some references </li>
+</ul>
 
 
 
@@ -81,8 +87,27 @@ order parameters are evolved according to the appropriate
 coarse-grained dynamics, but also interact with the fluid in a
 fully coupled fashion.
 
+<h4>How the code works</h4>
 
+We aim to provide a robust and portable code, written in ANSI C, which
+can be used to perform serial and scalable parallel simulations of
+complex fluid systems based around hydrodynamics via the lattice
+Boltzmann method. Time evolution of modelled quantities takes
+place on a fixed regular discrete lattice. The preferred method of
+dealing with the corresponding order parameter equations is by
+using finite difference. However, for the case of a binary fluid,
+a two-distribution lattice Boltzmann approach is also maintained
+for historical reference.
 
+Users control the operation of the code via a plain text input file;
+output for various data are available. These data may be visualised
+using appropriate third-party software (e.g., Paraview). Specific
+diagnostic output may require alterations to the code.
+
+Potential users should also note that the complex fluid simulations
+enabled by \textit{Ludwig} can be time consuming, prone to instability,
+and provide results which are difficult to
+interpret. We make no apology for this: that's the way it is.
 
 
 </body>
