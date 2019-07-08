@@ -2,13 +2,88 @@
 <html>
 <head>
 <title>Ludwig: A lattice Boltzmann code for complex fluids</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+ <script type = "text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-HTMLorMML" async>
+ </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+
+<style>
+pre  {background-color: whitesmoke;}
+</style>
+
 </head>
 <body>
+
+<noscript>
+<div style="color:#CC0000; text-align:center">
+<b>Warning: <a href="http://www.mathjax.org/">MathJax</a>
+requires JavaScript to process the mathematics on this page.<br />
+If your browser supports JavaScript, be sure it is enabled.</b>
+</div>
+<hr>
+</noscript>
+
+
+
 <h2>Ludwig</h2>
 
-<p>
+A lattice Boltzmann code for complex fluids.
 
-This page is currently a placeholder.
+<h3>Repository<h3>
+Please go to the main git repository for details of the code
+<a href = "https://github.com/ludwig-cf/ludwig">
+           https://github.com/ludwig-cf/ludwig</a>
+
+<h3> Contents </h3>
+
+
+
+<h3> Overview </h3>
+
+<p>
+This introduction provides a brief overview of what the <i>Ludwig</i> code
+does, how to obtain and build it, and how to run a sample problem.
+It is assumed that the reader has at least a general knowledge
+of Navier-Stokes hydrodynamics, complex fluids, and to some
+extent statistical physics. This knowledge will be required to make sense
+of the input and output involved in using the code. Those wanting
+to work on or develop the code itself will need knowledge of ANSI C,
+and perhaps message passing and CUDA. We assume the reader is using
+a Unix-based system.
+</p>
+
+<h4>Purpose of the Code</h4>
+
+<p>
+The <i>Ludwig</i> code has been developed over a number of
+years to address specific problems in complex fluids. The underlying
+hydrodynamic model is based on the lattice Boltzmann equation
+(LBE, or just `LB'). This itself may be used to study simple
+(Newtonian) fluids in a number of different scenarios, including porous
+media and particle suspensions. However, the
+code is more generally suited to complex fluids, where a number of
+options are available, among others: symmetric binary fluids and
+Brazovskii smectics,
+polar gels, liquid crystals, or charged fluid via a Poisson-Boltzmann
+equation approach. These features are added in the framework of a
+free energy approach, where specific compositional or orientational
+order parameters are evolved according to the appropriate
+coarse-grained dynamics, but also interact with the fluid in a
+fully coupled fashion.
+
+
+
+
 
 </body>
 </html>
