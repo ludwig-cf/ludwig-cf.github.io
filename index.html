@@ -47,8 +47,8 @@ Please go to the main git repository for the code
 <h3> Documentation </h3>
 
 <ul>
-<li> Building and testing </li>
-<li> <a href = "./input.html">Input file options</a> </li>
+<li> <a href = "./build.html"> Building and testing </a> </li>
+<li> <a href = "./input.html"> Input file options   </a> </li>
 <li> Some references </li>
 </ul>
 
@@ -58,14 +58,12 @@ Please go to the main git repository for the code
 
 <p>
 This introduction provides a brief overview of what the <i>Ludwig</i> code
-does, how to obtain and build it, and how to run a sample problem.
-It is assumed that the reader has at least a general knowledge
+does. It is assumed that the reader has at least a general knowledge
 of Navier-Stokes hydrodynamics, complex fluids, and to some
-extent statistical physics. This knowledge will be required to make sense
-of the input and output involved in using the code. Those wanting
+extent statistical physics. This knowledge will be required to make
+sense of the input and output involved in using the code. Those wanting
 to work on or develop the code itself will need knowledge of ANSI C,
-and perhaps message passing and CUDA. We assume the reader is using
-a Unix-based system.
+and perhaps message passing and CUDA.
 </p>
 
 <h4>Purpose of the Code</h4>
@@ -87,9 +85,24 @@ order parameters are evolved according to the appropriate
 coarse-grained dynamics, but also interact with the fluid in a
 fully coupled fashion.
 
+<p>
+A number of other features are catered for is some or all situations.
+These include fluctuating hydrodynamics, and appropriate fluctuating
+versions of order parameter dynamics for binary solvents and liquid
+crystals. Colloidal particles are available for simulation of
+suspensions and dispersions, and with appropriate boundary
+conditions binary mixtures, liquid crystals, and charged fluid. Shear
+flow is available for fluid-only systems implemented via Lees-Edwards
+sliding periodic boundaries.
+
+<p>
+Broadly, the code is intended for complex fluid problems at low
+Reynolds numbers, so there is no consideration of turbulence,
+high Mach number flows, high density ratio flows, and so on.
+
 <h4>How the code works</h4>
 
-We aim to provide a robust and portable code, written in ANSI C, which
+The code is written in ANSI C, and
 can be used to perform serial and scalable parallel simulations of
 complex fluid systems based around hydrodynamics via the lattice
 Boltzmann method. Time evolution of modelled quantities takes
@@ -99,16 +112,26 @@ using finite difference. However, for the case of a binary fluid,
 a two-distribution lattice Boltzmann approach is also maintained
 for historical reference.
 
+<p>
 Users control the operation of the code via a plain text input file;
 output for various data are available. These data may be visualised
 using appropriate third-party software (e.g., Paraview). Specific
 diagnostic output may require alterations to the code.
 
-Potential users should also note that the complex fluid simulations
-enabled by \textit{Ludwig} can be time consuming, prone to instability,
-and provide results which are difficult to
-interpret. We make no apology for this: that's the way it is.
+<p>
+Potential users should note that the complex fluid simulations
+enabled by <tt>Ludwig</tt> can be time consuming, prone to instability,
+and provide results which are difficult to interpret.
 
+<h4>License</h4>
+The code is developed largely at The University of Edinburgh, and is
+freely available under a BSD-style license. See
+<a href = "https://github.com/ludwig-cf/ludwig">
+           https://github.com/ludwig-cf/ludwig</a>.
+
+
+<br>
+<br>
 
 </body>
 </html>

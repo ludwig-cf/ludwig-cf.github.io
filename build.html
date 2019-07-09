@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ludwig: Building and testing</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+ <script type = "text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-HTMLorMML" async>
+ </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+
+<style>
+pre  {background-color: whitesmoke;}
+</style>
+
+</head>
+<body>
+
+<noscript>
+<div style="color:#CC0000; text-align:center">
+<b>Warning: <a href="http://www.mathjax.org/">MathJax</a>
+requires JavaScript to process the mathematics on this page.<br />
+If your browser supports JavaScript, be sure it is enabled.</b>
+</div>
+<hr>
+</noscript>
+
+
+
+<h2>Building and Testing</h2>
+
+<a href = "./index.html">Home page</a>
+
+<p>
+In this section:
+<ol>
+<li> <a href = "#configure"> Configuration </a> </li>
+<li> <a href = "#compile">   Compilation   </a> </li>
+<li> <a href = "#test">      Testing       </a> </li>
+</ol>
+
+<h3 id = "configure"> Configuration </h3>
+
+<h4> Parallel build </h4>
+
+<p>
+You will need to copy one of the existing configuration files from
+the <tt>config</tt> directory to the top level directory. This
+file sets the relevant local details for compilation. For
+example:
+<pre>
+$ cp config/unix-mpicc-default.mk config.mk
+</pre>
+The (Gnu-) Makefile system expects the configuration in the top level directory
+with the name <tt>config.mk</tt>. You may need to edit this copy to set
+appropriate compilers and so on for your system. A number of other
+standard configuration files are available in the <tt>config</tt>
+directory, one of which might also be appropriate for the local system. </p>
+
+<p>
+The configuration file defines a number of variables which are included
+in the top-level Makefile
+<pre>
+BUILD   = parallel                # here "parallel" for message passing
+MODEL   = -D_D3Q19_               # one of _D2Q9_ _D3Q15_ or _D3Q19_
+
+CC      = gcc                     # serial C compiler
+MPICC   = mpicc                   # MPI compiler wrapper
+CFLAGS  = -O2 -DNDEBUG            # compiler flags
+
+AR      = ar                      # standard ar command
+ARFLAGS = -cru                    # flags for ar
+LDFLAGS =                         # additional link time flags
+
+MPI_INC_PATH      =               # path to mpi.h (if required)
+MPI_LIB_PATH      =               # path to libmpi.a (if required)
+MPI_LIB           =               # -lmpi (if required)
+
+LAUNCH_SERIAL_CMD =               # serial launch command
+LAUNCH_MPIRUN_CMD = mpirun        # parallel launch command
+MPIRUN_NTASK_FLAG = -np           # flag to set number of MPI tasks
+</pre>
+Note this configuration expects the MPI compiler wrapper <tt>mpicc</tt>
+to be present in the current <tt>PATH</tt>.
+If the MPI compiler wrapper does not require that MPI include and library
+paths be explicitly defined, the relevant variables can be left blank (as
+in this example).
+
+<p>
+The test system requires that an MPI program can be started (often via
+<tt>mpirun</tt>) so relevant variables are also set. Note the number of
+MPI tasks used by the tests is not specified in the configuration.
+
+
+<h4> Serial build </h4>
+
+<p>
+If no MPI library is available, or strictly serial execution is wanted,
+the <tt>BUILD</tt> configuration variable should be set to <tt>serial</tt>.
+In this case, a stub MPI library is compiled as a replacement which allows
+the code to operate in serial.
+
+<p>
+To configure a serial build copy, e.g.,
+<pre>
+$ cp config/unix-gcc-default.mk config.mk
+</pre>
+to the top-level directory.
+
+<p>
+Again, you may need to edit the file to reflect local conditions. A
+minimum configuration might be:
+<pre>
+BUILD   = serial                  # here "serial"
+MODEL   = -D_D3Q19_               # preprocessor macro for model
+
+CC      = gcc                     # serial C compiler
+MPICC   = gcc                     # "parallel" C compiler
+CFLAGS  = -O -g -Wall             # compiler options
+
+AR      = ar                      # standard ar command
+ARFLAGS = -cru                    # standard ar options
+LDFLAGS =                         # additional link time flags
+
+MPI_INC_PATH      = ./mpi_s       # stub MPI include location
+MPI_LIB_PATH      = ./mpi_s       # stub MPI library location
+MPI_LIB           = -lmpi         # MPI library link
+
+LAUNCH_SERIAL_CMD =               # blank
+</pre>
+
+<p>
+The stub MPI library should be built before the main compilation.
+To do this,
+<pre>
+$ make serial
+</pre>
+
+
+<h3 id = "compile"> Compilation </h3>
+
+<p>
+With a relevant configuration file in the top-level directory,
+compilation proceeds via
+<pre>
+$ make
+</pre>
+This will build the executable, the unit tests, and a small number
+of utilities. To remove these files, and other compilation products
+<pre>
+$ make clean
+</pre>
+
+
+
+<h4> Preprocessor options </h4>
+
+<p>
+A number of standard C-preprocessor macros are relevant at compilation time,
+and should be set in the configuration file. All are introduced in the
+usual way via the <tt>-D</tt> flag. (Note this is also the form of the
+<tt>MODEL</tt> configuration varaible which determines the LB basis set.)
+A summary is:
+<pre>
+# Macro           Purpose
+
+_D2Q9_            # Use D2Q9  model
+_D3Q15_           # Use D3Q15 model
+_D3Q19_           # Use D3Q19 model
+                  # Set via the MODEL configuration variable. It is
+                  # erroneous to define more than one of these three.
+
+NDEBUG            # Standard C option to disable assertions.
+                  # Should be used for all production runs.
+
+NSIMDVL=4         # Set the SIMD vector length used in inner loops.
+                  # The default vector length is 1. The best choice
+                  # for performance depends on hardware (2, 4, 8...)
+
+ADDR_SOA          # Use SOA array addressing (for GPU targets).
+                  # Default is AOS (for CPU).
+</pre>
+Apart from the choice of <tt>MODEL</tt> preprocessor options should
+be specfied via the variable <tt>CFLAGS</tt> in the normal way.
+
+
+<h4> TargetDP </h4>
+
+<p>
+The code includes a lightweight abstraction of threaded parallelism
+referred to as targetDP. This supports either no threads (the default),
+OpenMP threads (when the target for production runs is a CPU), or CUDA
+threads (if the target device is an NVIDIA GPU).
+Control of the targetDP layer is via the compiler and compiler
+options.
+
+<h4> Using OpenMP </h4>
+
+For OpenMP threads, the compiler options <tt>CFLAGS</tt>
+should include the standard flag for enabling OpenMP; the number
+of threads is set at runtime via <tt>OMP_NUM_THREADS</tt> in the
+usual way. For example, for Intel compilers this might be
+<pre>
+CFLAGS = -fast -qopenmp
+</pre>
+
+<h4> Using CUDA </h4>
+
+<p>
+If NVIDIA hardware is available and required, the code should be compiled with
+<tt>nvcc</tt>, which will cause the targetDP layer to make the
+appropriate thread model available.
+
+<p>
+An appropriate configuration file might be:
+<pre>
+BUILD   = parallel
+MODEL   = -D_D3Q19_
+
+CC      = nvcc
+MPICC   = nvcc
+CFLAGS  = -ccbin=icpc -DADDR_SOA -DNDEBUG -arch=sm_70 -x cu -dc
+
+AR      = ar
+ARFLAGS = -cr
+LDFLAGS = -ccbin=icpc -arch=sm_70
+
+MPI_HOME     = /path/to/mpi
+MPI_INC_PATH = -I$(MPI_HOME)/include64
+MPI_LIB_PATH = -L$(MPI_HOME)/lib64 -lmpi
+
+LAUNCH_SERIAL_CMD =
+LAUNCH_MPIRUN_CMD = mpirun
+MPIRUN_NTASK_FLAG = -np
+</pre>
+As this is a parallel build using the <tt>nvcc</tt> compiler (with the
+native compiler being Intel <tt>icpc</tt> in this case), we specify
+explicitly the location of MPI include and library files.
+
+<p>
+Note the <tt>-DADDR_SOA</tt> preprocessor macro is set to provide the
+correct memory access for coalescing on GPU architectures. The
+appropriate <tt>-arch</tt> flag for <tt>nvcc</tt> is also provided
+to describe the relevant hardware (at both compile and link time).
+
+
+<h3 id = "test"> Testing </h3>
+
+<p>
+A standard set of tests for the <tt>D3Q19</tt> model may be run via
+<pre>
+$ make
+$ make test
+</pre>
+from either the top level or the <tt>tests</tt> subdirectory.
+
+
+</body>
+</html>

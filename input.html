@@ -893,6 +893,14 @@ The initialises cubics patches of fluid of given size with $\phi= \pm 1$
 at random. The requested overall volume fractions may be met approximately.
 
 <p>
+A uniform value of the order parameter may be apprpropriate for
+some situations. This is arranged using a single value $\phi_0$:
+<pre>
+phi_initialisation          uniform     # same everywhere
+phi0                        0.2         # the uniform value
+</pre>
+
+<p>
 A spherical drop can be initialised at the centre of the system.
 <pre>
 phi_initialisation          drop        # spherical droplet
