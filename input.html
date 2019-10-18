@@ -806,6 +806,15 @@ The counterbalancing body force on the fluid which enforces the
 constraint of momentum conservation for the system as a whole is
 computed automatically by the code at each time step.
 
+<p> Note: in a real system, a gravitation force on a colloid is
+related to buoyancy $F \propto \Delta\rho g$, where the density
+difference is that between the colloid and the surrounding fluid.
+In a system where there is no density contrast, as we have here
+(typically), the "gravity" is the product $\Delta rho g$. Formally,
+this may be viewed as the limit that $\Delta\rho \rightarrow 0$,
+combined with the limit $g \rightarrow \infty$, but the limit of
+the product is finite.
+
 
 <h3 id = "porous-media"> Porous media </h3>
 
