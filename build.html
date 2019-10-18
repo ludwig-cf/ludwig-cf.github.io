@@ -42,32 +42,43 @@ If your browser supports JavaScript, be sure it is enabled.</b>
 <p>
 In this section:
 <ol>
-<li> <a href = "#configure"> Configuration </a> </li>
-<li> <a href = "#compile">   Compilation   </a> </li>
+<li> <a href = "#configure"> Configuration </a> <br>
+                             The <tt>config.mk</tt> file, parallel build,
+                             serial build,  ...</li>
+<li> <a href = "#compile">   Compilation   </a> <br>
+                             Preprocessor options, thread abstraction and
+                             targetDP, OpenMP, CUDA,..</li>
 <li> <a href = "#test">      Testing       </a> </li>
 </ol>
 
 <h3 id = "configure"> Configuration </h3>
 
+<p>
+Compilation of the main code is controlled by the <tt>config.mk</tt> in
+the  top-level directory. This is a (gnu-) Makefile fragment which is
+included in all the relevant Makefiles in the code to describe the
+local configuration.
+
+<p>
+A number of example <tt>config.mk</tt> files
+are provided in the <tt>config</tt> directory (which can be copied and
+adjusted as needed). This section discusses a number of issues
+which influence compilation.
+
 <h4> Parallel build </h4>
+
 
 <p>
 You will need to copy one of the existing configuration files from
-the <tt>config</tt> directory to the top level directory. This
-file sets the relevant local details for compilation. For
-example:
+the <tt>config</tt> directory to the top level directory. For a
+parellel build use, e.g.,
 <pre>
 $ cp config/unix-mpicc-default.mk config.mk
 </pre>
-The (Gnu-) Makefile system expects the configuration in the top level directory
-with the name <tt>config.mk</tt>. You may need to edit this copy to set
-appropriate compilers and so on for your system. A number of other
-standard configuration files are available in the <tt>config</tt>
-directory, one of which might also be appropriate for the local system. </p>
 
 <p>
-The configuration file defines a number of variables which are included
-in the top-level Makefile
+The configuration file defines a number of variables which include
+<tt>MPICC</tt>, the compiler required for MPI programs:
 <pre>
 BUILD   = parallel                # here "parallel" for message passing
 MODEL   = -D_D3Q19_               # one of _D2Q9_ _D3Q15_ or _D3Q19_
@@ -88,8 +99,6 @@ LAUNCH_SERIAL_CMD =               # serial launch command
 LAUNCH_MPIRUN_CMD = mpirun        # parallel launch command
 MPIRUN_NTASK_FLAG = -np           # flag to set number of MPI tasks
 </pre>
-Note this configuration expects the MPI compiler wrapper <tt>mpicc</tt>
-to be present in the current <tt>PATH</tt>.
 If the MPI compiler wrapper does not require that MPI include and library
 paths be explicitly defined, the relevant variables can be left blank (as
 in this example).
@@ -251,6 +260,32 @@ correct memory access for coalescing on GPU architectures. The
 appropriate <tt>-arch</tt> flag for <tt>nvcc</tt> is also provided
 to describe the relevant hardware (at both compile and link time).
 
+<h4> Electrokinetics and using PETSc </h4>
+
+There is the option to use PETSc to solve the Poisson equation required in
+the electrokinetic problem. A rather less efficient in-built method
+can be used if PETSc is not available. We suggest using PETSC
+v3.4 or later available from Argonne National Laboratory
+<a href = "http://www.mcs.anl.gov/petsc/"> http://www.mcs.anl.gov/petsc/</a>.
+
+<p>
+If PETSc is required, please enter the additional variables in the
+<tt>config.mk</tt> file:
+<pre>
+HAVE_PETSC = true
+PETSC_INC  = /path/to/petsc/include
+PETSC_LIB  = /path/to/petsc/lib
+</pre>
+
+<p>
+In addition, there is a choice of finite difference stencil size for
+the electrokinetic problem which is determined at compile time. The
+choices are via preprocesor options
+<pre>
+-DNP_D3Q6       # 7-point stencil in 3 dimensions (the default)
+-DNP_D3Q18      # 19-point stenvil in 3 dimensions
+-DNP_D3Q18      # 27-point stencil in 3 dimensions
+</pre>
 
 <h3 id = "test"> Testing </h3>
 
