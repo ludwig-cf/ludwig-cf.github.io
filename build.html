@@ -83,8 +83,7 @@ The configuration file defines a number of variables which include
 BUILD   = parallel                # here "parallel" for message passing
 MODEL   = -D_D3Q19_               # one of _D2Q9_ _D3Q15_ or _D3Q19_
 
-CC      = gcc                     # serial C compiler
-MPICC   = mpicc                   # MPI compiler wrapper
+CC      = mpicc                   # C compiler
 CFLAGS  = -O2 -DNDEBUG            # compiler flags
 
 AR      = ar                      # standard ar command
@@ -131,8 +130,7 @@ minimum configuration might be:
 BUILD   = serial                  # here "serial"
 MODEL   = -D_D3Q19_               # preprocessor macro for model
 
-CC      = gcc                     # serial C compiler
-MPICC   = gcc                     # "parallel" C compiler
+CC      = gcc                     # C compiler
 CFLAGS  = -O -g -Wall             # compiler options
 
 AR      = ar                      # standard ar command
@@ -235,7 +233,6 @@ BUILD   = parallel
 MODEL   = -D_D3Q19_
 
 CC      = nvcc
-MPICC   = nvcc
 CFLAGS  = -ccbin=icpc -DADDR_SOA -DNDEBUG -arch=sm_70 -x cu -dc
 
 AR      = ar
