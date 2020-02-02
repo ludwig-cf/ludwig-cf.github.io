@@ -826,8 +826,8 @@ as appropriate. Note that in parallel, a single data file can be supplied,
 but it must be binary. The default is <tt>BINARY</tt>. The key
 <tt>porous_media_format</tt> is either <tt>status_only</tt>, in which
 case the file content is the solid/fluid status alone, or
-<tt>status_with_h</tt>, in which case a wetting free energy constant is
-included.
+<tt>status_with_c_h</tt>, in which case two wetting free energy constants
+are included.
 
 <h5>File format</h5>
 
@@ -846,11 +846,14 @@ by <tt>1</tt>. These data should be of type <tt>char</tt> in binary,
 and may be integer in ASCII.</p>
 
 <p>
-Where wetting information is required, the free energy parameter $H$
-can be supplied by using the <tt>status_with_h</tt> switch. In this
-case, the <tt>char</tt> status is augmented by a single <tt>double</tt>
-value which is the local value of $H$. The order is then
-$s_1,h_1, s_2, h_2, \ldots$.</p>
+Where wetting information is required, the free energy parameters $C$ and
+$H$ can be supplied by using the <tt>status_with_c_h</tt> switch. In this
+case, the <tt>char</tt> status is augmented by two <tt>double</tt>
+valued which are the local values of $C$ and $H$. The order is then
+$s_1, c_1, h_1, s_2, c_2, h_2, \ldots$.</p>
+
+<p> To set a wetting angle other than 90 degrees, it is usual to set $C = 0$,
+and set an approriate value of $H$.
 
 <p>
 An example of how to construct a porous media file is provided in
