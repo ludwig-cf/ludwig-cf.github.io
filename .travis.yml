@@ -1,0 +1,18 @@
+language: ruby
+os: linux
+
+install:
+  - pip install --user sphinx
+
+script:
+  - make html
+
+deploy:
+  provider: pages
+  repo: ludwig-cf/ludwig-cf.github.io
+  target_branch: gh-pages
+  local_dir: _build/html
+  token: $STATIC_WEB_SITE_TOKEN
+  skip_cleanup: true
+  on:
+    branch: master
