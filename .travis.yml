@@ -10,7 +10,7 @@ script:
 deploy:
   provider: pages
   repo: ludwig-cf/ludwig-cf.github.io
-  target_branch: gh-pages
+  target_branch: master
   local_dir: _build/html
   token: $STATIC_WEB_SITE_TOKEN
   skip_cleanup: true
