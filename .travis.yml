@@ -15,4 +15,4 @@ deploy:
   token: $STATIC_WEB_SITE_TOKEN
   skip_cleanup: true
   on:
-    branch: master
+    branch: develop
