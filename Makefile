@@ -18,3 +18,4 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	cp CNAME $(BUILDDIR)/html/CNAME
+	cp .nojekyll $(BUILDDIR)/html/.nojekyll
