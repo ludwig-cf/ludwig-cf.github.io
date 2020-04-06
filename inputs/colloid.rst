@@ -124,6 +124,25 @@ swimming direction along the :math:`x`-axis.
   colloid_one_b1            0.05
   colloid_one_b2            0.05
 
+Fixed position or velocity
+""""""""""""""""""""""""""
+
+It is possible to fix the position or velocity of a colloid via
+
+.. code-block:: none
+
+  colloid_one_isfixedr       1
+  colloid_one_isfixedv       1
+
+It is also possible to do this on a per co-ordinate direction basis
+using
+
+.. code-block:: none
+
+  colloid_one_isfixedrxyz    0_0_1
+  colloid_one_isfixedvxyz    0_0_1
+
+to, for example, fix the :math:`z`-poisition and velocity components only.
 
 Many colloid initialisation at random
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
