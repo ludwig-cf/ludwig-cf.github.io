@@ -86,6 +86,34 @@ This method has the advantage that an equilibrium is admittted, but
 the disadvantage that momentum is not conserved (it can only be so
 via a divergence form).
 
+External chemical potential gradient
+""""""""""""""""""""""""""""""""""""
+
+For Cahn-Hilliard dynmaics, it is possible to add a fixed external
+chemical potential gradient :math:`\nabla_\alpha^\textrm{ex} \mu`
+which generates an additional diffusive flux
+
+.. math::
+
+   \partial_t \phi + \nabla_\alpha \phi u_\alpha =
+   -\nabla_\alpha (M\nabla_\alpha \mu + M \nabla_\alpha^\textrm{ex}\mu),
+
+where :math:`M` is the mobility.
+The addition chemical potential gradient also leads to a contribution to the
+body force on the fluid which
+is locally :math:`-\phi \nabla_\alpha^\textrm{ex}\mu`. The external
+potential chemical gradient is a vector which may be defined in the
+input file as, e.g.,
+
+.. code-block:: none
+
+  grad_mu              0.00001_0.0_0.0   # External chemical potential gradient
+  fd_force_divergence  no                # Currently required 
+
+The additional force on the fluid may lead to a permanent acceleration
+of the fluid, so it may make sense to use this option only when walls
+are present, or some other mechanism is present to limit fluid motion.
+
 
 Local force via the equilibrium stress
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

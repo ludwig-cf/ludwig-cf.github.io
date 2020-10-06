@@ -258,3 +258,53 @@ are via preprocesor options
   -DNP_D3Q18      # 19-point stencil in 3 dimensions
   -DNP_D3Q18      # 27-point stencil in 3 dimensions
 
+
+Testing
+-------
+
+Various tests are found in the ``tests`` subdirectory. Type ``make test``
+from the top level to run the default tests, which will take a few minutes. 
+
+.. code-block :: none
+
+  $ make -s test
+  PASS     ./unit/test_pe
+  PASS     ./unit/test_coords
+  ...
+
+Unit tests
+^^^^^^^^^^
+
+Unit tests are found in ``./tests/unit`` and report pass or fail for
+each case. The unit tests can be run in either serial or parallel,
+and run as part of the default test target from the top level. Some
+tests may report 'skip' if they are not relevant on a particular
+platform.
+
+
+Regression tests
+^^^^^^^^^^^^^^^^
+
+A series of regression tests is available which run the main code with
+a given input and compare the answer with a reference output.
+
+Regression tests may be run from the ``tests`` directory, e.g.,
+
+.. code-block :: none
+
+  $ cd tests
+  $ make d3q19-short
+  
+  PASS     ./serial-actv-s01.inp
+  PASS     ./serial-actv-s02.inp
+  ...
+
+Each test should report pass or fail. Failures will produce a diff-like
+output showing how the current result differs from the reference result.
+Floating point numbers are checked to within a tolerance set in the
+``./tests/awk-fp-diff.sh`` script. Results can be subject to variations
+slightly larger than the tolerance depending on the platform/compiler.
+The default tests should be run in serial.
+
+
+

@@ -71,6 +71,7 @@ Contents
 
    building/index
    inputs/index
+   outputs/index
 
 
 Index

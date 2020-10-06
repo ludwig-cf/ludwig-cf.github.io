@@ -2,7 +2,8 @@
 Input File
 ----------
 
-Inputs index is here
+The following sections provide a concise overview of various input
+parameters used to control the behaviour of the code at run time.
 
 
 
@@ -14,6 +15,7 @@ Inputs index is here
    fe
    lespc
    colloid
+   walls
    porous
    order
    visc

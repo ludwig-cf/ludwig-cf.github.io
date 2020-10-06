@@ -217,7 +217,7 @@ div.body h5 { font-size: /* Default 100% */; }
 div.body h6 { font-size: /* Default 100% */; }
 
 a.headerlink {
-    color: #DDD;
+    color: /* Default or causes accessability issue #DDD */;
     padding: 0 4px;
     text-decoration: none;
 }
