@@ -1,8 +1,8 @@
-language: ruby
+language: python
 os: linux
 
 python:
-  - "3.8.5"
+  - "3.8"
 
 install:
   - pip install --user sphinx==3.4.3
