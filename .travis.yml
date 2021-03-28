@@ -1,6 +1,9 @@
 language: ruby
 os: linux
 
+python:
+  - "3.8.5"
+
 install:
   - pip install --user sphinx
 
