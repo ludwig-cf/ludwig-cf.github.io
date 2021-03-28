@@ -5,7 +5,7 @@ python:
   - "3.8"
 
 install:
-  - pip install --user sphinx==3.4.3
+  - pip install sphinx
 
 script:
   - make html
