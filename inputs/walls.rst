@@ -73,8 +73,8 @@ at the top wall (walls in the :math:`x-y` plane). Values of the slip
 If slip is active, no moving walls can be used.
 
 
-Colloids
-""""""""
+Colloids and plane walls
+""""""""""""""""""""""""
 
 Systems with colloids and walls can be accommodated. To prevent colloids
 impinging on the plane walls, a lubrication correction can be added by
