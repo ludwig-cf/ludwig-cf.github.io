@@ -1,14 +1,14 @@
 
 Plane walls
-------------
+-----------
 
 .. contents:: In this section
    :depth: 1
    :local:
    :backlinks: none
 
-Plane walls
-^^^^^^^^^^^
+Plane boundary walls
+^^^^^^^^^^^^^^^^^^^^
 
 As a convenience, it is possible to specifiy that sets of plane walls
 are present in the system in one or more co-ordinate directions. For
