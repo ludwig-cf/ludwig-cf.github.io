@@ -40,6 +40,7 @@ release = '0.10.0'
 # ones.
 extensions = [
     'sphinx.ext.mathjax',
+    'sphinx.ext.autosectionlabel'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -81,7 +82,7 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {"lang": "en"}
+html_theme_options = {}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
