@@ -79,6 +79,7 @@ to be otherwise:
   #                         ``subgrid'' COLLOID_TYPE_SUBGRID
   # colloid_one_a0          input radius
   # colloid_one_ah          hydrodynamic radius
+  # colloid_one_al          subgrid offset parameter (subgrid only)
   # colloid_one_r           position vector
   # colloid_one_v           velocity (vector)
   # colloid_one_w           angular velocity (vector)
