@@ -37,7 +37,7 @@ required, and so on. Each free energy has a number of associated parameters
 discussed in the following sections.
 
 Details of general (Newtonian) fluid parameters, such as viscosity,
-are discussed in Section CROSS REFERENCE.
+are discussed in :ref:`Simulation parameters`.
 
 
 
