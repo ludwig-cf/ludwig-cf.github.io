@@ -99,6 +99,8 @@ html_static_path = ['_static']
 #
 #html_sidebars = {'**': ['about.html', 'navigation.html', 'relations.html', 
 #                        'searchbox.html']}
+html_sidebars = {'**': ['about.html', 'navigation.html', 
+                        'searchbox.html']}
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
