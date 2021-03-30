@@ -249,6 +249,63 @@ following gives an example of the relevant input key words:
   soft_sphere_nu            1.0               # exponent is positive
   soft_sphere_cutoff        2.25              # a surface-surface separation
 
+Soft-sphere potential (type-specific)
+"""""""""""""""""""""""""""""""""""""
+
+This potential is of the same form as the basic cut-and-shifted
+soft-sphere potential
+described above, but allows different parameters to be specified for
+colloids with different *interaction type*. The interaction type is
+an integer specifed by the appropriate element of the colloid
+structure, e.g., via input
+
+.. code-block:: none
+
+  colloid_one_interact_type   0
+  ...
+  colloid_two_interact_type   1
+
+
+specifying two different types (0 and 1). The first type must have
+index 0. Interactions between different pairs then all have the form
+:math:`v_{ij} \sim \epsilon_{ij} (\sigma_{ij}/r)^{\nu_{ij}}`.
+
+The type specific pair interaction is then introduced via
+
+.. code-block:: none
+
+  pair_ss_cut_ij          yes
+  pair_ss_cut_ij_ntypes   2
+
+the second key value pair giving the number of types expected. The parameters
+then form a symmetric matrix, for which we specific the upper triangle as
+a flattened vector. In the case of two types, there are three independent
+parameters, e.g.,
+
+.. code-block:: none
+
+  pair_ss_cut_ij_epsilon  0.2_0.1_0.05  # epsilon_00, _01, _11 in order
+
+where we specify :math:`\epsilon_{00}, \epsilon_{01}` and
+:math:`\epsilon_{11}`,
+being the interaction energies for interactions bewtween pairs of type
+(0,0), (0,1), and (1,1) respectively. The value :math:`\epsilon_{10}` is
+set to be the same as :math:`\epsilon_{01}` internally.
+A full set of key value pairs might be
+
+.. code-block:: none
+
+  pair_ss_cut_ij          yes           # Switch on
+  pair_ss_cut_ij_ntypes   2             # Number of types n
+  pair_ss_cut_ij_epsilon  0.0_0.1_0.0   # n(n+1)/2 epsilon parameters
+  pair_ss_cut_ij_sigma    0.0_2.0_0.0   # n(n+1)/2 sigma parameters
+  pair_ss_cut_ij_nu       1.0_1.0_3.0   # n(n+1)/2 nu exponents
+  pair_ss_cut_ij_hc       0.1_0.4_0.1   # n(n+1)/2 surface-surface cut offs
+
+The user must ensure all colloids have appropriate interaction types, i.e.,
+the interaction type does not exceed 1 in theis case.
+
+
 Lennard-Jones potential
 """""""""""""""""""""""
 
