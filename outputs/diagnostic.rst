@@ -27,8 +27,8 @@ The details of the exact global statistics produced depends upon the
 choice of free energy, and the presence of other features in the
 particular simulation. All output is reported in lattice units.
 
-Examples
-^^^^^^^^
+Diagnostic Examples
+^^^^^^^^^^^^^^^^^^^
 
 Fluid-only system
 ~~~~~~~~~~~~~~~~~

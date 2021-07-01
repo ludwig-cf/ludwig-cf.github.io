@@ -8,12 +8,9 @@ Colloid Output
    :maxdepth: 1
 
 
-File I/O
-^^^^^^^^
+Colloid File I/O
+^^^^^^^^^^^^^^^^
 
-File Format
-^^^^^^^^^^^
-
-Examples
-^^^^^^^^
+Colloid File Format
+^^^^^^^^^^^^^^^^^^^
 
