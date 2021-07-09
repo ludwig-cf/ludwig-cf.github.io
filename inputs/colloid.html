@@ -1,0 +1,449 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2.5. Colloids &#8212; Ludwig 0.13.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.6. Plane walls" href="walls.html" />
+    <link rel="prev" title="2.4. Lees Edwards SPBCs" href="lespc.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="colloids">
+<h1><span class="section-number">2.5. </span>Colloids<a class="headerlink" href="#colloids" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="in-this-section">
+<p class="topic-title">In this section</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introducing-colloids" id="id1">Introducing colloids</a></p></li>
+<li><p><a class="reference internal" href="#single-colloid-initialisation" id="id2">Single colloid initialisation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#example-single-active-particle-a-squirmer" id="id3">Example: Single active particle (a squirmer)</a></p></li>
+<li><p><a class="reference internal" href="#fixed-position-or-velocity" id="id4">Fixed position or velocity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#many-colloid-initialisation-at-random" id="id5">Many colloid initialisation at random</a></p></li>
+<li><p><a class="reference internal" href="#colloid-interactions" id="id6">Colloid interactions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#boundary-colloid-lubrication-correction" id="id7">Boundary-colloid lubrication correction</a></p></li>
+<li><p><a class="reference internal" href="#colloid-colloid-lubrication-corrections" id="id8">Colloid-colloid lubrication corrections</a></p></li>
+<li><p><a class="reference internal" href="#soft-sphere-potential" id="id9">Soft-sphere potential</a></p></li>
+<li><p><a class="reference internal" href="#soft-sphere-potential-type-specific" id="id10">Soft-sphere potential (type-specific)</a></p></li>
+<li><p><a class="reference internal" href="#lennard-jones-potential" id="id11">Lennard-Jones potential</a></p></li>
+<li><p><a class="reference internal" href="#yukawa-potential" id="id12">Yukawa potential</a></p></li>
+<li><p><a class="reference internal" href="#dipole-dipole-interaction-and-the-ewald-sum" id="id13">Dipole-dipole interaction and the Ewald sum</a></p></li>
+<li><p><a class="reference internal" href="#external-forces" id="id14">External forces</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="introducing-colloids">
+<h2><span class="section-number">2.5.1. </span>Introducing colloids<a class="headerlink" href="#introducing-colloids" title="Permalink to this headline">¶</a></h2>
+<p>If no relevant key words are present, no colloids will be
+expected at run time. The simulation will progress in the
+usual fashion with fluid only.</p>
+<p>If colloids are required, the <code class="docutils literal notranslate"><span class="pre">colloid_init</span></code>
+key word must be present to allow the code to determine where
+colloid information will come from. The options for the
+<code class="docutils literal notranslate"><span class="pre">colloid_init</span></code> key word are summarised below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_init             none
+
+#  none                  no colloids [DEFAULT]
+#  input_one             one colloid from input file
+#  input_two             two colloids from input file
+#  input_three           three colloids from input file
+#  input_random          Small number at random
+#  from_file             Read a separate file (including all restarts)
+</pre></div>
+</div>
+<p>For idealised simulations which require 1, 2, or 3 colloids, relevant
+initial state information
+for each particle can be included in the input file. In principle, most
+of the colloid state as defined in the colloid
+state structure in <code class="docutils literal notranslate"><span class="pre">colloid.h</span></code> may be specified. (Some state is
+reserved for internal use only and cannot be set from the input file.)
+Furthermore, not all the state is relevant in all simulations —
+quantities such as charge and wetting parameters may not be required,
+in which case they a simply ignored.</p>
+<p>A minimal initialisation is shown in the following example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_init              input_one
+
+colloid_one_a0            1.25
+colloid_one_ah            1.25
+colloid_one_r             12.0_12.0_12.0
+</pre></div>
+</div>
+<p>This initialises a single colloid with an input radius <span class="math notranslate nohighlight">\(a_0=1.25\)</span>,
+and a hydrodynamic radius <span class="math notranslate nohighlight">\(a_h=1.25\)</span>; in general both are required,
+but they do not have to be equal.
+A valid position is required within the extent of the system
+<span class="math notranslate nohighlight">\(0.5 &lt; x,y,z &lt; L + 0.5\)</span> as specified by the <code class="docutils literal notranslate"><span class="pre">size</span></code> key word.
+State which is not explicitly defined is initialised to zero.</p>
+</section>
+<section id="single-colloid-initialisation">
+<h2><span class="section-number">2.5.2. </span>Single colloid initialisation<a class="headerlink" href="#single-colloid-initialisation" title="Permalink to this headline">¶</a></h2>
+<p>A full list of colloid state-related key words is as follows. All
+the quantities are floating point numbers unless explicitly stated
+to be otherwise:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># colloid_one_nbonds      (integer) number of bonds
+#   colloid_one_bond1     (integer) index of bond partner 1
+#   colloid_one_bond2     (integer) index of bond partner 2
+# colloid_one_isfixedr    colloid has fixed position (integer 0 or 1)
+# colloid_one_isfixedv    colloid has fixed velocity (integer 0 or 1)
+# colloid_one_isfixedw    colloid has fixed angular velocity (0 or 1)
+# colloid_one_isfixeds    colloid has fixed spin (0 or 1)
+# colloid_one_type        ``default&#39;&#39; COLLOID_TYPE_DEFAULT
+#                         ``active&#39;&#39;  COLLOID_TYPE_ACTIVE
+#                         ``subgrid&#39;&#39; COLLOID_TYPE_SUBGRID
+# colloid_one_a0          input radius
+# colloid_one_ah          hydrodynamic radius
+# colloid_one_al          subgrid offset parameter (subgrid only)
+# colloid_one_r           position vector
+# colloid_one_v           velocity (vector)
+# colloid_one_w           angular velocity (vector)
+# colloid_one_s           spin (unit vector)
+# colloid_one_m           direction of motion (unit) vector for swimmers
+</pre></div>
+</div>
+<p>Note that for magnetic particles, the appropriate initialisation involves
+the spin key word <code class="docutils literal notranslate"><span class="pre">colloid_one_s</span></code> which relates to the dipole
+moment <span class="math notranslate nohighlight">\(\mu \mathbf{s}_i\)</span>, while <code class="docutils literal notranslate"><span class="pre">colloid_one_m</span></code> relates to the
+direction of motion vector. Do not confuse the two.
+It is possible in principle to have magnetic active particles,
+in which case the dipole direction or spin (<span class="math notranslate nohighlight">\(\mathbf{s}_i\)</span>) and the
+direction of swimming motion <span class="math notranslate nohighlight">\(\mathbf{m}_i\)</span> are allowed to be distinct.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># colloid_one_b1          Squirmer parameter B_1
+# colloid_one_b2          Squirmer parameter B_2
+# colloid_one_rng         (integer) random number generator state
+# colloid_one_q0          charge (charge species 0)
+# colloid_one_q1          charge (charge species 1)
+# colloid_one_epsilon     Permeativity
+# colloid_one_c           Wetting parameter C
+# colloid_one_h           Wetting parameter H
+</pre></div>
+</div>
+<section id="example-single-active-particle-a-squirmer">
+<h3><span class="section-number">2.5.2.1. </span>Example: Single active particle (a squirmer)<a class="headerlink" href="#example-single-active-particle-a-squirmer" title="Permalink to this headline">¶</a></h3>
+<p>The following example shows a single active particle with initial
+swimming direction along the <span class="math notranslate nohighlight">\(x\)</span>-axis.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_init              input_one
+
+colloid_one_type          active
+colloid_one_a0            7.25
+colloid_one_ah            7.25
+colloid_one_r             32.0_32.0_32.0
+colloid_one_v             0.0_0.0_0.0
+colloid_one_m             1.0_0.0_0.0
+colloid_one_b1            0.05
+colloid_one_b2            0.05
+</pre></div>
+</div>
+</section>
+<section id="fixed-position-or-velocity">
+<h3><span class="section-number">2.5.2.2. </span>Fixed position or velocity<a class="headerlink" href="#fixed-position-or-velocity" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to fix the position or velocity of a colloid via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_one_isfixedr       1
+colloid_one_isfixedv       1
+</pre></div>
+</div>
+<p>It is also possible to do this on a per co-ordinate direction basis
+using</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_one_isfixedrxyz    0_0_1
+colloid_one_isfixedvxyz    0_0_1
+</pre></div>
+</div>
+<p>to, for example, fix the <span class="math notranslate nohighlight">\(z\)</span>-poisition and velocity components only.</p>
+</section>
+</section>
+<section id="many-colloid-initialisation-at-random">
+<h2><span class="section-number">2.5.3. </span>Many colloid initialisation at random<a class="headerlink" href="#many-colloid-initialisation-at-random" title="Permalink to this headline">¶</a></h2>
+<p>For suspensions with more than few colloids, but still at
+relatively low volume fraction (10–20% by volume), it is
+possible to request initialisation at random positions.</p>
+<p>The additional key word value pair <code class="docutils literal notranslate"><span class="pre">colloid_random_no</span></code>
+determines the total number of particles to be placed in
+the system. To prevent particles being initialised very
+close together, which can cause problems in the first few
+time steps if strong potential interactions are present,
+a <code class="docutils literal notranslate"><span class="pre">grace''</span> <span class="pre">distance</span> <span class="pre">or</span> <span class="pre">minimum</span> <span class="pre">surface-surface</span> <span class="pre">separation</span>
+<span class="pre">may</span> <span class="pre">also</span> <span class="pre">be</span> <span class="pre">specified</span> <span class="pre">(``colloid_random_dh</span></code>).</p>
+<p>The following example asks for 100 colloids to be initialised
+at random positions, with a minimum separation of 0.5 lattice
+spacing.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_init              input_random
+
+colloid_random_no         100             # Total number of colloids
+colloid_random_dh         0.5             # ``Grace&#39;&#39; distance
+
+colloid_random_a0         2.30
+colloid_random_ah         2.40
+</pre></div>
+</div>
+<p>An input radius and hydrodynamic radius must be provided: these
+are the same for all colloids.
+If specific initialisations of the colloid state (excepting the
+position) other than the radii are wanted, values should be provided
+as for the single particle case in the preceding section, but using
+<code class="docutils literal notranslate"><span class="pre">colloid_random_a0</span></code> in place of <code class="docutils literal notranslate"><span class="pre">colloid_one_a0</span></code> and so on.</p>
+<p>The code will try to initialise the requested number in the current
+system size, but only makes a finite number of attempts to place
+particles at random with no overlaps. (The initialisation will also
+take into account the presence of any solid walls, using the same
+grace distance.) If the the number of particles is too large, the
+code will halt with a message to that effect.</p>
+<p>In general, colloid information for a arbitrary configuration with many
+particles should be read from a pre-prepared file. See the section on
+File I/O for further information on reading files.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Section on File I/O required</p>
+</div>
+</section>
+<section id="colloid-interactions">
+<h2><span class="section-number">2.5.4. </span>Colloid interactions<a class="headerlink" href="#colloid-interactions" title="Permalink to this headline">¶</a></h2>
+<p>Note that two-body pair-potential interactions are defined uniformly for
+all colloids in a simulation. The same is true for lubrication corrections.
+There are a number of constraints related to the computation of
+interactions discussed below.</p>
+<section id="boundary-colloid-lubrication-correction">
+<h3><span class="section-number">2.5.4.1. </span>Boundary-colloid lubrication correction<a class="headerlink" href="#boundary-colloid-lubrication-correction" title="Permalink to this headline">¶</a></h3>
+<p>Lubrication corrections (here the normal force) between a flat wall
+are required to prevent overlap between colloid  and the wall.
+The cutoff distance is set via the key word value pair</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_lubrication_rcnormal    0.5
+</pre></div>
+</div>
+<p>It is recommended that this is used in all cases involving walls.
+A reasonable value is in the range <span class="math notranslate nohighlight">\(0.1 &lt; r_c &lt; 0.5\)</span> in lattice
+units, and should be calibrated for particle hydrodynamic radius
+and fluid viscosity if exact results are important.</p>
+</section>
+<section id="colloid-colloid-lubrication-corrections">
+<h3><span class="section-number">2.5.4.2. </span>Colloid-colloid lubrication corrections<a class="headerlink" href="#colloid-colloid-lubrication-corrections" title="Permalink to this headline">¶</a></h3>
+<p>The key words to activate the calculation of lubrication corrections
+are:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lubrication_on                   1
+lubrication_normal_cutoff        0.5
+lubrication_tangential_cutoff    0.05
+</pre></div>
+</div>
+</section>
+<section id="soft-sphere-potential">
+<h3><span class="section-number">2.5.4.3. </span>Soft-sphere potential<a class="headerlink" href="#soft-sphere-potential" title="Permalink to this headline">¶</a></h3>
+<p>A cut-and-shifted soft-sphere potential of the form
+<span class="math notranslate nohighlight">\(v \sim \epsilon (\sigma/r)^\nu\)</span> is
+available. Some trial-and-error with the parameters may be required in
+any given situation to ensure simulation stability in the long run. The
+following gives an example of the relevant input key words:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>soft_sphere_on            1                 # integer 0/1 for off/on
+soft_sphere_epsilon       0.0004            # energy units
+soft_sphere_sigma         1.0               # a length
+soft_sphere_nu            1.0               # exponent is positive
+soft_sphere_cutoff        2.25              # a surface-surface separation
+</pre></div>
+</div>
+</section>
+<section id="soft-sphere-potential-type-specific">
+<h3><span class="section-number">2.5.4.4. </span>Soft-sphere potential (type-specific)<a class="headerlink" href="#soft-sphere-potential-type-specific" title="Permalink to this headline">¶</a></h3>
+<p>This potential is of the same form as the basic cut-and-shifted
+soft-sphere potential
+described above, but allows different parameters to be specified for
+colloids with different <em>interaction type</em>. The interaction type is
+an integer specifed by the appropriate element of the colloid
+structure, e.g., via input</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_one_interact_type   0
+...
+colloid_two_interact_type   1
+</pre></div>
+</div>
+<p>specifying two different types (0 and 1). The first type must have
+index 0. Interactions between different pairs then all have the form
+<span class="math notranslate nohighlight">\(v_{ij} \sim \epsilon_{ij} (\sigma_{ij}/r)^{\nu_{ij}}\)</span>.</p>
+<p>The type specific pair interaction is then introduced via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pair_ss_cut_ij          yes
+pair_ss_cut_ij_ntypes   2
+</pre></div>
+</div>
+<p>the second key value pair giving the number of types expected. The parameters
+then form a symmetric matrix, for which we specific the upper triangle as
+a flattened vector. In the case of two types, there are three independent
+parameters, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pair_ss_cut_ij_epsilon  0.2_0.1_0.05  # epsilon_00, _01, _11 in order
+</pre></div>
+</div>
+<p>where we specify <span class="math notranslate nohighlight">\(\epsilon_{00}, \epsilon_{01}\)</span> and
+<span class="math notranslate nohighlight">\(\epsilon_{11}\)</span>,
+being the interaction energies for interactions bewtween pairs of type
+(0,0), (0,1), and (1,1) respectively. The value <span class="math notranslate nohighlight">\(\epsilon_{10}\)</span> is
+set to be the same as <span class="math notranslate nohighlight">\(\epsilon_{01}\)</span> internally.
+A full set of key value pairs might be</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pair_ss_cut_ij          yes           # Switch on
+pair_ss_cut_ij_ntypes   2             # Number of types n
+pair_ss_cut_ij_epsilon  0.0_0.1_0.0   # n(n+1)/2 epsilon parameters
+pair_ss_cut_ij_sigma    0.0_2.0_0.0   # n(n+1)/2 sigma parameters
+pair_ss_cut_ij_nu       1.0_1.0_3.0   # n(n+1)/2 nu exponents
+pair_ss_cut_ij_hc       0.1_0.4_0.1   # n(n+1)/2 surface-surface cut offs
+</pre></div>
+</div>
+<p>The user must ensure all colloids have appropriate interaction types, i.e.,
+the interaction type does not exceed 1 in theis case.</p>
+</section>
+<section id="lennard-jones-potential">
+<h3><span class="section-number">2.5.4.5. </span>Lennard-Jones potential<a class="headerlink" href="#lennard-jones-potential" title="Permalink to this headline">¶</a></h3>
+<p>The Lennard-Jones potential is controlled by the following key words:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lennard_jones_on          1                 # integer 0/1 off/on
+lj_epsilon                0.1               # energy units
+lj_sigma                  2.6               # potential length scale
+lj_cutoff                 8.0               # a centre-centre separation
+</pre></div>
+</div>
+</section>
+<section id="yukawa-potential">
+<h3><span class="section-number">2.5.4.6. </span>Yukawa potential<a class="headerlink" href="#yukawa-potential" title="Permalink to this headline">¶</a></h3>
+<p>A cut-and-shifted Yukawa potential of the form
+<span class="math notranslate nohighlight">\(v \sim \epsilon \exp(-\kappa r)/r\)</span> is
+available using the following key word value pairs:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>yukawa_on                 1                 # integer 0/1 off/on
+yukawa_epsilon            1.330             # energy units
+yukawa_kappa              0.725             # an inverse length
+yukawa_cutoff             16.0              # a centre-centre cutoff
+</pre></div>
+</div>
+</section>
+<section id="dipole-dipole-interaction-and-the-ewald-sum">
+<h3><span class="section-number">2.5.4.7. </span>Dipole-dipole interaction and the Ewald sum<a class="headerlink" href="#dipole-dipole-interaction-and-the-ewald-sum" title="Permalink to this headline">¶</a></h3>
+<p>The Ewald sum is completely specified in the input file
+by the uniform dipole strength $mu$ and the real-space cut off <span class="math notranslate nohighlight">\(r_c\)</span>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ewald_sum                 1                 # integer 0/1 off/on
+ewald_mu                  0.285             # dipole strength mu
+ewald_rc                  16.0              # real space cut off
+</pre></div>
+</div>
+<p>If short range interactions are required, particle information is stored
+in a cell list, which allows efficient computation of the potentially
+<span class="math notranslate nohighlight">\(N^2\)</span> interactions present. This gives rise to a constraint that the
+width of the cells must be large enough that all relevant interactions
+are included. This generally means that the cells must be at least
+<span class="math notranslate nohighlight">\(2a_h + h_c\)</span> where <span class="math notranslate nohighlight">\(h_c\)</span> is the largest relevant cut off
+distance.</p>
+<p>The requirement for at least two cells per local domain in parallel
+means that there is a associated minimum local domain size. This is
+computed at run time on the basis of the input. If the local domain
+is too small, the code will terminate with an error message. The
+local domain size should be increased.</p>
+</section>
+<section id="external-forces">
+<h3><span class="section-number">2.5.4.8. </span>External forces<a class="headerlink" href="#external-forces" title="Permalink to this headline">¶</a></h3>
+<p>The following example requests a uniform body force in the negative
+<span class="math notranslate nohighlight">\(z\)</span>-direction on all particles.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_gravity           0.0_0.0_-0.001    # vector
+</pre></div>
+</div>
+<p>The counterbalancing body force on the fluid which enforces the
+constraint of momentum conservation for the system as a whole is
+computed automatically by the code at each time step.</p>
+<p>Note: in a real system, a gravitation force on a colloid is
+related to buoyancy <span class="math notranslate nohighlight">\(F \propto \Delta\rho g\)</span>, where the density
+difference is that between the colloid and the surrounding fluid,
+and <span class="math notranslate nohighlight">\(g\)</span> is an acceleration.
+In a system where there is no density contrast, as we have here
+(typically), the “gravity” is the product <span class="math notranslate nohighlight">\(\Delta\rho g\)</span>. Formally,
+this may be viewed as the limit that <span class="math notranslate nohighlight">\(\Delta\rho \rightarrow 0\)</span>,
+combined with the limit <span class="math notranslate nohighlight">\(g \rightarrow \infty\)</span>, but the limit of
+the product is finite.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.8. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.9. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.10. Force on the fluid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/inputs/colloid.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

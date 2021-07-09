@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2.10. Force on the fluid &#8212; Ludwig 0.13.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Initial Conditions" href="../initial/index.html" />
+    <link rel="prev" title="2.9. Viscosity Models" href="visc.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="force-on-the-fluid">
+<h1><span class="section-number">2.10. </span>Force on the fluid<a class="headerlink" href="#force-on-the-fluid" title="Permalink to this headline">¶</a></h1>
+<p>Forces on the fluid fall into a number of categories which are discussed
+in this section.</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="body-forces">
+<h2><span class="section-number">2.10.1. </span>Body forces<a class="headerlink" href="#body-forces" title="Permalink to this headline">¶</a></h2>
+<p>The momentum equation may include a term which is a local body force
+density. The origin of such a force will depend on context, but may
+include uniform external forces (“gravity”), or local forces arising
+from the thermodynamic sector. The later would include bending forces
+at the interface arising from interfacial tension in the case of a
+symmetric binary fluid.</p>
+</section>
+<section id="constant-body-forces">
+<h2><span class="section-number">2.10.2. </span>Constant body forces<a class="headerlink" href="#constant-body-forces" title="Permalink to this headline">¶</a></h2>
+<p>If a constant body force density on the fluid is required, this may be
+included via:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>force fx_fy_fz
+</pre></div>
+</div>
+<p>where the three components are defined in the usual way. This force desnity
+is applied per fluid site per time step, so there must be some
+counter-balancing mechanism to prevent the fluid accelerating
+indefinitely. This counter-balancing force might be provided by,
+e.g., drag at external walls.</p>
+</section>
+<section id="local-forces-from-the-thermodynamic-sector">
+<h2><span class="section-number">2.10.3. </span>Local forces from the thermodynamic sector<a class="headerlink" href="#local-forces-from-the-thermodynamic-sector" title="Permalink to this headline">¶</a></h2>
+<p>Local forces on teh fluid often arise from the thermodynamic sector; as
+a concrete example we will consider the symmetric free energy with
+compositional order parameter <span class="math notranslate nohighlight">\(\phi(\mathbf{r};t)\)</span> and corresponding
+chemical potential <span class="math notranslate nohighlight">\(\mu(\mathbf{r};t)\)</span>.</p>
+<section id="via-the-diveregence-of-the-stress">
+<h3><span class="section-number">2.10.3.1. </span>Via the diveregence of the stress<a class="headerlink" href="#via-the-diveregence-of-the-stress" title="Permalink to this headline">¶</a></h3>
+<p>The body force density may be computed via the divergence of the
+thermodynamic stress:</p>
+<div class="math notranslate nohighlight">
+\[f_\alpha (\mathbf{r}; t) = \partial_\beta P_{\alpha\beta}\]</div>
+<p>The key in the input file to use this method is</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>force_divergence yes
+</pre></div>
+</div>
+<p>This method has the advantage that momentum is conserved both locally, and
+therefore globally, but the disadvantage that an equillibrium is not possible
+owing to the generation of residual (“spurious”) flows.
+Note that this is the default method.</p>
+</section>
+<section id="via-the-gradient-of-the-chemical-potential">
+<h3><span class="section-number">2.10.3.2. </span>Via the gradient of the chemical potential<a class="headerlink" href="#via-the-gradient-of-the-chemical-potential" title="Permalink to this headline">¶</a></h3>
+<p>The local force on the fluid may be computed as</p>
+<div class="math notranslate nohighlight">
+\[f_\alpha (\mathbf{r};t) = - \phi(\mathbf{r};t) \nabla_\alpha \mu(\mathbf{r};t)\]</div>
+<p>To use this method set the switch</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>force_divergence no
+</pre></div>
+</div>
+<p>This method has the advantage that an equilibrium is admittted, but
+the disadvantage that momentum is not conserved (it can only be so
+via a divergence form).</p>
+</section>
+<section id="external-chemical-potential-gradient">
+<h3><span class="section-number">2.10.3.3. </span>External chemical potential gradient<a class="headerlink" href="#external-chemical-potential-gradient" title="Permalink to this headline">¶</a></h3>
+<p>For Cahn-Hilliard dynmaics, it is possible to add a fixed external
+chemical potential gradient <span class="math notranslate nohighlight">\(\nabla_\alpha^\textrm{ex} \mu\)</span>
+which generates an additional diffusive flux</p>
+<div class="math notranslate nohighlight">
+\[\partial_t \phi + \nabla_\alpha \phi u_\alpha =
+-\nabla_\alpha (M\nabla_\alpha \mu + M \nabla_\alpha^\textrm{ex}\mu),\]</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the mobility.
+The addition chemical potential gradient also leads to a contribution to the
+body force on the fluid which
+is locally <span class="math notranslate nohighlight">\(-\phi \nabla_\alpha^\textrm{ex}\mu\)</span>. The external
+potential chemical gradient is a vector which may be defined in the
+input file as, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>grad_mu              0.00001_0.0_0.0   # External chemical potential gradient
+fd_force_divergence  no                # Currently required
+</pre></div>
+</div>
+<p>The additional force on the fluid may lead to a permanent acceleration
+of the fluid, so it may make sense to use this option only when walls
+are present, or some other mechanism is present to limit fluid motion.</p>
+</section>
+</section>
+<section id="local-force-via-the-equilibrium-stress">
+<h2><span class="section-number">2.10.4. </span>Local force via the equilibrium stress<a class="headerlink" href="#local-force-via-the-equilibrium-stress" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to introduce an effective body force at the lattice Boltzmann
+collision stage by making an ad-hoc addition to the equilibrium stress
+<span class="math notranslate nohighlight">\(S_{\alpha\beta}^{eq}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[S_{\alpha\beta}^{eq} = u_\alpha u_\beta + P_{\alpha\beta}\]</div>
+<p>where <span class="math notranslate nohighlight">\(P_{\alpha\beta}\)</span> is the thermodynamic contribution to the
+stress. To do this set the switch</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_use_stress_relaxation yes
+</pre></div>
+</div>
+<p>Note that this may be done when the thermodynamic contribution is symmetric.
+If the thermodynamic contribution is anti-symmetric (e.g., for the liquid
+crystal case) then only the symmetric part is implememnted in this way.
+The contribution to the force is computed as a divergence of the
+anti-symmetric stress as above.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.8. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.9. Viscosity Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.10. Force on the fluid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/inputs/force.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
