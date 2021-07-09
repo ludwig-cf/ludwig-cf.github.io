@@ -179,7 +179,3 @@ Special case: single file output in parallel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-
-Examples
-^^^^^^^^
-

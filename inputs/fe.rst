@@ -41,7 +41,7 @@ are discussed in :ref:`Simulation parameters`.
 
 
 
-Symmetric Binary Fluid
+Symmetric binary fluid
 ^^^^^^^^^^^^^^^^^^^^^^
 
 We recall the free energy is a functional of composition :math:`\phi`

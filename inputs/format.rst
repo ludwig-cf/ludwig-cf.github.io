@@ -79,6 +79,8 @@ occur if they are missing. The remainder of this part
 of the guide details the various choices for key value pairs,
 along with any default values, and any relevant constraints. 
 
-
+Key value pairs which appear in the input file, but are not used by
+the code at run time, are reported at the end of the run. This may
+indicate that the key string is incorrect or unrecognised.
 
 
