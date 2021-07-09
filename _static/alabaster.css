@@ -336,7 +336,15 @@ div.seealso {
 }
 
 div.topic {
-    background-color: #EEE;
+    /* No background and no border, please. */
+    /* background-color: #EEE;*/
+    border: 0px solid #CCC;
+}
+
+p.topic-title {
+    font-size: 1.1em;
+    font-weight: normal;
+    margin-top: 10px;
 }
 
 p.admonition-title {
