@@ -53,7 +53,8 @@ the Mach number constraint which means that the density should be close to
 :math:`\rho_0` throughout the fluid. The same
 statistics are reported for compositional order ``[phi]``. Net composition
 should not change for a conserved order parameter, so the total reported
-for ``[phi]`` should be fixed after initialisation. The maximumm and
+for ``[phi]`` should be fixed after initialisation (see further
+comments below). The maximumm and
 minimum order parameter may extend slightly beyond the equilibrium values
 :math:`\pm \phi^\star`.
 
@@ -84,3 +85,45 @@ of external forces, the total momentum should be conserved. However, in
 practice, the figures reported will drift owing to the accumulation of
 round offs errors (as seen in the above example). However, these errors
 should remain small compared with unity.
+
+The total momentum from the fluid is computed as a compensated sum, so
+should be robust to parallel decomposition. Other contributions to the
+total momumtum (e.g., from colloids) are not currently treated in the
+same way.
+
+
+Conserved order parameter
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In cases where composition is locally and globally conserved (as in the
+symmretic binary fluid), some care can be taken to ensure the total
+reported order parameter (ie., the composition) remains fixed as a function
+of time. There
+are at least two sources of round-off error that can lead to apparent
+drift in the total reported as
+
+.. code-block:: none
+
+  Scalars - total mean variance min max
+  [rho] ...
+  [phi]  3.1484764e+00  1.2010484e-05  3.7820523e-04 -4.7270149e-02  4.6821679e-02
+
+The first is in the evaluation of the total itself (and particularly the
+order in which the sum is accumulated in parallel). This is handled in
+all cases via a compensated sum, which should ensure the results are
+consistent independent of parallel decomposition (in both MPI/thread sense).
+The second is the time evolution via the Cahn-Hilliard equation. Additional
+measures can be taken if required here via the option:
+
+.. code-block:: none
+
+  cahn_hilliard_options_conserve  1   # integer value 0, 1, or 2
+
+The choices are 0 (the default) which means no special action; 1, which
+indroduces an additional compensation at each point of the lattice in
+the Cahn Hilliard update; and 2, which introduces a post-hoc correction
+to maintain the initial value of the total order parameter at each
+time step. These options may be of interest if strict conservation at
+machine precision is wanted. This may be most noticable if the total
+is exactly zero or very close to zero. For most purposes, the default
+should be acceptable.
