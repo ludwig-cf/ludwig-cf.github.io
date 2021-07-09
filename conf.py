@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Ludwig'
-copyright = '2020, The University of Edinburgh'
+copyright = '2021, The University of Edinburgh'
 author = 'Kevin Stratford'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.10.0'
+release = '0.13.0'
 
 
 # -- General configuration ---------------------------------------------------
