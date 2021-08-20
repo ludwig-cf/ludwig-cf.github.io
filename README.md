@@ -6,7 +6,7 @@ All commits should be made to the `develop` branch.
 
 ## Local preview
 
-In order to see anything other than the current site at X, e.g. a branch, you will need a local preview. To arrange this, `sphinx` is required.
+In order to see anything other than the current site via github pages, e.g. a branch, you will need a local preview. To arrange this, `sphinx` is required.
 
 An easy way to install this is via `miniconda`. See https://docs.conda.io/en/latest/miniconda.html
 
