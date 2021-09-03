@@ -59,7 +59,7 @@ The key in the input file to use this method is
 
 .. code-block:: none
 
-  force_divergence yes
+  fd_force_divergence yes
 
 
 This method has the advantage that momentum is conserved both locally, and
@@ -80,7 +80,7 @@ To use this method set the switch
 
 .. code-block:: none
 
-  force_divergence no
+  fd_force_divergence no
 
 This method has the advantage that an equilibrium is admittted, but
 the disadvantage that momentum is not conserved (it can only be so
