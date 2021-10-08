@@ -30,6 +30,7 @@ Possible values of the ``free_energy`` key are:
   #  lc_droplet               Liquid crystal emulsions
   #  fe_electro               Single fluid electrokinetics
   #  fe_electro_symmetric     Binary fluid electrokinetics
+  #  ternary                  Three-component fluid
 
 The choice of free energy will control automatically a number of factors
 related to choice of order parameter, the degree of parallel communication
@@ -51,17 +52,19 @@ and its density may be written:
 
   f(\phi) = {\textstyle \frac{1}{2}} A \phi^2
           + {\textstyle \frac{1}{4}} B \phi^4
-          + {\textstyle \frac{1}{2}}\kappa (\partial_\alpha \phi)^2
+          + {\textstyle \frac{1}{2}}\kappa (\partial_\alpha \phi)^2.
 
 Parameters are set in the input file via
 
 .. code-block:: none
 
   # Binary fluid
-  free_energy  symmetric
-  A            -0.0625                         # Default: -0.003125
-  B            +0.0625                         # Default: +0.003125
-  K            +0.04                           # Default: +0.002
+  free_energy            symmetric         # Use free energy
+  symmetric_a            -0.0625           # Bulk term          [required]
+  symmetric_b            +0.0625           # Bulk term          [required]
+  symmetric_kappa        +0.04             # Interfacial term   [required]
+  symmetric_c             0.00             # Surface term       [optional]
+  symmetric_h             0.00             # Surface term       [optional]
 
 Common usage has :math:`A < 0` and :math:`B = -A` so that the separated phase
 has values :math:`\phi^\star = (-A/B)^{1/2} = \pm 1`. The parameter
@@ -70,9 +73,27 @@ and is usually positive. The combination of parameters determines
 the interfacial width :math:`\xi = (-2\kappa/A)^{1/2}` and the interfacial
 tension :math:`\sigma = 4\kappa\phi^{\star 2}/3\xi`.
 
-.. attention::
+The surface terms are discussed further in :doc:`walls`.
 
-  Add something on hybrid
+In this approach, the fluid is treated using lattice Boltzmann, while the
+order parameter evolves according to a Cahn-Hilliard equation treated
+numerically via finite difference. For historical interest, the symmetric
+free energy problem can also be treated using two lattice Boltzmann
+distributions:
+
+.. code-block:: none
+
+  free_energy   symmetric_lb
+
+Other parameters have the same meaning. This approach was used in an
+earlier implementation, is and
+discussed at some length in work including [Kendon2001]_.
+
+.. [Kendon2001] V.M. Kendon, M.E. Cates, I. Pagonabarraga, J.-C. Desplat,
+                and P. Bladon,
+                Inertial effects in three-dimensional spinodal decomposition
+                of a symmetric binary fluid mixture: a lattice Boltzmann study,
+                *J. Fluid Mech.*, **440** 147-203 (2001).
 
 
 Brazovskii smectics
@@ -104,7 +125,7 @@ For :math:`A < 0`, phase separation occurs with a result depending on
 :math:`\kappa`:
 one gets two symmetric phases for :math:`\kappa >0` (cf. the symmetric case)
 or a lamellar phase for :math:`\kappa < 0`. Typically, :math:`B = -A` and the
-parameter in the highest derivative `math:`C > 0`.
+parameter in the highest derivative :math:`C > 0`.
 
 
 Polar active gels
@@ -112,7 +133,7 @@ Polar active gels
 
 
 The free energy density is a function of vector order parameter 
-:math`P_\alpha`:
+:math:`P_\alpha`:
 
 .. math::
 
@@ -249,7 +270,34 @@ Relevant keys (with default values) are:
 Note that key ``lc_gamma`` is not used in this case.
 
 
+Ternary free energy
+^^^^^^^^^^^^^^^^^^^
 
+An implementation of the ternary model following [Semprebon]_ is
+available. This uses a lattice Boltzmann density :math:`\rho` coupled to
+two scalar order parameters :math:`\phi` and :math:`\psi` to give three
+components. The two scalar order parameters each evolve via a Cahn-Hilliard
+equation treated by finite difference.
 
+The basic free energy parameters are:
 
+.. code-block:: none
 
+  free_energy               ternary            # Select ternary free energy
+  
+  ternary_kappa1            0.01               # Interfacial parameter > 0
+  ternary_kappa2            0.02               # Interfacial parameter > 0
+  ternary_kappa3            0.05               # Interfacial parameter > 0
+  ternary_alpha             1.00               # Interfical width
+  
+  ternary_mobility_phi      0.15               # Mobility for phi
+  ternary_mobility_psi      0.10               # Mobility for psi
+
+All the parameters must be specified.
+
+As the description is rather involved, we do not repeat it here.
+
+.. [Semprebon] C. Semprebon, T. Krueger, and H. Kusumaatmaja,
+               Ternary free-energy lattice Boltzmann model with tunable
+               contact angles,
+               *Phys. Rev. E*, **93** 033305 (2016).

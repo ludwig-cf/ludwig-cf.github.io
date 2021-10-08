@@ -12,3 +12,5 @@ conditions available for the fluid and various order parameters.
 
    fluid
    composition
+   liquid-crystal
+   three-phase
