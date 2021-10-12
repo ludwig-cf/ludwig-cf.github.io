@@ -5,7 +5,8 @@
 
 This is the repository for the Ludwig static web site.
 
-All commits should be made to the `develop` branch.
+All commits should be made to the `develop` branch, i.e., make a branch
+based on `develop` and then make a pull request to `develop`. 
 
 ## Local preview
 
