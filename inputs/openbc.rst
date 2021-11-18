@@ -81,7 +81,55 @@ velocity :math:`u(L_x,y,z) = u(L_x-1,y,z)`; incoming distributions
 are again computed via :math:`f_i = f^{eq}_i(\rho_0, u)`.
 
   
-Composition and the Cahn-Hilliard equation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Open boundaries for composition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Pending.
+Open boundary conditions (with the same provisos as mentioned above) are
+available for composition variable :math:`\phi`, as used in symmetric
+and Brazovskii free energy models.
+
+Inflow and outflow conditions are set, e.g.,:
+
+.. code-block:: none
+
+  phi_bc_open                yes        # Use open boundaries for phi
+  phi_bc_inflow_type         fixed      # inflow type
+  phi_bc_inflow_fixed_phib   +1.0       # inflow parameter
+
+  phi_bc_outflow_type        free       # outflow type
+
+These would typically be used with the corresponding hydrodynamic
+inflow/outflow conditions discussed above.
+
+Type ``fixed`` inflow
+"""""""""""""""""""""
+
+.. code-block:: none
+
+  phi_bc_outflow_type          fixed
+  phi_bc_outflow_fixed_phib    -1.0
+
+A fixed boundary condition sets :math:`\phi(x=0,y,z) = \phi_b` where
+a uniform value :math:`\phi_b` is specified via the key
+``phi_bc_inflow_fixed_phib``.
+
+The boundary condition sets all values of :math:`\phi` in the boundary
+region (up to the extent of the parallel halo region). This influences
+the calculation of the order parameter gradients
+:math:`\partial_\alpha \phi` and :math:`\partial^2_\alpha \phi` and
+hence the value of the chemical potential. The advective flux in
+the Cahn-Hilliard equation also responds to the boundary value
+appropriately in conjunction with the imposed inflow velocity.
+
+Type ``free`` outflow
+"""""""""""""""""""""
+
+.. code-block:: none
+
+  phi_bc_outflow_type          free
+
+
+This outflow boundary condition sets
+:math:`\phi_b (x = L+1, y, z) = \phi (L,y,z)`,
+again to the extent of the parallel halo region. There are no additional
+parameters associated with this boundary condition.
