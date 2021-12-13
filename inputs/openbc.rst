@@ -19,6 +19,10 @@ Open boundary conditions may be used with a number of provisos:
    of the domain, and the outflow is at the upper, or 'right-hand' end;
 4. All three dimensions must be non-periodic.
 
+
+At present there is an additional constraint when running in parallel
+that the flow direction must be the :math:`x`-direction.
+
 A suitable set of input keys would therefore be, e.g.:
 
 .. code-block:: none
@@ -133,3 +137,12 @@ This outflow boundary condition sets
 :math:`\phi_b (x = L+1, y, z) = \phi (L,y,z)`,
 again to the extent of the parallel halo region. There are no additional
 parameters associated with this boundary condition.
+
+
+Restarting with open boundary conditions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+At present, there may be some small differences in results introduced
+by a restart (compared with the same run 'straight through'). This
+relates the need for density values in the open boundary regions.
+This should not impair the overall reliability of the results.
