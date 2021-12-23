@@ -17,6 +17,7 @@ parameters used to control the behaviour of the code at run time.
    colloid
    walls
    porous
+   openbc
    order
    visc
    force

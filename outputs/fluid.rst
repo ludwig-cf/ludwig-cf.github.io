@@ -8,6 +8,26 @@ Fluid Output
    :maxdepth: 1
 
 
+The first section gives a summary of output options. These are discussed
+in more detail in the following sections.
+
+
+Summary of relevant options
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The table shows a summary of available options:
+
+.. code-block:: none
+
+  # Density
+
+  rho_io_wanted     yes        # Not output by default
+  rho_io_freq       1000       # every so many steps
+  rho_io_format     ASCII      # BINARY is default
+  rho_io_grid       1_1_1      # [optional] for parallel output
+
+
+
 File I/O
 ^^^^^^^^
 

@@ -200,13 +200,43 @@ Other important parameters in the liquid crystal picture are:
 
   lc_xi            0.7                         # Default: 0.0
   lc_Gamma         0.5                         # Default: 0.0
-  lc_active_zeta   0.0                         # Default: 0.0
 
 The first is :math:`\xi` (key ``lc_xi``) is the effective molecular
 aspect ratio and should be in the range :math:`0 < \xi < 1`. The rotational
 diffusion constant is :math:`\Gamma` (key ``lc_Gamma``; not to be
-confused with ``lc_gamma``). The (optional) apolar activity
-parameter is :math:`\zeta` (key ``lc_active_zeta``).
+confused with ``lc_gamma``).
+
+Liquid crystal activity
+"""""""""""""""""""""""
+
+There exists an option to model contractile or extensile active fluids
+via the addition of an "active" stress in the
+liquid crystal free energy. For historical reasons, this is
+additional active stress written as
+
+.. math::
+  
+  S_{\alpha\beta} = \zeta_0 \delta_{\alpha\beta} - \zeta_1 Q_{\alpha\beta} 
+                  - \zeta_2 (\partial_\beta P_\alpha + \partial_\alpha P_\beta)
+
+where :math:`P_\alpha = Q_{\alpha\gamma} \partial_\beta Q_{\beta\gamma}`.
+The first term in :math:`\zeta_0` is included for completeness: it
+should only influence compressability and one may safely leave
+:math:`\zeta_0  = 0`. The second term models active force dipoles and
+sets the force density (:math:`\zeta_1 < 0` for a contractile fluid,
+and :math:`\zeta_1 > 0` for an extensile fluid).
+The third term in :math:`\zeta_2` is experimental. 
+
+The relevant input keys and values are, e.g.,
+
+.. code-block:: none
+
+  lc_activity      yes                         # Required for activity
+  lc_active_zeta0  0.0                         # Default: 0.0
+  lc_active_zeta1  0.001                       # Default: 0.0
+  lc_active_zeta2  0.0                         # Default: 0.0
+
+
 
 Liquid crystal anchoring
 """"""""""""""""""""""""
@@ -268,6 +298,31 @@ Relevant keys (with default values) are:
   lc_droplet_W           -0.05                 # Default: 0.0
 
 Note that key ``lc_gamma`` is not used in this case.
+
+Liquid crystal emulsion activity
+""""""""""""""""""""""""""""""""
+
+An option for an additional active stress in the case of an emulsion
+is present. The form of the stress allows for activity in the
+ordered phase (:math:`\phi = +1`):
+
+.. math::
+
+  S_{\alpha\beta} = {\textstyle\frac{1}{2}} (1 + \phi)
+                    [ \zeta_0 \delta_{\alpha\beta} - \zeta_1 Q_{\alpha\beta} ].
+
+The meaning of the active terms is the same as for the bare (active)
+liquid crystal case.
+
+The relavant input keys are:
+
+.. code-block:: none
+
+  lc_droplet_active_zeta0    0.0       # Default 0.0
+  lc_droplet_active_zeta1    0.001     # Default 0.0
+
+Note that these are separate from the bare liquid crystal activity
+parameters (which are not used at the same time).
 
 
 Ternary free energy
