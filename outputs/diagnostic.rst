@@ -27,7 +27,7 @@ The details of the exact global statistics produced depends upon the
 choice of free energy, and the presence of other features in the
 particular simulation. All output is reported in lattice units.
 
-Diagnostic Examples
+Diagnostic examples
 ^^^^^^^^^^^^^^^^^^^
 
 Fluid-only system
@@ -127,3 +127,33 @@ time step. These options may be of interest if strict conservation at
 machine precision is wanted. This may be most noticable if the total
 is exactly zero or very close to zero. For most purposes, the default
 should be acceptable.
+
+
+Timing and performance
+^^^^^^^^^^^^^^^^^^^^^^
+
+Timing for various parts of the code is produced at the end of a normal
+run.
+
+In addition, the following options are available:
+
+.. code-block:: none
+
+  timer_lap_report          yes        # request lap timer [optional]
+  timer_lap_report_freq     1000       # every so many steps
+
+This option produces a "lap" time every so many steps, i.e., the elapsed
+wall clock time since the previous lap (or since the start of execution
+for the first lap). If
+the option is selected a non-zero ``timer_lap_report_freq`` must be
+provided. The lap report is not provided by default.
+
+A lap report will be to standard output, and is of the form:
+
+.. code-block:: none
+
+  Lap time at step   1000 is:  8.683 seconds at Thu Dec 23 14:23:04 2021
+  Lap time at step   2000 is:  8.521 seconds at Thu Dec 23 14:23:13 2021
+
+showing a lap time of something over 8 seconds.
+
