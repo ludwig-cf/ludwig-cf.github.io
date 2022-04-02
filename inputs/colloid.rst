@@ -220,6 +220,25 @@ A reasonable value is in the range :math:`0.1 < r_c < 0.5` in lattice
 units, and should be calibrated for particle hydrodynamic radius
 and fluid viscosity if exact results are important.
 
+Boundary-colloid soft sphere potential
+""""""""""""""""""""""""""""""""""""""
+
+In some circumstances it may be desirable to use a conservative potential
+at a boundary wall in place of the lubrication correction. In this case a
+cut-and-shifted soft sphere potential is available. Foe example:
+
+.. code-block:: none
+
+  wall_ss_cut_on       yes                    # Switch
+  wall_ss_cut_epsilon  0.001                  # Energy scale
+  wall_ss_cut_sigma    0.1                    # Length scale
+  wall_ss_cut_nu       2.0                    # Exponent
+  wall_ss_cut_hc       0.5                    # wall-surface cut off
+
+Both the exponent and the wall-surface cut off should be positive. The
+potential will take effect at boundary walls in all directions.
+
+
 Colloid-colloid lubrication corrections
 """""""""""""""""""""""""""""""""""""""
 
