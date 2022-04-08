@@ -33,20 +33,47 @@ particular, relevant CPU/GPU halo swaps will be applied.
 If explicit control is required, one can use some of the following
 flags.
 
-.. code-block:: none
+Lattice distribution halo swaps
+"""""""""""""""""""""""""""""""
 
-  lb_halo_scheme          lb_halo_openmp_reduced
-  hydro_halo_scheme       hydro_u_halo_openmp
-
-For field types (currently only tensor order parameter in the case
-of the blue phase free energy) explicit control is provided by a
-switch
+There a number of different halo swap mechaniams for the lattice Boltzmann
+distributions. One or other may be selected explicitly via
 
 .. code-block:: none
 
-  field_halo_openmp       yes
+  lb_halo_scheme          lb_halo_openmp_full       # host (full)	
+  lb_halo_scheme          lb_halo_openmp_reduced    # host (reduced)
+  lb_halo_scheme          lb_halo_target            # target (full) [default]
 
-to enforce use of the host (OpenMP) halo swap.
+The two host options (which, despite their names, will work with or
+without OpenMP) are full or reduced. The reduced halo swap may be
+quicker as it sends only distributions propagating in the relevant
+direction. However, the reduced halo swap should not be used if
+solid objects (boundaries or colloids) are present. It is intended
+for fluid only computations. The target halo swap handles the extra
+complexity in the GPU case: this is always a 'full' halo swap at the
+moment.
+
+There is an additional restriction that if two distribitions are
+needed (two-distribution binary fluid case), the target halo swap
+must be used.
+
+Halo swaps for other fields
+"""""""""""""""""""""""""""
+  
+There are similar options for other field types.
+
+.. code-block:: none
+
+  field_halo_openmp       yes                     # [no] use host scheme
+  field_halo_verbose      yes                     # [no] report information
+  hydro_halo_scheme       hydro_u_halo_target     # [default]
+  hydro_halo_scheme       hydro_u_halo_openmp     # updated host scheme
+  hydro_halo_scheme       hydro_u_halo_host       # older host version
+
+There is no concept of a reduced halo swap for these data; the full
+data are always exchanged. The ``field_halo_openmp`` option is only
+available in liquid crystal casess at the moment.
 
 
 Threaded parallelism via OpenMP
