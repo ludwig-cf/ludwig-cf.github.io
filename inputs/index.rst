@@ -21,3 +21,4 @@ parameters used to control the behaviour of the code at run time.
    order
    visc
    force
+   parallel
