@@ -16,6 +16,13 @@ Various standard initialisations for the tensor order parameter
 Nematic initialisation
 ^^^^^^^^^^^^^^^^^^^^^^
 
+Remember that to obtain a nematic, the cholesteric pitch wavevector
+:math:`q_0` should be set to zero.
+
+The following initial conditions are specifically aimed at nematics
+(althougth other initialisations discussed for cholesterics below
+may also be relevant).
+
 .. code-block:: none
   
   lc_q_initialisation   nematic          # uniform nematic...
@@ -33,6 +40,12 @@ The value of the amplitude :math:`A_0` is taken from the corresponding
 current free energy parameter. If the input director is not a unit
 vector, it is normalised to be so before the initialisation. 
 
+.. code-block:: none
+
+  lc_q_initialisation   random_xy        # random in (x,) plane
+
+Will select a random unit director in the (x,y) plane and initialise
+the :math:`Q_{\alpha\beta}` tensor as above.
 
 Cholesteric initialisation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -92,7 +105,8 @@ components are:
 
   Q_{xx} = A (-2 C_y S_z + S_x C_z + C_x S_y) 
 
-and so on. A negative amplitude should be selected BECAUSE...
+and so on. Note that a negative amplitude :math:`A` is associated with oblate
+anisoptropy (+ve is prolate).
 
 The wavevector is typically selected so that the system length is
 :math:`L = \sqrt{2} p`, that is, a unit cell.

@@ -124,7 +124,8 @@ A summary of choices is:
   lc_q_initialisation   cf1_fluc_y       # as cf1_y with random perturbations
   lc_q_initialisation   cf1_flux_z       # as cf1_z with random perturbations
 
-  lc_q_initialistion    random           # with randomly chosen unit director
+  lc_q_initialisation   random           # with randomly chosen unit director
+  lc_q_initialisation   random_xy        # random nematic in (x,y) plane
 
 Note many of the initialiations require an initial amplitude of order,
 which should be set via

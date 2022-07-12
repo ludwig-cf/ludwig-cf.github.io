@@ -402,15 +402,172 @@ combined with the limit :math:`g \rightarrow \infty`, but the limit of
 the product is finite.
 
 
+Liquid crystal anchoring at colloid surfaces
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The preferred orientation of the liquid crystal director at the surface
+of a colloid can be of one of two different types:
+
+.. code-block:: none
+
+   lc_anchoring_coll        normal
+   lc_anchoring_coll        planar
+
+For both cases, the chosen condition appliess to all colloids in the
+system in the same way.
+
+The liquid crystal anchoring boundary condition is implemented via the
+calculation of the tensor order parameter gradients at the surface of
+the colloid. We assume there is a surface free energy density (per unit
+area)
+
+.. math::
+
+   f_s = f_s(Q_{\alpha\beta}, Q^0_{\alpha\beta})
+
+where :math:`Q_{\alpha\beta}` us the adjacent fluid order parameter, and
+:math:`Q^0_{\alpha\beta}` is some preferred otder parameter determined
+by the type of anchoring.
+
+The boundary condition is derived from the Euler-Lagrange equation, and
+contains gradient terms in the bulk free energy density and the surface
+free energy density :math:`f` and :math:`f_s`, along with the outward
+unit normal at the surface :math:`\hat{n}_\gamma`:
+
+.. math:
+
+   \hat{n}_\gamma \frac{\partial f}{\partial Q_{\alpha\beta,\gamma}}
+   + \frac{\partial f_s}{\partial Q_{\alpha\beta}} = 0
+
+A suitable gradient computation must be selected (see below).
+
+Normal (or homoetropic) anchoring at colloid surfaces
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+If the preferred orientation of order at the colloid surface is normal
+to the surface (also referred to as homoetropic anchoring), the surface
+free energy density per unit area may be written
+
+.. math::
+
+   f_s = {\textstyle\frac{1}{2}} w_1 (Q_{\alpha\beta} - Q^0_{\alpha\beta})^2.
+
+Here, :math:`w_1` is a parameter, and :math:`Q_{\alpha\beta}` is the
+local fluid order parameter. The preferred orientation is based on
+the outward normal :math:`\hat{n}_\gamma` at the surface
+(in the direction from the centre of the colloid to the relevant fluid
+site at the surface). The order parameter tensor
+
+.. math::
+
+   Q^0_{\alpha\beta} = {\textstyle\frac{1}{2}}
+   A (3\hat{n}_\alpha \hat{n}_\beta - \delta_{\alpha\beta})
+
+The value of :math:`A` corresponds to that which minimises the bulk
+free energy (depending on the temperature :math:`\gamma`). The full
+boundary condition for the order parameter gradient at the colloid
+surface then contains the term
+
+.. math::
+
+   \frac{\partial f_s}{\partial Q_{\alpha\beta}} =
+   -w_1 (Q_{\alpha\beta} - Q^0_{\alpha\beta}).
+
+The relevant input key/value pairs for normal colloid anchoring are:
+
+.. code-block:: none
+
+   lc_coll_anchoring      normal     # anchoring type
+   lc_coll_anchoring_w1   0.002      # free energy parameter w_1
+
+It is often appropriate to set the value of the surface free energy
+parameter in the context of the bulk elastic constant, e.g., by
+considering the dimensionless group :math:`w_1/\kappa a`, where
+:math:`a` is the radius of the colloid.
+
+As an example, an ordinary nematic is initialised with the
+director along the :math:`x`-direction, and a single stationary
+sphereical colloid with normal anchoring introduced to the system. The nematic
+is allowed to relax with no hydrodynamics. A section of the resulting
+director field is shown for a "weak" anchoring case (left), and a
+"strong" anchoring case (right). The :math:`x`-direction is in the
+horizontal. In the strong anchoring case, it can
+be seen that a defect in the orientational order has appeared above
+and below the surface of the colloid. In three dimensions, this defect
+is present all around the circumference of the colloid and forms a
+"Saturn ring".
+      
+.. figure:: colloid-anchoring-normal.svg
+   :alt: Example of normal anchoring at colloid surface (weak and strong)
+   :figwidth: 95%
+   :align: center
 
 
+While the nominal radius of the colloid is indicated by the circle, it
+should be remembered that the discrete shape is block-like, as indicated
+by the presence of director in individual grid cells.
 
 
+Planar (or degenerate) anchoring at colloid surfaces
+""""""""""""""""""""""""""""""""""""""""""""""""""""
+For planar anchoring, the preferred orientation is in the local tangent
+plane at the surface: this is a degenerate case as any orientation in
+the plane is energetically equivalent. An appropriate boundary
+condition is described by Fournier and Galatola [FournierGalatola2005]_,
+which we write as
+
+.. math::
+
+   f_s = \textstyle{\frac{1}{2}}
+         w_1 (\tilde{Q}_{\alpha\beta} - \tilde{Q}^\perp_{\alpha\beta})^2
+       + \textstyle{\frac{1}{2}}
+	 w_2 (\tilde{Q}^2 - S_0^2)^2.
+
+To compute this term we take the local fluid order parameter
+:math:`Q_{\alpha\beta}`, form the quantity
+
+.. math::
+
+   \tilde{Q} = Q_{\alpha\beta} + \textstyle{\frac{1}{2}} A \delta_{\alpha\beta}
+
+which is then projected onto the tangent plane via
+:math:`\tilde{Q}^\perp_{\alpha\beta} = P_{\alpha\gamma} \tilde{Q}_{\gamma\sigma} P_{\sigma\beta}`
+with the local surface normal entering through
+:math:`P_{\alpha\beta} = \delta_{\alpha\beta} - \hat{n}_\alpha \hat{n}_\beta`.
+(Again, the normal at the colloid surface is based on the displacement from
+the colloid centre.)
+The full boundary condition arising from the surface free energy contains
+the terms
+
+.. math::
+
+   \frac{\partial f_s}{\partial Q_{\alpha\beta}} =
+   - w_1(\tilde{Q}_{\alpha\beta} - \tilde{Q}^\perp_{\alpha\beta})
+   - 2w_2(\tilde{Q}^2_{\alpha\beta} - S_0^2) \tilde{Q}_{\alpha\beta}.
+
+The term :math:`S_0 = 3A/2`, with amplitude :math:`A` as described
+above for normal anchoring.
+
+Relevant input parameters are:
+
+.. code-block:: none
+
+  lc_coll_anchoring      planar
+  lc_coll_anchoring_w1   0.01        # both w1 and w2 must be present
+  lc_coll_anchoring_w2   0.005
 
 
-
-
-
+Following the example for normal anchoring, the illustration below shows
+the result for planar anchoring with :math:`w_1 = w_2` (weak and strong
+cases are left and right, respectively). In the strong case one can
+identify a pair of point defects at either side of the colloid, usually
+referred to as "boojums". Note that the director has actually rotated
+into the thrid dimension at these points and so appears forshortened.
+        
+.. figure:: colloid-anchoring-planar.svg
+   :alt: Example of planar anchoring at colloid surface (weak and strong)
+   :figwidth: 95%
+   :align: center
 
 
 
