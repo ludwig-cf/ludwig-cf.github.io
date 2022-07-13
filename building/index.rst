@@ -6,11 +6,11 @@ This page contains details of how to install *Ludwig*; all that
 is required in the most simple case is Gnu make and a functioning
 C compiler.
 
-.. toctree::
-   :maxdepth: 2
-
-
-   
+.. contents:: In this section
+   :depth: 3
+   :local:
+   :backlinks: none
+	      
 
 Configuration
 -------------
@@ -228,6 +228,46 @@ memory access for coalescing on GPU architectures. The appropriate ``-arch``
 flag for ``nvcc`` is also provided to describe the relevant hardware
 (at both compile and link time).
 
+
+Using HIP
+"""""""""
+
+The targetDP layer supports a HIP implementation which can be used for
+AMD GPUs. Compilation is via the standard ``hipcc`` compiler. A configuration
+might be
+
+.. code-block:: make
+
+   BUILD   = parallel
+   MODEL   = -D_D3Q19_
+
+   CC      = hipcc
+   CFLAGS  = -x hip -O3 -fgpu-rdc --amdgpu-target=gfx90a -DADDR_SOA \
+             -DAMD_GPU_WORKAROUND
+
+   AR      = ar
+   ARFLAGS = -cr
+   LDFLAGS = -fgpu-rdc --hip-link --amdgpu-target=gfx90a
+
+   MPI_HOME     = /path/to/mpi
+   MPI_INC_PATH = -I$(MPI_HOME)/include
+   MPI_LIB_PATH = -L$(MPI_HOME)/lib -lmpi
+
+The option ``-fgpu-rdc`` requests relocatable device code so that device
+code from different translation units (aka. files) can be called.
+It is the equivalent of ``nvcc -dc`` for NVIDIA platforms.
+
+The current GPU architecture is specified with the ``--amdgpu-target`` option;
+this will vary between platforms.
+
+The ``-DAMD_GPU_WORK_AROUND`` definition is required at the time of
+writing to allow the liquid crystal stress to be computed correctly.
+
+Note that without the ``-DNDEBUG`` flag (as above) the time taken at the link
+stage can be around 30 minutes. (The reason appears to be that device code
+generation is deferred until link time, and more time is needed to
+expand the array adddress functions present in array references.)
+With ``-DNDEBUG`` the link time should be reasonable.
 
 
 Electrokinetics and using PETSc

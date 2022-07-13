@@ -229,3 +229,235 @@ The gradient computation must be one of
 
 for the three phase model with wetting in either two dimensions
 or three dimensions, as required.
+
+
+Anchoring for liquid crystals at plane walls
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The preferred orientation of the liquid crystal director at a solid
+surface is usually referred to as the surface anchoring.
+For liquid crystal order there are three possiblities for anchoring
+conditions at a plane wall:
+
+.. code-block:: none
+
+  lc_anchoring_wall           fixed
+  lc_anchoring_wall           planar
+  lc_anchoring_wall           normal
+
+For all cases, the conidition applies at all sides of the system. It is
+not possible to have different coniditions at different walls at the
+moment.
+
+The liquid crystal anchoring boundary condition is implemented via the
+calculation of the order parameter gradients near the walls. We assume
+there is a surface free energy (density per unit area)
+
+.. math::
+
+   f_s = f_s(Q_{\alpha\beta}, Q^0_{\alpha\beta})
+
+where :math:`Q_{\alpha\beta}` is adjacent fluid order parameter, and
+:math:`Q^0_{\alpha\beta}` is some preferred order parameter at the
+surface determined by the type of anchoring.
+
+The boundary condition is derived from the Euler-Lagrange equation,
+and contains the gradient terms in the bulk free energy density and
+the surface free energy :math:`f` and
+:math:`f_s`, along with the unit outward normal at the surface
+:math:`\hat{n}_\gamma`:
+
+.. math::
+
+   \hat{n}_\gamma \frac{\partial f}{\partial Q_{\alpha\beta,\gamma}}
+   + \frac{\partial f_s}{\partial Q_{\alpha\beta}} = 0.
+
+A suitable gradient computation must be selected (see below).
+
+Only the values above are valid (normal, planar, or fixed); any other value
+will generate a run time error. We consider the three cases in turn.
+
+Normal or homoetropic anchoring at walls
+""""""""""""""""""""""""""""""""""""""""
+
+The preferred direction of the surface order here is, as the name suggests,
+normal to the surface. We can write the surface free energy density (per
+unit area):
+
+.. math::
+
+   f_s = \textstyle{\frac{1}{2}} w_1 (Q_{\alpha\beta} - Q^0_{\alpha\beta})^2
+
+where :math:`w_1` is a constant, and :math:`Q_{\alpha\beta}` is the local
+fluid order parameter. The preferred orientation is based on the
+unit outward normal at the relevant wall :math:`\hat{n}_\gamma`, and is
+computed via the uniaxial approximation
+
+.. math::
+
+   Q^0_{\alpha\beta} = \textstyle{\frac{1}{2}}
+                       A(3\hat{n}_\alpha \hat{n}_\beta - \delta_{\alpha\beta}).
+
+The value of :math:`A` is dependent on the bulk free energy constant
+:math:`\gamma` and is fixed by
+assuming :math:`Q^0_{\alpha\beta}` minimes the bulk free energy.
+Note that the preferred outward normal where two or three walls meet
+at an edge or at a corner, is :math:`45^\circ` outward (see example
+below).
+The full boundary condition for the order parameter gradient at the solid
+fluid boundary then contains the term
+
+.. math::
+
+   \frac{\partial f_s}{\partial Q_{\alpha\beta}} =
+   -w_1 (Q_{\alpha\beta} - Q^0_{\alpha\beta}).
+
+The relevant input key/value pairs are:
+
+.. code-block:: none
+
+  lc_wall_anchoring      normal      # anchoring
+  lc_wall_anchoring_w1   0.01        # free energy parameter
+
+It can be appropriate to set the value of the free energy parameter
+in the context of the bulk fluid elastic constant, e.g., by considering
+the dimensionless group :math:`w_1 / \kappa L`, where :math:`L` is an
+apprpropriate length scale for the problem. An example is shown in
+the following illustration.
+
+.. figure:: wall-anchor-normal.svg
+   :alt: Example normal anchoring for a two-dimensional nematic 
+   :figwidth: 100%
+   :align: center
+ 
+The above results represent a two-dimensional nemetic in
+a square system of size :math:`L^2` surrounded by plane walls
+(only the top half of
+the system is shown). An initial random nematic director
+configuration is allowed to relax with no hydrodynamics, and the
+resulting patterns are observed for the three different normal
+anchoring strengths shown. Note that the preferred angle in the
+corners is :math:`45^\circ` outwards.
+
+	   
+Planar (or degenerate) anchoring at walls
+"""""""""""""""""""""""""""""""""""""""""
+
+For planar anchoring, the preferred orientation is in the local tangent
+plane at the surface: this is a degenerate case as any orientation in
+the plane is energetically equivalent. An appropriate boundary
+condition is described by Fournier and Galatola [FournierGalatola2005]_,
+which we write as
+
+.. math::
+
+   f_s = \textstyle{\frac{1}{2}}
+         w_1 (\tilde{Q}_{\alpha\beta} - \tilde{Q}^\perp_{\alpha\beta})^2
+       + \textstyle{\frac{1}{2}}
+	 w_2 (\tilde{Q}^2 - S_0^2)^2.
+
+To compute this term we take the local fluid order parameter
+:math:`Q_{\alpha\beta}`, form the quantity
+
+.. math::
+
+   \tilde{Q} = Q_{\alpha\beta} + \textstyle{\frac{1}{2}} A \delta_{\alpha\beta}
+
+which is then projected onto the tangent plane via
+:math:`\tilde{Q}^\perp_{\alpha\beta} = P_{\alpha\gamma} \tilde{Q}_{\gamma\sigma} P_{\sigma\beta}`
+with the local surface normal entering through
+:math:`P_{\alpha\beta} = \delta_{\alpha\beta} - \hat{n}_\alpha \hat{n}_\beta`.
+The full boundary condition arising from the surface free energy contains
+the terms
+
+.. math::
+
+   \frac{\partial f_s}{\partial Q_{\alpha\beta}} =
+   - w_1(\tilde{Q}_{\alpha\beta} - \tilde{Q}^\perp_{\alpha\beta})
+   - 2w_2(\tilde{Q}^2_{\alpha\beta} - S_0^2) \tilde{Q}_{\alpha\beta}.
+
+The term :math:`S_0 = 3A/2`, with amplitude :math:`A` as described
+above for normal anchoring.
+
+Relevant input parameters are:
+
+.. code-block:: none
+
+  lc_wall_anchoring      planar
+  lc_wall_anchoring_w1   0.01        # both w1 and w2 must be present
+  lc_wall_anchoring_w2   0.005
+
+For the same two-dimensional nematic example discussed for normal
+anchoring above, initialised with the same random configuration,
+the corresponding results for planar anchoring are:
+
+
+.. figure:: wall-anchor-planar.svg
+   :alt: Example planar anchoring for a two-dimensional nematic 
+   :figwidth: 100%
+   :align: center
+
+All simulations used :math:`w_1 = w_2` (although experience suggests the
+value of :math:`w_2` does not have a strong influence on the result).
+Note again that the preferred angle at the corners is at :math:`45^\circ`
+(visible in the strong anchoring case on the right).
+
+
+.. [FournierGalatola2005] J.-B. Fournier and P. Galatola, Modeling planar
+			  degenerate wetting and anchoring in nematic
+			  liquid crystals,
+			  *Europhys. Lett.* **72** 403-409 (2005).
+
+Fixed anchoring direction at walls
+""""""""""""""""""""""""""""""""""
+
+Relevant input parameters are:
+
+.. code-block:: none
+
+  lc_anchoring_wall           fixed         # anchoring
+  lc_anchoring_wall_w1        0.01          # free energy parameter
+  lc_wall_fixed_orientation   1.0_0.0_0.0   # the vector \hat{n}
+
+
+This choice sets a uniform preferred director :math:`\hat{n}_\alpha`
+which gives rise to a preferred order parameter at the fluid next to the
+wall of :math:`Q^0_{\alpha\beta}` based on the uniaxial approximation.
+The treatment then follows that of normal anchoring as described above.
+
+If the vector supplied in the input is not a unit vector, it will be
+adjusted to make it so at run time.
+
+The example again uses the same random initial nemetic configuration in
+two dimensions, and the fixed anchoring orientation is along the
+:math:`x`-direction (the horizontal here). In this case there is no
+distinction between
+the "weak" and "strong" cases, as the orientation can be accommodated
+everywhere for a nematic.
+
+.. figure:: wall-anchor-fixed.svg
+   :alt: Example fixed anchoring for a two-dimensional nematic 
+   :figwidth: 100%
+   :align: center
+
+
+Gradient computation for anchoring at walls
+"""""""""""""""""""""""""""""""""""""""""""
+
+For the gradient computation it is recommended to use
+
+.. code-block:: none
+
+   fd_gradient_calculation      s7_anchoring
+
+This uses a 7-point stencil in three dimensions to compute the gradient
+terms, and can be used for any combination of place walls and colloids.
+
+Note that the alternative anchoring gradient computation
+
+., code-block:: none
+
+   fd_gradient_calculation      3d_7pt_solid
+
+should not be used if walls meeting at edges or corners are required
+(as in the above examples). For single plane walls they are the same.

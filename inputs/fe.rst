@@ -243,15 +243,11 @@ Liquid crystal anchoring
 
 Different types of anchoring are available at solid surfaces, with
 one or two related free energy parameters depending on the type.
-The type of anchoring may be set independently for stationary
-boundaries (walls) and colloids.
+The type of anchoring may be set independently for walls and colloids.
+Please see the apprpropriate section for details:
 
-.. code-block:: none
-
-  lc_anchoring_strength     0.01               # free energy parameter w1
-  lc_anchoring_strength_2   0.0                # free energy parameter w2
-  lc_wall_anchoring         normal             # ``normal'' or ``planar''
-  lc_coll_anchoring         normal             # ``normal'' or ``planar''
+- :ref:`Liquid crystal anchoring at colloid surfaces`
+- :ref:`Anchoring for liquid crystals at plane walls`
 
 
 Liquid crystal emulsion

@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Ludwig'
-copyright = '2021, The University of Edinburgh'
+copyright = '2021-2022, The University of Edinburgh'
 author = 'Kevin Stratford'
 
 # The short X.Y version
