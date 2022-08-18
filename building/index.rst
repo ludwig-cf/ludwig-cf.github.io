@@ -189,6 +189,22 @@ this might be
 
   CFLAGS = -fast -qopenmp
 
+It is often the case that the OpenMP compiler option needs to
+be specificed at both compile and link stages. This can be done
+conveniently via, e.g.,
+
+.. code-block:: make
+
+  CC = gcc -fopenmp
+
+where we have specified the ``-fopenmp`` option relevant for GNU `gcc`.
+
+The OpenMP implementation is strongly recommended, as it has a number
+of advantages over the simple MPI-only implementation. For example, if
+the local MPI domain size becomes small, it can limit both flexibility
+in parameter choices (particularly for large particles), and improve
+efficiency. Performance should remain reasonable as long as threads
+are limited to single NUMA regions.
 
 Using CUDA
 """"""""""
