@@ -320,6 +320,35 @@ The relavant input keys are:
 Note that these are separate from the bare liquid crystal activity
 parameters (which are not used at the same time).
 
+Liquid crystal in external electric field
+"""""""""""""""""""""""""""""""""""""""""
+
+A term the the free energy density arising from an external electric field
+is available, being written
+
+.. math::
+
+   f(Q_{\alpha\beta}) =
+   - \frac{\epsilon_a}{12\pi} E_\alpha Q_{\alpha\beta} E_\beta
+
+where :math:`E_\alpha` is the external field, and :math:`\epsilon_a` is the
+dielectric anistropy. These terms may be specified via
+
+.. code-block:: none
+
+   lc_dielectric_anisotropy    41.4            # Should be +ve; default 0
+   electric_e0                 0.01_0.0_0.0
+   
+It is convenient to render the free energy density dimensionless, in
+which case a reduced, or effective electric field strength is defined:
+
+.. math::
+
+   e^2 = \frac{27 \epsilon_a}{32 \pi A_0 \gamma} E_\alpha E_\alpha.
+
+The quantity :math:`e` is computed and reported by the code when an external
+field is present.
+
 
 Ternary free energy
 ^^^^^^^^^^^^^^^^^^^
