@@ -98,6 +98,17 @@ Typically, for 16 cores per NUMA regions, one might set
 Local details may vary on how exactly to run in this hybrid MPI/OpenMP
 mode.
 
+It is possible to specify "first touch" policy for a number of data
+structures in the input file:
+
+.. code-block:: none
+
+   lb_data_use_first_touch      yes    # lattice Boltzmann data [no]
+   field_data_use_first_touch   yes    # field data: default is [no]
+
+The field option only refers to tensor order parameter at the moment.
+All other fields have the default setting.
+
 
 Threaded parallelism for GPU
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
