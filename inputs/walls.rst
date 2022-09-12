@@ -455,9 +455,24 @@ terms, and can be used for any combination of place walls and colloids.
 
 Note that the alternative anchoring gradient computation
 
-., code-block:: none
+.. code-block:: none
 
    fd_gradient_calculation      3d_7pt_solid
 
 should not be used if walls meeting at edges or corners are required
 (as in the above examples). For single plane walls they are the same.
+
+Anchoring with both walls and colloids
+""""""""""""""""""""""""""""""""""""""
+
+If both plane walls and colloids are present, the surface normal will
+become poorly defined if colloid and wall sites are adjacant. In such
+cases, the wall anchoring will take precedence. The
+advice would be to try to avoid such situations by using the
+boundary lubrication correction to maintain a clear separation
+between any colloids and the boundary wall. "A clear separation"
+here means at least half a lattice unit, which will ensure there is
+always a fluid site adjcaent to the walls. See the section on
+colloid lubrication corrections for further deatils.
+
+

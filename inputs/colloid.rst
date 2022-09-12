@@ -569,5 +569,17 @@ into the thrid dimension at these points and so appears forshortened.
    :figwidth: 95%
    :align: center
 
+	   
+Anchoring when more than one colloid is present
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+If more than one colloid is present in the system, then the surface
+normal can become poorly defined if adjacent lattice sites are
+occupied by different colloids. If such cases the anchoring term
+is set to zero in the boundary condition. The advice here is to prevent
+close approaches between colloids by means of, e.g., a soft-sphere
+potential. This should ensure that fluid sites are always present in
+the gap.
+
 
 
