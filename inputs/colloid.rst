@@ -192,9 +192,6 @@ In general, colloid information for a arbitrary configuration with many
 particles should be read from a pre-prepared file. See the section on
 File I/O for further information on reading files.
 
-.. attention::
-
-  Section on File I/O required
 
 Colloid interactions
 ^^^^^^^^^^^^^^^^^^^^
@@ -213,12 +210,57 @@ The cutoff distance is set via the key word value pair
 
 .. code-block:: none
 
-  boundary_lubrication_rcnormal    0.5
+  boundary_lubrication_rcnormal    0.5    # normal cut-off distance
+                                          # Note this is 'rcnormal'
 
 It is recommended that this is used in all cases involving walls.
-A reasonable value is in the range :math:`0.1 < r_c < 0.5` in lattice
+A reasonable value for the cut off is in the range
+:math:`0.1 < h_c < 0.5` in lattice
 units, and should be calibrated for particle hydrodynamic radius
-and fluid viscosity if exact results are important.
+and fluid viscosity :math:`\eta` if exact results are important.
+
+The form of the lubrication correction for a colloid of hydrodynamic
+radius :math:`a_h` and velocity :math:`U_\alpha` is based on the
+analytical expression for the lubrication force between a place wall and
+a sphere:
+
+.. math::
+   
+   f_\alpha = - 6\pi \eta a_h \left( \frac{1}{h} - \frac{1}{h_c} \right)
+                {\hat n}_\beta U_\beta {\hat n}_\alpha \quad\quad (h < h_c)
+
+where :math:`{\hat n}_\alpha` is the unit normal between the wall and the
+centre of the colloid. The correction is zero for :math:`h > h_c`.
+The surface-surface separation is :math:`h` and
+the cut off is :math:`h_c` as illustrated in the following diagram on the
+left. In this illustration, the wall position (full line) is at the default
+value of :math:`x = 0.5`for the lower end of the system in the
+:math:`x`-direction.
+
+.. figure:: lubrication-wall-colloid.svg
+   :alt: Illustration of lubrication correction between wall and colloid
+   :figwidth: 90%
+   :align: center
+
+In some situations it may be useful to prevent colloids approaching the
+wall to within some fixed separation. It is possible to provide a uniform
+offset the apparent position of the wall by a fixed amount :math:`\delta h`.
+This is illustrated on the right above. The lubrication correction will
+then diverge at the new wall position (dotted line). This can be useful
+to maintain clear fluid lattice sites between wall and colloid.
+
+The relevant input key is
+
+.. code-block:: none
+
+  boundary_lubrication_dhnormal    0.2    # normal offset distance (+ve)
+                                          # [Default: 0]
+
+For both the cut-off, and the offset distance, there is a single input
+value which takes effect in all three co-ordinate directions if a wall is
+present in the corrsponding direction.
+In practice, the lubrication correction between wall and colloid should
+be very robust.
 
 Boundary-colloid soft sphere potential
 """"""""""""""""""""""""""""""""""""""
@@ -568,6 +610,18 @@ into the thrid dimension at these points and so appears forshortened.
    :alt: Example of planar anchoring at colloid surface (weak and strong)
    :figwidth: 95%
    :align: center
+
+	   
+Anchoring when more than one colloid is present
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+If more than one colloid is present in the system, then the surface
+normal can become poorly defined if adjacent lattice sites are
+occupied by different colloids. If such cases the anchoring term
+is set to zero in the boundary condition. The advice here is to prevent
+close approaches between colloids by means of, e.g., a soft-sphere
+potential. This should ensure that fluid sites are always present in
+the gap.
 
 
 
