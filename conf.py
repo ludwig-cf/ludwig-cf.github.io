@@ -24,9 +24,9 @@ copyright = '2021-2022, The University of Edinburgh'
 author = 'Kevin Stratford'
 
 # The short X.Y version
-version = ''
+version = '0.19.0'
 # The full version, including alpha/beta/rc tags
-release = '0.16.0'
+release = '0.19.0'
 
 
 # -- General configuration ---------------------------------------------------
