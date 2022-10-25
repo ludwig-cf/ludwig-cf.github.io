@@ -10,7 +10,7 @@ C compiler.
    :depth: 3
    :local:
    :backlinks: none
-	      
+
 
 Configuration
 -------------
@@ -141,7 +141,7 @@ Preprocessor options
 A number of standard C-preprocessor macros are relevant at compilation time,
 and should be set in the configuration file. All are introduced to the
 compiler in the usual way via the -D flag. (Note this is also the form of
-the ``MODEL`` configuration varaible which determines the LB basis set.)
+the ``MODEL`` configuration variable which determines the LB basis set.)
 A summary is:
 
 .. code-block:: none
@@ -164,7 +164,7 @@ A summary is:
   ADDR_SOA          # Use SOA array addressing (for GPU targets).
                     # Default is AOS (for CPU).
 
-Apart from the choice of ``MODEL`` preprocessor options should be specfied
+Apart from the choice of ``MODEL`` preprocessor options should be specified
 via the variable ``CFLAGS`` in the normal way.
 
 
@@ -190,7 +190,7 @@ this might be
   CFLAGS = -fast -qopenmp
 
 It is often the case that the OpenMP compiler option needs to
-be specificed at both compile and link stages. This can be done
+be specified at both compile and link stages. This can be done
 conveniently via, e.g.,
 
 .. code-block:: make
@@ -282,7 +282,7 @@ writing to allow the liquid crystal stress to be computed correctly.
 Note that without the ``-DNDEBUG`` flag (as above) the time taken at the link
 stage can be around 30 minutes. (The reason appears to be that device code
 generation is deferred until link time, and more time is needed to
-expand the array adddress functions present in array references.)
+expand the array address functions present in array references.)
 With ``-DNDEBUG`` the link time should be reasonable.
 
 
@@ -306,7 +306,7 @@ If PETSc is required, please enter the additional variables in the
 
 In addition, there is a choice of finite difference stencil size for the
 electrokinetic problem which is determined at compile time. The choices
-are via preprocesor options
+are via preprocessor options
 
 .. code-block:: none
 
@@ -319,7 +319,7 @@ Testing
 -------
 
 Various tests are found in the ``tests`` subdirectory. Type ``make test``
-from the top level to run the default tests, which will take a few minutes. 
+from the top level to run the default tests, which will take a few minutes.
 
 .. code-block :: none
 
@@ -350,7 +350,7 @@ Regression tests may be run from the ``tests`` directory, e.g.,
 
   $ cd tests
   $ make d3q19-short
-  
+
   PASS     ./serial-actv-s01.inp
   PASS     ./serial-actv-s02.inp
   ...
@@ -361,6 +361,3 @@ Floating point numbers are checked to within a tolerance set in the
 ``./tests/awk-fp-diff.sh`` script. Results can be subject to variations
 slightly larger than the tolerance depending on the platform/compiler.
 The default tests should be run in serial.
-
-
-

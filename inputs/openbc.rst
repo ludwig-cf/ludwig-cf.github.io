@@ -51,7 +51,7 @@ Gernealisations to the
 :math:`y`-direction or :math:`z`-direction may be made is
 a straightforward manner.
 
-      
+
 Type ``rhou`` inflow
 """"""""""""""""""""
 
@@ -67,13 +67,13 @@ will request an inflow condition which imposes a uniform velocity
 :math:`u(0,y,z) = u_0`. The density is
 :math:`\rho(0,y,z) = \rho(1,y,z)`. The incoming distributions
 are then computed as :math:`f_i = f^{eq}_i (\rho, u)`. The velocity
-specifed at the inflow should be in the positive :math:`x`-direction.
+specified at the inflow should be in the positive :math:`x`-direction.
 
 
 Type ``rhou`` outflow
 """""""""""""""""""""
 
-Correspinding outflow conditions are introduced via, e.g.:
+Corresponding outflow conditions are introduced via, e.g.:
 
 .. code-block:: none
 
@@ -84,7 +84,7 @@ Here the outflow density :math:`\rho(L_x,y,z) = \rho_0`, and the
 velocity :math:`u(L_x,y,z) = u(L_x-1,y,z)`; incoming distributions
 are again computed via :math:`f_i = f^{eq}_i(\rho_0, u)`.
 
-  
+
 Open boundaries for composition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

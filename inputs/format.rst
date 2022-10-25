@@ -60,7 +60,7 @@ may take on the follow forms:
   key_double_scalar    1.0
   key_double_vector    1.0_2.0_3.0
 
-  # keys inteded for logical switches may take a number of different values
+  # keys intended for logical switches may take a number of different values
   key_swtich_off       [0 | no  | off]
   key_switch_on        [1 | yes | on ]
 
@@ -77,10 +77,8 @@ Most keys have an associated default value which will be used if
 the key is not present. Some keys must be specified: an error will
 occur if they are missing. The remainder of this part
 of the guide details the various choices for key value pairs,
-along with any default values, and any relevant constraints. 
+along with any default values, and any relevant constraints.
 
 Key value pairs which appear in the input file, but are not used by
 the code at run time, are reported at the end of the run. This may
 indicate that the key string is incorrect or unrecognised.
-
-

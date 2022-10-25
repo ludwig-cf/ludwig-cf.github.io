@@ -48,7 +48,7 @@ case with compositional order :math:`\phi`, we might have:
 Here the total density reported against ``[rho]`` should be :math:`\rho_0` per
 fluid site (the total
 fluid volume for the system in the case that :math:`\rho_0` is unity). Maximum
-and minimum density should alert the user to any signifigant deviation from
+and minimum density should alert the user to any significant deviation from
 the Mach number constraint which means that the density should be close to
 :math:`\rho_0` throughout the fluid. The same
 statistics are reported for compositional order ``[phi]``. Net composition
@@ -124,7 +124,7 @@ indroduces an additional compensation at each point of the lattice in
 the Cahn Hilliard update; and 2, which introduces a post-hoc correction
 to maintain the initial value of the total order parameter at each
 time step. These options may be of interest if strict conservation at
-machine precision is wanted. This may be most noticable if the total
+machine precision is wanted. This may be most noticeable if the total
 is exactly zero or very close to zero. For most purposes, the default
 should be acceptable.
 
@@ -156,4 +156,3 @@ A lap report will be to standard output, and is of the form:
   Lap time at step   2000 is:  8.521 seconds at Thu Dec 23 14:23:13 2021
 
 showing a lap time of something over 8 seconds.
-

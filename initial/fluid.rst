@@ -40,7 +40,7 @@ values
 
 where :math:`w_i` and :math:`c_{i\alpha}` are the relevant weights and
 discrete velocities for the model in use. The density :math:`\rho` can
-be controlled as discussed above. 
+be controlled as discussed above.
 
 
 Uniform
@@ -96,7 +96,7 @@ lattice Boltzmann inputs (in lattice units) by matching some appropriate
 dimensionless groups.
 
 Brown and Minion have a fixed system size :math:`L = 1` and increase
-the resolution by decreasing the grid spacing. 
+the resolution by decreasing the grid spacing.
 Larger values of the grid spacing give a relative poor
 resolution of the shear layer.
 A shear layer width in reduced units would be :math:`1/L\kappa`,
@@ -107,7 +107,7 @@ fixed and increase the system size to :math:`L = N`, the number
 of grid points. To respect the Mach number constraint, we can set,
 e.g, :math:`u_0 = 0.01`. To find the lattice Boltzmann viscosity,
 we can then match a Reynolds number in each case. Brown and Minion
-have, e.g., :math:`Re = u_0 \delta L / \nu = 500` for 
+have, e.g., :math:`Re = u_0 \delta L / \nu = 500` for
 :math:`u_0 \delta = 0.05`
 and a kinematic viscosity :math:`\nu = 1/10,000`. The lattice
 dynamic vicosity would then be :math:`\eta` (with :math:`\rho = 1`)
@@ -117,7 +117,7 @@ match :math:`Re = \rho u_0 \delta N / \eta`.
 It is convenient to retain the same units for :math:`\kappa` in the
 input and convert internally. Finally, the number of lattice Boltzmann
 time steps is fixed to match the time T = 0.8 via the reduced time
-:math:`T/T_0`. 
+:math:`T/T_0`.
 
 
 An example input file with actual values can be found in
@@ -144,4 +144,3 @@ e.g., Dellar [Dellar2014]_ and references therein.
 .. [Dellar2014] P.J. Dellar, Lattice Boltzmann algorithms without cubic
                      defects in Galilean invariance on standard lattices,
                      *J. Computat. Phys.* **259** 270-283 (2014).
-

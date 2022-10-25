@@ -6,7 +6,7 @@
 This is the repository for the Ludwig static web site.
 
 All commits should be made to the `develop` branch, i.e., make a branch
-based on `develop` and then make a pull request to `develop`. 
+based on `develop` and then make a pull request to `develop`.
 
 ## Local preview
 
@@ -30,4 +30,3 @@ and then the pages should be accessible via `./_build/html/index.html`
 
 By agreement with The University of Edinburgh this site is available via the
 URL http://ludwig.epcc.ed.ac.uk/.
-

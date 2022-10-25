@@ -8,10 +8,10 @@ overheads.
 .. toctree::
    :maxdepth: 1
 
-A heirachy of parallelism is employed in the code. At the most coarse
+A hierarchy of parallelism is employed in the code. At the most coarse
 grained level, domain decomposition is implemented via the message
 pessing interface (MPI). Within each subdomain, computational kernels
-are execuated in a threaded model which may involve either OpenMP for
+are executed in a threaded model which may involve either OpenMP for
 CPU architectures, or an appropriate GPU model. This means the user
 may have a number of choices in how to deploy resources for problems
 of any given size.
@@ -41,7 +41,7 @@ distributions. One or other may be selected explicitly via
 
 .. code-block:: none
 
-  lb_halo_scheme          lb_halo_openmp_full       # host (full)	
+  lb_halo_scheme          lb_halo_openmp_full       # host (full)
   lb_halo_scheme          lb_halo_openmp_reduced    # host (reduced)
   lb_halo_scheme          lb_halo_target            # target (full) [default]
 
@@ -60,7 +60,7 @@ must be used.
 
 Halo swaps for other fields
 """""""""""""""""""""""""""
-  
+
 There are similar options for other field types.
 
 .. code-block:: none
@@ -131,7 +131,7 @@ Halo swap imbalance time
 A facility is provided to report the imbalance time observed at the
 point of the lattice distribition halo swap. This introduces an
 explicit synchronisation immediately before the halo swap to
-allow the separation of load  imbalance and actually communciation
+allow the separation of load  imbalance and actually communication
 overhead.
 
 .. code-block:: none

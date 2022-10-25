@@ -20,11 +20,11 @@ Remember that to obtain a nematic, the cholesteric pitch wavevector
 :math:`q_0` should be set to zero.
 
 The following initial conditions are specifically aimed at nematics
-(althougth other initialisations discussed for cholesterics below
+(although other initialisations discussed for cholesterics below
 may also be relevant).
 
 .. code-block:: none
-  
+
   lc_q_initialisation   nematic          # uniform nematic...
   lc_init_nematic       1.0_0.0_0.0      # director n_alpha
 
@@ -33,12 +33,12 @@ parameter will be initialised uniformly in uni-axial fashion:
 
 .. math::
 
-  Q_{\alpha\beta} = 
+  Q_{\alpha\beta} =
   {\textstyle \frac{1}{2}} A_0 (3 n_\alpha n_\beta - \delta_{\alpha\beta}).
 
 The value of the amplitude :math:`A_0` is taken from the corresponding
 current free energy parameter. If the input director is not a unit
-vector, it is normalised to be so before the initialisation. 
+vector, it is normalised to be so before the initialisation.
 
 .. code-block:: none
 
@@ -66,7 +66,7 @@ parameter initialised from the unixial approximation
 
 .. math::
 
-  Q_{\alpha\beta} = 
+  Q_{\alpha\beta} =
   {\textstyle \frac{1}{2}} A_0 (3 n_\alpha n_\beta - \delta_{\alpha\beta}),
 
 with :math:`A_0` taken form the corresponding free energy parameter.
@@ -93,7 +93,7 @@ and can be used as the basis for initialisation.
 A suitable initialisation might be:
 
 .. code-block:: none
-   
+
   lc_q_initialisation   o8m      # Initialisation is BPI
   lc_q_init_amplitude   -0.2     # amplitude A
 
@@ -103,7 +103,7 @@ components are:
 
 .. math::
 
-  Q_{xx} = A (-2 C_y S_z + S_x C_z + C_x S_y) 
+  Q_{xx} = A (-2 C_y S_z + S_x C_z + C_x S_y)
 
 and so on. Note that a negative amplitude :math:`A` is associated with oblate
 anisoptropy (+ve is prolate).
@@ -120,7 +120,7 @@ Mermin as :math:`O^2` is appropriate for blue phase II, and is
 introduced via
 
 .. code-block:: none
-  
+
   lc_q_initialisation     o2
   lc_q_init_amplitude     0.3
 
@@ -142,7 +142,7 @@ An additional rotation can be applied to the following blue phase
 initialisations to adjust their orientation:
 
 .. code-block:: none
-  
+
   lc_q_initialisation       o8m       # Available
   lc_q_initialisation       o2        # Available
   lc_q_init_euler_angles    45_45_0   # e.g., Euler angles (a,b,c).
@@ -151,7 +151,7 @@ The rotation applied for Euler angles (:math:`\alpha, \beta, \gamma`)
 is a standard Euler rotation
 
 .. math::
-  
+
   M_z(\gamma) M_x(\beta) M_z(\alpha)
 
 representing a sequence of rotations: first, around the :math:`z`-axis by angle

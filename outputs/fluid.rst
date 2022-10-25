@@ -74,7 +74,7 @@ frequency requested), e.g.,
 .. code-block:: none
 
   phi-00000000.001-001
-  phi-00020000.001-001  
+  phi-00020000.001-001
 
 would be expected for a simulation starting at time step zero, and
 producing output at each 20,000 steps. The signficance of the file
@@ -197,5 +197,3 @@ with corresponding met-data files.
 
 Special case: single file output in parallel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-

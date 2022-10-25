@@ -22,7 +22,7 @@ colloid information will come from. The options for the
 .. code-block:: none
 
   colloid_init             none
-  
+
   #  none                  no colloids [DEFAULT]
   #  input_one             one colloid from input file
   #  input_two             two colloids from input file
@@ -31,7 +31,7 @@ colloid information will come from. The options for the
   #  from_file             Read a separate file (including all restarts)
 
 For idealised simulations which require 1, 2, or 3 colloids, relevant
-initial state information 
+initial state information
 for each particle can be included in the input file. In principle, most
 of the colloid state as defined in the colloid
 state structure in ``colloid.h`` may be specified. (Some state is
@@ -45,7 +45,7 @@ A minimal initialisation is shown in the following example:
 .. code-block:: none
 
   colloid_init              input_one
-  
+
   colloid_one_a0            1.25
   colloid_one_ah            1.25
   colloid_one_r             12.0_12.0_12.0
@@ -84,7 +84,7 @@ to be otherwise:
   # colloid_one_v           velocity (vector)
   # colloid_one_w           angular velocity (vector)
   # colloid_one_s           spin (unit vector)
-  # colloid_one_m           direction of motion (unit) vector for swimmers 
+  # colloid_one_m           direction of motion (unit) vector for swimmers
 
 Note that for magnetic particles, the appropriate initialisation involves
 the spin key word ``colloid_one_s`` which relates to the dipole
@@ -92,7 +92,7 @@ moment :math:`\mu \mathbf{s}_i`, while ``colloid_one_m`` relates to the
 direction of motion vector. Do not confuse the two.
 It is possible in principle to have magnetic active particles,
 in which case the dipole direction or spin (:math:`\mathbf{s}_i`) and the
-direction of swimming motion :math:`\mathbf{m}_i` are allowed to be distinct. 
+direction of swimming motion :math:`\mathbf{m}_i` are allowed to be distinct.
 
 .. code-block:: none
 
@@ -225,7 +225,7 @@ analytical expression for the lubrication force between a place wall and
 a sphere:
 
 .. math::
-   
+
    f_\alpha = - 6\pi \eta a_h \left( \frac{1}{h} - \frac{1}{h_c} \right)
                 {\hat n}_\beta U_\beta {\hat n}_\alpha \quad\quad (h < h_c)
 
@@ -258,7 +258,7 @@ The relevant input key is
 
 For both the cut-off, and the offset distance, there is a single input
 value which takes effect in all three co-ordinate directions if a wall is
-present in the corrsponding direction.
+present in the corresponding direction.
 In practice, the lubrication correction between wall and colloid should
 be very robust.
 
@@ -304,7 +304,7 @@ following gives an example of the relevant input key words:
 
 .. code-block:: none
 
-  soft_sphere_on            1                 # integer 0/1 for off/on 
+  soft_sphere_on            1                 # integer 0/1 for off/on
   soft_sphere_epsilon       0.0004            # energy units
   soft_sphere_sigma         1.0               # a length
   soft_sphere_nu            1.0               # exponent is positive
@@ -317,7 +317,7 @@ This potential is of the same form as the basic cut-and-shifted
 soft-sphere potential
 described above, but allows different parameters to be specified for
 colloids with different *interaction type*. The interaction type is
-an integer specifed by the appropriate element of the colloid
+an integer specified by the appropriate element of the colloid
 structure, e.g., via input
 
 .. code-block:: none
@@ -364,7 +364,7 @@ A full set of key value pairs might be
   pair_ss_cut_ij_hc       0.1_0.4_0.1   # n(n+1)/2 surface-surface cut offs
 
 The user must ensure all colloids have appropriate interaction types, i.e.,
-the interaction type does not exceed 1 in theis case.
+the interaction type does not exceed 1 in this case.
 
 
 Lennard-Jones potential
@@ -397,7 +397,7 @@ Dipole-dipole interaction and the Ewald sum
 """""""""""""""""""""""""""""""""""""""""""
 
 The Ewald sum is completely specified in the input file
-by the uniform dipole strength $\mu$ and the real-space cut off :math:`r_c`.  
+by the uniform dipole strength $\mu$ and the real-space cut off :math:`r_c`.
 
 .. code-block:: none
 
@@ -538,7 +538,7 @@ be seen that a defect in the orientational order has appeared above
 and below the surface of the colloid. In three dimensions, this defect
 is present all around the circumference of the colloid and forms a
 "Saturn ring".
-      
+
 .. figure:: colloid-anchoring-normal.svg
    :alt: Example of normal anchoring at colloid surface (weak and strong)
    :figwidth: 95%
@@ -604,14 +604,14 @@ the result for planar anchoring with :math:`w_1 = w_2` (weak and strong
 cases are left and right, respectively). In the strong case one can
 identify a pair of point defects at either side of the colloid, usually
 referred to as "boojums". Note that the director has actually rotated
-into the thrid dimension at these points and so appears forshortened.
-        
+into the third dimension at these points and so appears forshortened.
+
 .. figure:: colloid-anchoring-planar.svg
    :alt: Example of planar anchoring at colloid surface (weak and strong)
    :figwidth: 95%
    :align: center
 
-	   
+
 Anchoring when more than one colloid is present
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -622,6 +622,3 @@ is set to zero in the boundary condition. The advice here is to prevent
 close approaches between colloids by means of, e.g., a soft-sphere
 potential. This should ensure that fluid sites are always present in
 the gap.
-
-
-

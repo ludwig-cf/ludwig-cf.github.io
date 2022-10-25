@@ -60,7 +60,7 @@ License
 """""""
 
 The code is developed largely at The University of Edinburgh, and is freely
-available under a BSD-style license. See https://github.com/ludwig-cf/ludwig. 
+available under a BSD-style license. See https://github.com/ludwig-cf/ludwig.
 
 Contents
 ^^^^^^^^

@@ -18,7 +18,7 @@ Two input key/value pairs of interest are:
 
 .. code-block:: none
 
-  colloid_io_freq          1000     # every 1000 time steps 
+  colloid_io_freq          1000     # every 1000 time steps
   colloid_io_format        BINARY   # ASCII or BINARY (default is BINARY)
 
 If necessary, different input and output formats may be specified
@@ -52,24 +52,24 @@ cases.
   int rebuild;          /* Rebuild flag */
   int nbonds;           /* Number of bonds e.g. fene (to NBOND_MAX) */
   int nangles;          /* Number of angles, e.g., fene (1 at the moment) */
-  
+
   int isfixedr;         /* Set to 1 for no position update */
   int isfixedv;         /* Set to 1 for no velocity update */
   int isfixedw;         /* Set to 1 for no angular velocity update */
   int isfixeds;         /* Set to zero for no s, m update */
-  
+
   int type;             /* Particle type */
   int bond[2]        ;  /* Bonded neighbours ids (index) */
-  
+
   int rng;              /* Random number state */
-  
+
   int isfixedrxyz[3];   /* Position update in specific coordinate directions */
   int isfixedvxyz[3];   /* Velocity update in specific coordinate directions */
-  
+
   int inter_type;       /* Interaction type of a particle */
-  
+
   int intpad[13];       /* Unused */
-  
+
   double a0;            /* Input radius (lattice units) */
   double ah;            /* Hydrodynamic radius (from calibration) */
   double r[3];          /* Position */
@@ -83,16 +83,16 @@ cases.
   double h;             /* Wetting free energy parameter H */
   double dr[3];         /* r update (pending refactor of move/build process) */
   double deltaphi;      /* order parameter bbl net; required to restart */
-  
+
   double q0;            /* magnitude charge 0 */
   double q1;            /* magnitude charge 1 */
   double epsilon;       /* permittivity */
-  
+
   double deltaq0;       /* surplus/deficit of charge 0 at change of shape */
   double deltaq1;       /* surplus/deficit of charge 1 at change of shape */
   double sa;            /* surface area (finite difference) */
   double saf;           /* surface area to fluid (finite difference grid) */
-  
+
   double al;            /* Offset parameter used for subgrid particles */
   double dpad[15];      /* Unused */
 
@@ -135,4 +135,3 @@ conditions) may be read from a single file via either
 
   colloid_io_format_input     ASCII_SERIAL
   colloid_io_format_input     BINARY_SERIAL
-
