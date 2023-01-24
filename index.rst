@@ -73,6 +73,7 @@ Contents
    inputs/index
    initial/index
    outputs/index
+   tutorials/index
 
 
 Index

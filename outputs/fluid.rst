@@ -2,67 +2,106 @@
 Fluid Output
 ------------
 
-
-
 .. toctree::
    :maxdepth: 1
 
 
-The first section gives a summary of output options. These are discussed
-in more detail in the following sections.
+Many fluid quantities defined at the level of the lattice are available
+for output. The fluid quantities include the lattice Boltzmann distributions,
+density and velocity, and order parameters if relevant. Output for some
+quantities is optional, while output for quantities required for restart
+will always be enabled automatically.
 
 
-Summary of relevant options
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I/O for all lattice quantities
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The table shows a summary of available options:
+There are a significant number of options related to the input and
+output of data. These concern the format of the data, the mechanism
+by which the data are produced, and reporting of input/output activity.
+The recommended options are:
 
 .. code-block:: none
 
-  # Density
+   default_io_mode           mpiio    # Use MPI-IO
+   default_io_format         binary   # ascii or binary
+   default_io_report         no       # produce a report on i/o
 
-  rho_io_wanted     yes        # Not output by default
-  rho_io_freq       1000       # every so many steps
-  rho_io_format     ASCII      # BINARY is default
-  rho_io_grid       1_1_1      # [optional] for parallel output
+Here, the ``mode`` is the mechanism used to generate the output. The
+recommended mode is MPI-IO, which will always work and produce the
+same file irrespective of the number of MPI tasks.
+The ``format`` refers to the representation of data in files: either
+binary or ASCII is available. Binary format is recommended for reasons
+of speed and file size; for these reasons it is also the default.
 
+Control for specific lattice quantities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Input and output for different quantities are controlled by specific
+key value pairs. For example, options for the density field ``rho``
+may be selected explicitly - overriding any default - using:
 
-File I/O
-^^^^^^^^
+.. code-block:: none
 
-Lattice quantities describing the fluid can be saved to file at regular
-intervals. This serves two purposes: (1) it allows fluid quantities to
-be analysed or visualised and (2) a complete set of fluid quantities
-allows the computation to be restarted (checkpoint/restart).
+   rho_io_mode               mpiio    # overrides default_io_mode
+   rho_io_format             binary   # overrides default_io_format
+   rho_io_report             yes      # overrides default_io_report
 
-Types of file I/O
-~~~~~~~~~~~~~~~~~
+   rho_input_io_format       ascii    # overrides rho_io_mode
+   rho_output_io_format      binary   # overrides default
+
+where``rho`` has replaced ``default`` in each case. Available lattice
+quantities include (using mode as an example):
+
+.. code-block:: none
+
+  lb_io_mode                          # LB distributions
+  rho_io_mode                         # density field (scalar)
+  vel_io_mode                         # velocity field (vector)
+  phi_io_mode                         # order parameters
+
+Note that all order parameter fields are treated on the same basis
+including scalar order parameters ``phi``, vector order parameters ``p``,
+and tensor order parameter ``q``. The format of these files for different
+numbers of scalar or vector components is discussed below.
+
+Frequency of I/O
+~~~~~~~~~~~~~~~~
 
 The following types of output may be requested at regular intervals
 
 .. code-block:: none
 
-  freq_rho         ! fluid density (scalar)
-  freq_vel         ! fluid velocity (vector)
-  freq_phi         ! order parameter (scalar, vector or tensor)
-  freq_fed         ! fluid free energy density
-  freq_config      ! Full configuration output for restart
+  freq_rho         # fluid density
+  freq_vel         # fluid velocity
+  freq_phi         # order parameter
+  freq_config      # Full configuration output for restart
 
 Full configuration output includes the lattice Boltzmann distributions,
-from which all fluid properties (density, velocity, stress) can be
-recovered.
+the density and velocity fields, and order parameters as required. The
+density and velocity fields are required in addition to the lattice
+Boltzmann distributions to ensure reproducibility at restarts.
+
+If a full configuration is not required at the end of the run, one can
+set
+
+.. code-block:: none
+
+   config_at_end          no      # default is "yes"
+
+The default is that configuration output should be produced at the end.
+
 
 Meta data and data
 ~~~~~~~~~~~~~~~~~~
 
-Requests for file output will first create a relevant `meta-data` file
+Requests for file output will always create a relevant `metadata` file
 for the type of output requested. For example, a request for order
-parameter output will generate a single file
+parameter output will generate a single JSON file
 
 .. code-block:: none
 
-  phi.001-001.meta
+  phi-metadata.001-001
 
 which contains information on the system size, order parameter fields
 and so on. The meta-data file provides a description of the corresponding
@@ -73,46 +112,57 @@ frequency requested), e.g.,
 
 .. code-block:: none
 
-  phi-00000000.001-001
-  phi-00020000.001-001
+  phi-000000000.001-001
+  phi-000020000.001-001
 
 would be expected for a simulation starting at time step zero, and
-producing output at each 20,000 steps. The signficance of the file
-extension ``.001-001`` is discussed under parallel output below.
-
-By default, output per time step occurs to a single file with extension
-``.001-001`` as seen above.
+producing output at each 20,000 steps. The file
+extension ``.001-001`` indicates this is one file in a set of one.
 
 
+Multiple file output
+~~~~~~~~~~~~~~~~~~~~
 
-File Formats
-^^^^^^^^^^^^
+For the largest systems (probably larger than :math:`512^3`) run on very large
+numbers of MPI tasks, it may be favourable to ask for output to be
+written to more than one file. This allows a larger overall bandwidth
+to disk to be obtained. The downside is that the separate files must
+be recombined if a complete view is required for visualisation etc.
+
+Output (and input) to more than one file is requested by specifying an
+I/O grid. This decomposes the system in a similar way to the processor
+decomposition (with one or more MPI tasks per I/O grid group).
+
+The I/O grid is set via
+
+.. code-block:: none
+
+  default_io_grid 2_2_1
+
+which would result is four I/O groups writing to four separate files, e.g.,
+
+.. code-block:: none
+
+  phi-000020000.001-004
+  phi-000020000.002-004
+  phi-000020000.003-004
+  phi-000020000.004-004
+
+with corresponding metadata files. The metadata files will detail which
+portions of the complete system are held by the respective data files.
+
+
+File Data Formats
+^^^^^^^^^^^^^^^^^
 
 Data format
 ~~~~~~~~~~~
 
 Output can be requested in either ASCII or (raw) binary format. While
 ASCII output can be appropriate for initial investigations, it is
-recommended that binary format is used as it is both significantly
-faster and results in smaller files. Binary is therefore the default.
-
-The format is controlled via input keys of the form
-
-.. code-block:: none
-
-  rho_io_format            ASCII
-  phi_io_format            BINARY
-  distribution_io_format   BINARY
-
-To avoid specifying many individual formats when a number of quantities
-are requested
-
-.. code-block:: none
-
-  default_io_format        BINARY
-
-may be requested.
-
+recommended that binary format is used. The data is always stored as
+8-byte floating point in binary format. In ASCII there are usually
+15 decimal places of precision.
 
 Serial storage order
 ~~~~~~~~~~~~~~~~~~~~
@@ -130,70 +180,26 @@ a per-lattice site basis in the following order:
   x_1 y_2 z_1   ...
   ...
 
-Parallel Output
-^^^^^^^^^^^^^^^
 
-In parallel, MPI tasks write local domains of data to file in turn.
-This means the order of the lattice sites in the file may not be
-the same is if the data were written in serial. The order of the
-writes per processor is detailed in the met-data file.
 
-To rearrange the data so that the correct order is recovered, the
-`extract` utility must be used:
+Older-style I/O mode
+^^^^^^^^^^^^^^^^^^^^
+
+Users of versions older than v0.19.0 will have used an older I/O mode
+which can be retained by using
 
 .. code-block:: none
 
-  $ ./extract meta-data-file data-file
+   default_io_mode           ansi     # use "old" mode
 
-For example:
-
-.. code-block:: none
-
-  $ ./extract phi.001-001.meta phi-00020000.001-001
-
-will result in a single reordered file ``phi-00020000`` (without file
-extension).
-The single output file will be in the correct order (as if written in
-serial) for analysis.
-
-This will also 'unroll' any displacement associated with Lees Edwards
-sliding periodic boundary conditions for the given time step.
-
-Note that in the case the the processor decomposition is in the
-:math:`x-` direction only, the order of the output happens to be
-correct, and the extract step in not required (unless Less Edwards
-'unrolling' is required).
-
-
-Multiple file output
-~~~~~~~~~~~~~~~~~~~~
-
-For large systems, the requirement that each MPI task write data in turn
-is unacceptable. Parallel output should be used so that different groups
-of MPI tasks write to different files, avoiding serialisation.
-
-This is done by specifying an I/O grid, which decomposes the system in
-a similar way to the processor decomposition (with one or more MPI tasks
-per I/O grid group).
-
-The I/O grid is set via
+There is no reason to prefer the old style I/O, except for the casae that
+older files are used for input. One can use
 
 .. code-block:: none
 
-  default_io_grid 2_2_1
+   default_input_io_mode     ansi
+   default_output_io_mode    mpiio
 
-which would result is four I/O groups writing to four separate files, e.g.,
-
-.. code-block:: none
-
-  phi-00020000.001-004
-  phi-00020000.002-004
-  phi-00030000.003-004
-  phi-00040000.004-004
-
-with corresponding met-data files.
-
-
-
-Special case: single file output in parallel
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+which would enable reading of "old" style input data files and writing of
+"new" style outputs. Note that in serial, the organisation of the data in
+the files is actually the same in both cases.

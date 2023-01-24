@@ -78,3 +78,6 @@ further constraint.
 
 Note that this means a simulation with one plane will only work
 if there is one process in the :math:`x` decomposition.
+
+Some background and a tutorial example are given in the
+:doc:`tutorial guides </tutorials/lees-edwards/lees-edwards>`.
