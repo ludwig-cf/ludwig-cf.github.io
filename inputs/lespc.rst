@@ -22,7 +22,7 @@ systems with periodic boundaries.
 The placing of the planes in the system is as follows.
 The number of planes :math:`N` must
 divide evenly the lattice size in the :math:`x`-direction to give an integer
-:math:`\delta x`. Planes are then placed at 
+:math:`\delta x`. Planes are then placed at
 :math:`\delta x / 2, 3\delta x/2, \ldots`.
 All planes have the same, constant, velocity jump associated with them:
 this is positive in the positive :math:`x`-direction. (This jump is usually
@@ -79,12 +79,5 @@ further constraint.
 Note that this means a simulation with one plane will only work
 if there is one process in the :math:`x` decomposition.
 
-
-
-
-
-
-
-
-
-
+Some background and a tutorial example are given in the
+:doc:`tutorial guides </tutorials/lees-edwards/lees-edwards>`.

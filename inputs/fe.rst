@@ -132,7 +132,7 @@ Polar active gels
 ^^^^^^^^^^^^^^^^^
 
 
-The free energy density is a function of vector order parameter 
+The free energy density is a function of vector order parameter
 :math:`P_\alpha`:
 
 .. math::
@@ -180,7 +180,7 @@ suitable for nematics and cholesterics, and not just blue phases:
 .. code-block:: none
 
   free_energy      lc_blue_phase
-  lc_a0            0.01                       # Deafult: 0.0
+  lc_a0            0.01                       # Default: 0.0
   lc_gamma         3.0                        # Default: 0.0
   lc_q0            0.19635                    # Default: 0.0
   lc_kappa0        0.00648456                 # Default: 0.0
@@ -215,8 +215,8 @@ liquid crystal free energy. For historical reasons, this is
 additional active stress written as
 
 .. math::
-  
-  S_{\alpha\beta} = \zeta_0 \delta_{\alpha\beta} - \zeta_1 Q_{\alpha\beta} 
+
+  S_{\alpha\beta} = \zeta_0 \delta_{\alpha\beta} - \zeta_1 Q_{\alpha\beta}
                   - \zeta_2 (\partial_\beta P_\alpha + \partial_\alpha P_\beta)
 
 where :math:`P_\alpha = Q_{\alpha\gamma} \partial_\beta Q_{\beta\gamma}`.
@@ -225,7 +225,7 @@ should only influence compressability and one may safely leave
 :math:`\zeta_0  = 0`. The second term models active force dipoles and
 sets the force density (:math:`\zeta_1 < 0` for a contractile fluid,
 and :math:`\zeta_1 > 0` for an extensile fluid).
-The third term in :math:`\zeta_2` is experimental. 
+The third term in :math:`\zeta_2` is experimental.
 
 The relevant input keys and values are, e.g.,
 
@@ -279,16 +279,16 @@ Relevant keys (with default values) are:
 .. code-block:: none
 
   free_energy            lc_droplet
-  
+
   A                      -0.0625
   B                      +0.0625
   K                      +0.053
-  
+
   lc_a0                   0.1
   lc_q0                   0.19635
   lc_kappa0               0.007
   lc_kappa1               0.007
-  
+
   lc_droplet_gamma        2.586                # Default: 0.0
   lc_droplet_delta        0.25                 # Default: 0.0
   lc_droplet_W           -0.05                 # Default: 0.0
@@ -310,7 +310,7 @@ ordered phase (:math:`\phi = +1`):
 The meaning of the active terms is the same as for the bare (active)
 liquid crystal case.
 
-The relavant input keys are:
+The relevant input keys are:
 
 .. code-block:: none
 
@@ -338,7 +338,7 @@ dielectric anistropy. These terms may be specified via
 
    lc_dielectric_anisotropy    41.4            # Should be +ve; default 0
    electric_e0                 0.01_0.0_0.0
-   
+
 It is convenient to render the free energy density dimensionless, in
 which case a reduced, or effective electric field strength is defined:
 
@@ -364,12 +364,12 @@ The basic free energy parameters are:
 .. code-block:: none
 
   free_energy               ternary            # Select ternary free energy
-  
+
   ternary_kappa1            0.01               # Interfacial parameter > 0
   ternary_kappa2            0.02               # Interfacial parameter > 0
   ternary_kappa3            0.05               # Interfacial parameter > 0
   ternary_alpha             1.00               # Interfical width
-  
+
   ternary_mobility_phi      0.15               # Mobility for phi
   ternary_mobility_psi      0.10               # Mobility for psi
 

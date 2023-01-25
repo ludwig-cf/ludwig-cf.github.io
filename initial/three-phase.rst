@@ -95,7 +95,7 @@ Lens in two dimensions
 
 .. code-block:: none
 
-  ternary_initialisation     2d_lens                # 
+  ternary_initialisation     2d_lens                #
   ternary_2d_lens_centre     16.0_16.0              # Required: centre (x0, y0)
   ternary_2d_lens_radius     4.0                    # Required: radius
 
@@ -107,7 +107,7 @@ Lens in two dimensions
 This initialises a circular droplet of phase :math:`C_3` with its centre at the
 specified position (absolute coordinates) and with given radius. The horizontal
 interface between :math:`C_1` and :math:`C_2`
-is always at :math:`L_y/2`. Such an intial condition, upon relaxation, should
+is always at :math:`L_y/2`. Such an initial condition, upon relaxation, should
 give rise to a lens shape depending on the equilibrium contact angles selected.
 
 Again, it is expected that the :math:`z`-dimension will have extent
@@ -121,7 +121,7 @@ T-shape in two dimensions
 .. code-block:: none
 
   ternary_initialisation   2d_tee                  # initialisation
-  ternary_2d_tee_xf1       0.50                    # optional: fraction of L_x 
+  ternary_2d_tee_xf1       0.50                    # optional: fraction of L_x
   ternary_2d_tee yf1       0.33                    # optional: fraction of L_y
 
 .. figure:: ternary_2d_tee.svg

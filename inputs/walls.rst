@@ -12,7 +12,7 @@ Plane walls
 Plane boundary walls
 ^^^^^^^^^^^^^^^^^^^^
 
-As a convenience, it is possible to specifiy that sets of plane walls
+As a convenience, it is possible to specify that sets of plane walls
 are present in the system in one or more co-ordinate directions. For
 example, a set of walls in the :math:`y-z` plane are placed at each end
 of the system in positions
@@ -25,14 +25,14 @@ file contains
   periodicity          0_1_1
 
 The extent of the system :math:`L_x` is then just the number of points in
-the x-direction as specfied by key ``size``. By default, walls have
+the x-direction as specified by key ``size``. By default, walls have
 no-slip boundary conditions implemented via bounce-back on links.
 
-It is usual, although not strictly necessary, to declare that the relevent
+It is usual, although not strictly necessary, to declare that the relevant
 direction is not periodic (as in the example above). It should not make
 any difference to the result of the computation.
 
-Walls may be specifed in two dimensions to form a rectangular
+Walls may be specified in two dimensions to form a rectangular
 "duct", or in all three dimensions to form an enclosed box.
 For example:
 
@@ -55,8 +55,8 @@ momemtum to the fluid. Use, e.g.,
   boundary_speed_bottom  -0.001
   boundary_speed_top     +0.001
 
-will set the corresponsing speed of the wall :math:`u_x` at the lower
-at upper ends of the system, 
+will set the corresponding speed of the wall :math:`u_x` at the lower
+at upper ends of the system,
 respectively. Note that these speeds should be selected with reference
 to the Mach number constraint :math:`u < c_s`. Momentum transfer here
 is again implemented via a no-slip condition via bounce-back on links.
@@ -81,7 +81,7 @@ E.g.,
 
 gives a no-slip condition at the lower wall and a free-slip condition
 at the top wall (walls in the :math:`x-y` plane). Values of the slip
-:math:`s` must satisfy :math:`0 \leq s \leq 1` for all six faces. 
+:math:`s` must satisfy :math:`0 \leq s \leq 1` for all six faces.
 If slip is active, no moving walls can be used.
 
 
@@ -167,7 +167,7 @@ by adjusting the gradient computation near the surface. This means
 
   fd_gradient_calculation 3d_27pt_solid
 
-is required. 
+is required.
 
 .. [Desplat2001] J.-C. Desplat, I. Pagonabarraga, and P. Bladon,
                  A parallel lattice Boltzmann code for complex fluids,
@@ -205,7 +205,7 @@ by the constraint
 
 There are then three contact angles :math:`\theta_{12}`, :math:`\theta_{23}`
 and :math:`\theta_{31}`. These are illustrated in the diagram on the right
-whre the rectangular box represents a solid surround.
+where the rectangular box represents a solid surround.
 
 The contact angles depend on the interfacial and surface tensions as,
 following the notation of Semprebon 2016:
@@ -236,7 +236,7 @@ Anchoring for liquid crystals at plane walls
 
 The preferred orientation of the liquid crystal director at a solid
 surface is usually referred to as the surface anchoring.
-For liquid crystal order there are three possiblities for anchoring
+For liquid crystal order there are three possibilities for anchoring
 conditions at a plane wall:
 
 .. code-block:: none
@@ -326,10 +326,10 @@ apprpropriate length scale for the problem. An example is shown in
 the following illustration.
 
 .. figure:: wall-anchor-normal.svg
-   :alt: Example normal anchoring for a two-dimensional nematic 
+   :alt: Example normal anchoring for a two-dimensional nematic
    :figwidth: 100%
    :align: center
- 
+
 The above results represent a two-dimensional nemetic in
 a square system of size :math:`L^2` surrounded by plane walls
 (only the top half of
@@ -339,7 +339,7 @@ resulting patterns are observed for the three different normal
 anchoring strengths shown. Note that the preferred angle in the
 corners is :math:`45^\circ` outwards.
 
-	   
+
 Planar (or degenerate) anchoring at walls
 """""""""""""""""""""""""""""""""""""""""
 
@@ -393,7 +393,7 @@ the corresponding results for planar anchoring are:
 
 
 .. figure:: wall-anchor-planar.svg
-   :alt: Example planar anchoring for a two-dimensional nematic 
+   :alt: Example planar anchoring for a two-dimensional nematic
    :figwidth: 100%
    :align: center
 
@@ -436,7 +436,7 @@ the "weak" and "strong" cases, as the orientation can be accommodated
 everywhere for a nematic.
 
 .. figure:: wall-anchor-fixed.svg
-   :alt: Example fixed anchoring for a two-dimensional nematic 
+   :alt: Example fixed anchoring for a two-dimensional nematic
    :figwidth: 100%
    :align: center
 
@@ -473,6 +473,4 @@ boundary lubrication correction to maintain a clear separation
 between any colloids and the boundary wall. "A clear separation"
 here means at least half a lattice unit, which will ensure there is
 always a fluid site adjcaent to the walls. See the section on
-colloid lubrication corrections for further deatils.
-
-
+colloid lubrication corrections for further details.

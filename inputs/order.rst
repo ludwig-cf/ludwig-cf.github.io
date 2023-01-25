@@ -66,7 +66,7 @@ interfacial width :math:`\xi` is computed via the current free energy
 parameters.
 
 A pair of plane interfaces at :math:`z = L_z/4` and :math:`z=3L_z/4` may
-be intialised via
+be initialised via
 
 .. code-block:: none
 
@@ -139,26 +139,5 @@ unit director :math:`n_\alpha`, the corresponding initial tensor will be
 
 .. math::
 
-  Q_{\alpha\beta} = 
+  Q_{\alpha\beta} =
   {\textstyle \frac{1}{2}} A (3 n_\alpha n_\beta - \delta_{\alpha\beta}).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

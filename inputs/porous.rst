@@ -11,7 +11,7 @@ Porous media calculations can be undertaken when appropriate
 solid/fluid status information is supplied. A number of standard
 structures are available via the input file; more generally, a
 file with solid/fluid status and (optionally) wetting data is
-required. 
+required.
 
 Standard porous media structures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -66,7 +66,7 @@ Simple cubic crystal of spheres
   porous_media_acell     10
 
 This will initialise an array of sphere in a simple cubic array with
-lattice contant :math:`a`. The lattice constant must exactly divide
+lattice constant :math:`a`. The lattice constant must exactly divide
 all three coordinate lengths (i.e., there should be an integer number
 of unit cells).
 
@@ -141,7 +141,7 @@ and may be integer in ASCII.
 
 Where wetting information is required, the relevant free energy parameters
 should be provided. These are of data type `double`. For example, in the
-symmetric free energy picture, values 
+symmetric free energy picture, values
 :math:`C` and :math:`H` are required at each site. The stoarge order is
 then :math:`s_1, c_1, h_1, s_2, c_2, h_2, \ldots`.
 
@@ -155,18 +155,3 @@ Please see the comments in
 the file for further details. Note that the allowed
 solid/fluid status values are defined in ``src/map.h``.
 A solid boundary is ``MAP_BOUNDARY``, while fluid is ``MAP_FLUID``.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

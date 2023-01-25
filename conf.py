@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Ludwig'
-copyright = '2021-2022, The University of Edinburgh'
+copyright = '2021-2023, The University of Edinburgh'
 author = 'Kevin Stratford'
 
 # The short X.Y version
-version = ''
+version = '0.19.0'
 # The full version, including alpha/beta/rc tags
-release = '0.16.0'
+release = '0.19.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -97,9 +97,9 @@ html_static_path = ['_static']
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-#html_sidebars = {'**': ['about.html', 'navigation.html', 'relations.html', 
+#html_sidebars = {'**': ['about.html', 'navigation.html', 'relations.html',
 #                        'searchbox.html']}
-html_sidebars = {'**': ['about.html', 'navigation.html', 
+html_sidebars = {'**': ['about.html', 'navigation.html',
                         'searchbox.html']}
 
 

@@ -35,13 +35,9 @@ parsed on a line by line basis. Lines may contain the following:
 
 Blank lines are treated as comments. The behaviour of the code is
 determined by a set of key value pairs. Any given key may appear
-only once in the input file; unused key value pairs are not reported.
-If the key value pairs are not correctly formed, the code will terminate
+only once in the input file. If the key value pairs are not correctly
+formed, the code will usually terminate
 with an error message and indicate the offending input line.
-
-Key value pairs may be present in the input file, but have no effect for
-any given run: they are merely ignored. Relevant control parameters for
-given input are reported in the standard output.
 
 Key value pairs
 ^^^^^^^^^^^^^^^
@@ -60,8 +56,8 @@ may take on the follow forms:
   key_double_scalar    1.0
   key_double_vector    1.0_2.0_3.0
 
-  # keys inteded for logical switches may take a number of different values
-  key_swtich_off       [0 | no  | off]
+  # keys intended for logical switches may take a number of different values
+  key_switch_off       [0 | no  | off]
   key_switch_on        [1 | yes | on ]
 
 Values which are strings should contain no white space. Scalar parameters
@@ -77,10 +73,11 @@ Most keys have an associated default value which will be used if
 the key is not present. Some keys must be specified: an error will
 occur if they are missing. The remainder of this part
 of the guide details the various choices for key value pairs,
-along with any default values, and any relevant constraints. 
+along with any default values, and any relevant constraints.
+
+Unused key value pairs
+^^^^^^^^^^^^^^^^^^^^^^
 
 Key value pairs which appear in the input file, but are not used by
 the code at run time, are reported at the end of the run. This may
 indicate that the key string is incorrect or unrecognised.
-
-

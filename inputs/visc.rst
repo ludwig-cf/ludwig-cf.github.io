@@ -47,7 +47,7 @@ of the value that would be computed from the free energy parameters.
 
 The values of :math:`\eta_+` and :math:`\eta_-` override any Newtonian
 viscosity that may also be specified in the input. The local bulk viscosity
-is computed via 
+is computed via
 
 .. math::
 

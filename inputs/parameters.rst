@@ -8,8 +8,8 @@ Simulation parameters
    :backlinks: none
 
 
-System size and parallel decompositon
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+System size and parallel decomposition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 The system size is specified via the key ``size``, e.g.:
@@ -103,5 +103,3 @@ temperature is in lattice units: reasonable values (at :math:`\rho_0 = 1`)
 are :math:`0 < kT < 0.0001`. If the temperature is too high, local
 velocities will rapidly exceed the Mach number constraint and
 the simulation will be unstable.
-
-
