@@ -11,16 +11,20 @@ Using the input file
 ^^^^^^^^^^^^^^^^^^^^
 
 By default, the run time expects to find user input in a file
-``input`` in the current working directory. If a different
-file name is required, its name should be provided as the sole
-command line argument, e.g.,
+``input`` in the current working directory. The code is
+invoked with no command line arguments:
 
 .. code-block:: none
 
-  ./Ludwig.exe input_file_name
+  $ ./Ludwig.exe
 
-If the input file is not located in the current working directory
-the code will terminate immediately with an error message.
+If the input file ``input`` is not located in the current working directory
+the code will terminate immediately with an error message. If a
+different file is required, a symbolic link can be used:
+
+.. code-block:: none
+
+  $ ln -s my-input-file input
 
 When an input file is located, its content is read by a single MPI
 task, and its contents then broadcast to all MPI relevant tasks.
