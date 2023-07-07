@@ -381,3 +381,39 @@ As the description is rather involved, we do not repeat it here.
                Ternary free-energy lattice Boltzmann model with tunable
                contact angles,
                *Phys. Rev. E*, **93** 033305 (2016).
+
+
+
+Electrokinetic free energy
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An implementation of a free energy appropriate for charged fluids,
+the electrokinetic problem, is available following [Capuani]_.
+
+The approach features two or more charged species (usually two),
+and solves the Nernst-Planck equation for charge transport
+(advection and diffusion for charge) coupled to the
+Navier-Stokes equations. A solver for the Poisson
+equation which relates the charge density to the electric
+potential is also required.
+
+The basic free energy parameters are, here for two charged
+species:
+
+.. code-block:: none
+
+  free_energy               fe_electro         # Electrokinetics
+
+  electrokinetcs_eunit      1.0                # The unit charge
+  electrokinetics_z0        +1                 # Valency species one
+  electrokinetics_z1        -1                 # Valency species two
+  electrokinetics_d0        0.0125             # Diffusivity species one
+  electrokinetics_d1        0.0075             # Diffusivity species two
+  electrockinetcs_epsilon   3300.0             # Permittivity
+
+Further details of the electrockinetic problem and some simple examples
+appear in the :ref:`Electrokinetics` tutorial section.
+
+.. [Capuani] F. Capuani, I. Pagonabarraga, and D. Frenkel,
+	     Discrete solution of the electrokinetic equations,
+	     *j. Chem. Phys.* **121** 973--986 (2004).

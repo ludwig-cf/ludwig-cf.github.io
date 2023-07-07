@@ -105,6 +105,7 @@ structures in the input file:
 
    lb_data_use_first_touch      yes    # lattice Boltzmann data [no]
    field_data_use_first_touch   yes    # field data: default is [no]
+   hydro_data_use_first_touch   yes    # hydrodynamic quantities [no]
 
 The field option only refers to tensor order parameter at the moment.
 All other fields have the default setting.

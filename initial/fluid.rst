@@ -102,7 +102,7 @@ resolution of the shear layer.
 A shear layer width in reduced units would be :math:`1/L\kappa`,
 and we can specify a reduced time :math:`T_0 = \Delta x / u_0 \delta`.
 
-In the lattice Botlzmann, we keep the resolution :math:`\Delta x`
+In the lattice Boltzmann, we keep the resolution :math:`\Delta x`
 fixed and increase the system size to :math:`L = N`, the number
 of grid points. To respect the Mach number constraint, we can set,
 e.g, :math:`u_0 = 0.01`. To find the lattice Boltzmann viscosity,

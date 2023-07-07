@@ -40,7 +40,7 @@ the compiler required for MPI programs:
 .. code-block:: make
 
   BUILD   = parallel                # here "parallel" for message passing
-  MODEL   = -D_D3Q19_               # one of _D2Q9_ _D3Q15_ or _D3Q19_
+  MODEL   = -D_D3Q19_               # one of _D2Q9_ _D3Q15_, _D3Q19_ or _D3Q27_
 
   CC      = mpicc                   # C compiler
   CFLAGS  = -O2 -DNDEBUG            # compiler flags
@@ -151,6 +151,7 @@ A summary is:
   _D2Q9_            # Use D2Q9  model
   _D3Q15_           # Use D3Q15 model
   _D3Q19_           # Use D3Q19 model
+  _D3Q27_           # Use D3Q27 model
                     # Set via the MODEL configuration variable. It is
                     # erroneous to define more than one of these three.
 
@@ -291,8 +292,9 @@ Electrokinetics and using PETSc
 
 There is the option to use PETSc to solve the Poisson equation required in
 the electrokinetic problem. A rather less efficient in-built method can be
-used if PETSc is not available. We suggest using PETSC v3.4 or later
-available from Argonne National Laboratory http://www.mcs.anl.gov/petsc/.
+used if PETSc is not available. We suggest a recent version of PETSc,
+which is
+available from Argonne National Laboratory http://petsc.org/release/.
 
 If PETSc is required, please enter the additional variables in the
 ``config.mk`` file:
@@ -302,17 +304,6 @@ If PETSc is required, please enter the additional variables in the
   HAVE_PETSC = true
   PETSC_INC  = /path/to/petsc/include
   PETSC_LIB  = /path/to/petsc/lib
-
-
-In addition, there is a choice of finite difference stencil size for the
-electrokinetic problem which is determined at compile time. The choices
-are via preprocessor options
-
-.. code-block:: none
-
-  -DNP_D3Q6       #  7-point stencil in 3 dimensions (the default)
-  -DNP_D3Q18      # 19-point stencil in 3 dimensions
-  -DNP_D3Q18      # 27-point stencil in 3 dimensions
 
 
 Testing
