@@ -5,7 +5,7 @@ python:
   - "3.7"
 
 install:
-  - pip install sphinx
+  - pip install sphinx==4.4.0
   - pip list
   - python -c "import ssl; print(ssl.OPENSSL_VERSION)"
 
