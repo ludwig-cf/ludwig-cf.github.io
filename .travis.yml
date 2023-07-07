@@ -18,7 +18,7 @@ deploy:
   repo: ludwig-cf/ludwig-cf.github.io
   target_branch: master
   local_dir: _build/html
-  github_token: $STATIC_WEB_SITE_TOKEN
+  github_token: $STATIC_WEBSITE_TOKEN
   skip_cleanup: true
   on:
     branch: develop
