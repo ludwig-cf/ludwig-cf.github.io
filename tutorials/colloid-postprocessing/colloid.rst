@@ -12,11 +12,11 @@ Colloid output formats
 
 Colloid output can be either in ASCII or raw binary format. A simple
 example can be found at ``docs/tutorial/colloid-test1``. Copy the
-input file to a suitable location and run the code:
+input file to a suitable location with name ``input`` and run the code:
 
 .. code-block:: none
 
-   $ ./Ludwig.exe input
+   $ ./Ludwig.exe
    ...
 
 A single colloid configuration in ASCII format should be generated at

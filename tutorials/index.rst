@@ -16,3 +16,4 @@ Oliver Henrich.
    liquid-crystal/liquid-crystal
    colloid-postprocessing/colloid
    lees-edwards/lees-edwards
+   electrokinetics/electrokinetics

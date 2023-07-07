@@ -22,14 +22,13 @@ file contains
 .. code-block:: none
 
   boundary_walls       1_0_0
-  periodicity          0_1_1
 
 The extent of the system :math:`L_x` is then just the number of points in
 the x-direction as specified by key ``size``. By default, walls have
 no-slip boundary conditions implemented via bounce-back on links.
 
 It is usual, although not strictly necessary, to declare that the relevant
-direction is not periodic (as in the example above). It should not make
+direction is not periodic. It should not make
 any difference to the result of the computation.
 
 Walls may be specified in two dimensions to form a rectangular
@@ -51,7 +50,7 @@ momemtum to the fluid. Use, e.g.,
 
 .. code-block:: none
 
-  boundary_walls          1_0_0
+  boundary_walls          0_0_1
   boundary_speed_bottom  -0.001
   boundary_speed_top     +0.001
 
@@ -63,7 +62,9 @@ is again implemented via a no-slip condition via bounce-back on links.
 
 Note the wall speed has only one non-zero component :math:`u_x`, which
 should be tangential to the place of the wall (i.e., moving walls
-should be in either `y` or `'z` dimensions).
+should be in either :math:`y` or :math:`z` dimensions).
+It is erroneous to specify a moving wall if the wall is in the
+the :math:`x` dimension.
 
 Slip and no-slip
 """"""""""""""""
@@ -322,7 +323,7 @@ The relevant input key/value pairs are:
 It can be appropriate to set the value of the free energy parameter
 in the context of the bulk fluid elastic constant, e.g., by considering
 the dimensionless group :math:`w_1 / \kappa L`, where :math:`L` is an
-apprpropriate length scale for the problem. An example is shown in
+appropriate length scale for the problem. An example is shown in
 the following illustration.
 
 .. figure:: wall-anchor-normal.svg
