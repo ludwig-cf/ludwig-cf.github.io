@@ -74,9 +74,10 @@ to be otherwise:
   # colloid_one_isfixedv    colloid has fixed velocity (integer 0 or 1)
   # colloid_one_isfixedw    colloid has fixed angular velocity (0 or 1)
   # colloid_one_isfixeds    colloid has fixed spin (0 or 1)
-  # colloid_one_type        ``default'' COLLOID_TYPE_DEFAULT
-  #                         ``active''  COLLOID_TYPE_ACTIVE
-  #                         ``subgrid'' COLLOID_TYPE_SUBGRID
+  # colloid_one_shape       'sphere' [the default] or 'ellipsoid'
+  # colloid_one_bc          boundary condition 'bbl' [the default] or 'subgrid'
+  # colloid_one_active      active switch [no]
+  # colloid_one_magnetic    magnetic switch [no]
   # colloid_one_a0          input radius
   # colloid_one_ah          hydrodynamic radius
   # colloid_one_al          subgrid offset parameter (subgrid only)
@@ -116,7 +117,8 @@ swimming direction along the :math:`x`-axis.
 
   colloid_init              input_one
 
-  colloid_one_type          active
+  colloid_one_shape         sphere
+  colloid_one_active        yes
   colloid_one_a0            7.25
   colloid_one_ah            7.25
   colloid_one_r             32.0_32.0_32.0
@@ -144,6 +146,66 @@ using
   colloid_one_isfixedvxyz    0_0_1
 
 to, for example, fix the :math:`z`-poisition and velocity components only.
+
+Ellipsoidal particles
+^^^^^^^^^^^^^^^^^^^^^
+
+One may select, e.g.,
+
+.. code-block:: none
+
+  colloid_one_shape       ellipsoid
+
+which will allow the use of prolate ellipoids. Additional information
+is required to define the semi-major axes, and an initial orientation.
+The semi-major axes :math:`a, b, c` are introduced via the key
+
+.. code-block:: none
+
+  colloid_one_elabc       7.5_2.5_2.5    # a, b, c
+
+At the moment that are a number of constraints on this choice. We must have
+:math:`a >= b >= c` for an ordinary ellipsoid, with an additional constraint
+that :math:`b = c` if the particle is active, or requires surface anchoring
+boundary conditions.
+
+It is not possible to use an ellipse in two dimensions.
+
+Initial orientation of ellipsoids
+"""""""""""""""""""""""""""""""""
+There are two ways available to specify the initial orientation of an ellipsoid
+(defined by the lines along the principal axes :math:`a` and :math:`b`).
+The first is via a standard :math:`z-x-z` set of Euler angles
+(specified in degrees):
+
+.. code-block:: none
+
+  colloid_one_euler    90.0_30.0_0.0     # Euler angles (degrees)
+
+These angles will be used to compute the initial orientation internally.
+
+The second way to be define two vectors with align along the first and
+second principle axis (:math:`a` and :math:`b`). This is done via
+
+.. code-block:: none
+
+  colloid_one_elev1    1.0_1.0_1.0        # First vector
+  colloid_one_elev2    1.0_0.0_0.0        # Second vector
+
+The vectors do not have to be unit vectors; they do not even have to be
+at right angles (the second will be orthogonalisated against the first).
+However, they must no be parallel (linearly dependent). Again, the
+related orientation (including the third axis) will be computed internally.
+
+Initialisation of orientation in colloid state files
+""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+The internal representation of current ellipsoid orientation is using a unit
+quaternion. This is what appears in the colloid state file used for input
+and output. If one wants to generate an appropriate input file, the relevant
+unit quaternion must be computed.
+
+
 
 Many colloid initialisation at random
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -433,7 +495,7 @@ The counterbalancing body force on the fluid which enforces the
 constraint of momentum conservation for the system as a whole is
 computed automatically by the code at each time step.
 
-Note: in a real system, a gravitation force on a colloid is
+Note: in a real system, a gravitational force on a colloid is
 related to buoyancy :math:`F \propto \Delta\rho g`, where the density
 difference is that between the colloid and the surrounding fluid,
 and :math:`g` is an acceleration.
@@ -442,6 +504,39 @@ In a system where there is no density contrast, as we have here
 this may be viewed as the limit that :math:`\Delta\rho \rightarrow 0`,
 combined with the limit :math:`g \rightarrow \infty`, but the limit of
 the product is finite.
+
+As a separate alternative, one can specify
+
+.. code-block:: none
+
+  colloid_buoyancy          0.0_0.0_-0.001    # vector
+
+which introduces a force proportional to the volume of each individual
+colloid. (The `colloid_gravity` option is a constant force.) One cannot
+specific both a buoyancy and a gravity force at the same time. The
+appropriate counterbalancing force on the fluid is again computed
+internally.
+
+One should not specify both a gravitational force (or buoyancy) at the
+same time a a body force on the fluid.
+
+Nite that if the system has a "bottom", e.g., a plane wall normal to
+the direction of the gravitational force, the counterbalancing force
+on the fluid is not really required. However, it is always present.
+
+
+Body force on the fluid when colloids are present
+"""""""""""""""""""""""""""""""""""""""""""""""""
+
+It is possible to impose an external body force on the fluid
+as described in :ref:`Constant body forces`.
+If colloids are present, a contribution to the force on the colloid
+proportional to the colloid's discrete volume is applied. This gives
+the same total momumtum input as if the colloid were replaced by fluid.
+
+It is not possible to have both a both an external gravitation force on
+the colloid (as via ``colloid_gravity``) and a body force on the fluid at
+the same time.
 
 
 Liquid crystal anchoring at colloid surfaces
