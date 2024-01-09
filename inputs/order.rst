@@ -141,3 +141,30 @@ unit director :math:`n_\alpha`, the corresponding initial tensor will be
 
   Q_{\alpha\beta} =
   {\textstyle \frac{1}{2}} A (3 n_\alpha n_\beta - \delta_{\alpha\beta}).
+
+
+Order parameter gradients
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Free energies involving an order parameter typically require computing
+the spatial gradients of that order parameter. There are various
+different stencils available for this computation.
+
+If surface wetting (binary/ternary fluids) or anchoring (liquid crystals)
+are required, the gradient computation must take account of the surface.
+A particular gradient computation will be necessary.
+
+If Lees-Edwards sliding periodic boundary conditions are required, the
+gradient computation must again take account of the co-ordinate
+transformations involved. A subset of the available stencils
+support the Lees-Edwards transformation.
+
+If a two-dimensional system is used with :math:`L_z = 1`, it is
+recommended to use a
+two-dimensional gradient stencil (usually with "2d" in the name).
+This may become mandatory in the future.
+
+More generally, the width of the system  should be at least twice the
+halo width required for the free energy to ensure correct operation.
+This is generally computed internally, so should be correct. However,
+care may be required for "thin" three-dimensional systems.
