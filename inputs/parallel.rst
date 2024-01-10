@@ -58,22 +58,19 @@ There is an additional restriction that if two distribitions are
 needed (two-distribution binary fluid case), the target halo swap
 must be used.
 
-Halo swaps for other fields
-"""""""""""""""""""""""""""
+Halo swaps for order parameter fields
+"""""""""""""""""""""""""""""""""""""
 
-There are similar options for other field types.
+Order parameter fields also have halo swaps (the extent of which is
+worked out automatically). Information on the halo swap can be
+obtained to standard output via:
 
 .. code-block:: none
 
-  field_halo_openmp       yes                     # [no] use host scheme
   field_halo_verbose      yes                     # [no] report information
-  hydro_halo_scheme       hydro_u_halo_target     # [default]
-  hydro_halo_scheme       hydro_u_halo_openmp     # updated host scheme
-  hydro_halo_scheme       hydro_u_halo_host       # older host version
 
 There is no concept of a reduced halo swap for these data; the full
-data are always exchanged. The ``field_halo_openmp`` option is only
-available in liquid crystal casess at the moment.
+data are always exchanged.
 
 
 Threaded parallelism via OpenMP

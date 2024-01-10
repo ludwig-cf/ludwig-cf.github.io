@@ -58,7 +58,7 @@ cases.
   int isfixedw;         /* Set to 1 for no angular velocity update */
   int isfixeds;         /* Set to zero for no s, m update */
 
-  int type;             /* Particle type */
+  int type;             /* Particle type NO LONGER USED; see "shape" etc */
   int bond[2]        ;  /* Bonded neighbours ids (index) */
 
   int rng;              /* Random number state */
@@ -68,7 +68,14 @@ cases.
 
   int inter_type;       /* Interaction type of a particle */
 
-  int intpad[13];       /* Unused */
+  int ioversion;        /* For internal use */
+  int bc;               /* Broadly, boundary condition (bbl, subgrid) */
+  int shape;            /* Particle shape (2d disk, sphere, ellipsoid) */
+  int active;           /* Particle is active */
+  int magnetic;         /* Particle is magnetic */
+  int attr;             /* Additional attributes bitmask */
+
+  int intpad[7];        /* Unused */
 
   double a0;            /* Input radius (lattice units) */
   double ah;            /* Hydrodynamic radius (from calibration) */
@@ -94,13 +101,30 @@ cases.
   double saf;           /* surface area to fluid (finite difference grid) */
 
   double al;            /* Offset parameter used for subgrid particles */
-  double dpad[15];      /* Unused */
+
+                        /* Ellipsoids */
+  double elabc[3];      /* Semi principal axes a,b,c */
+  double quat[4];       /* Quaternion describing current orientation */
+  double quatold[4];    /* Quaternion at previous time step */
+
+  double dpad[4];       /* Unused */
 
 
 Note that the bare colloid output files may be converted to different
 format (csv) with a subset of useful information if required. See
 ``util/extract_colloid.c``.
 
+Formats for versions before 0.21.0
+""""""""""""""""""""""""""""""""""
+
+Version 0.21.0 introduced ellipsoids, which required the replacement
+of the ``type`` entry in the colloid structure by separate entries to
+describe different properties.
+
+However, it should still be possible to read older colloid state files
+as the old ``type`` entry can be translated to the new structure in
+most cases. This is done automatically when the file is read at run
+time. Ellipsoids must follow the new structure.
 
 Colloid parallel output
 ^^^^^^^^^^^^^^^^^^^^^^^
