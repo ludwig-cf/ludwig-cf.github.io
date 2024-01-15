@@ -512,29 +512,32 @@ As a separate alternative, one can specify
   colloid_buoyancy          0.0_0.0_-0.001    # vector
 
 which introduces a force proportional to the volume of each individual
-colloid. (The `colloid_gravity` option is a constant force.) One cannot
-specific both a buoyancy and a gravity force at the same time. The
+colloid. (The ``colloid_gravity`` option is a constant force, independent
+of colloid size.) One cannot
+specify both a buoyancy and a gravity force at the same time. The
 appropriate counterbalancing force on the fluid is again computed
 internally.
 
 One should not specify both a gravitational force (or buoyancy) at the
-same time a a body force on the fluid.
+same time a a body force on the fluid (see below).
 
-Nite that if the system has a "bottom", e.g., a plane wall normal to
+Note that if the system has a "bottom", e.g., a plane wall normal to
 the direction of the gravitational force, the counterbalancing force
-on the fluid is not really required. However, it is always present.
+on the fluid is not really required. However, it is always present
+in the current implementation irrespective of any walls.
 
 
 Body force on the fluid when colloids are present
 """""""""""""""""""""""""""""""""""""""""""""""""
 
 It is possible to impose an external body force on the fluid
-as described in :ref:`Constant body forces`.
+as described in :ref:`Constant body forces` to provide, effectively,
+a pressure gradient.
 If colloids are present, a contribution to the force on the colloid
 proportional to the colloid's discrete volume is applied. This gives
 the same total momumtum input as if the colloid were replaced by fluid.
 
-It is not possible to have both a both an external gravitation force on
+It is not possible to have both a both an external gravitational force on
 the colloid (as via ``colloid_gravity``) and a body force on the fluid at
 the same time.
 
