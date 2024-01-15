@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.4. Lees Edwards SPBCs &#8212; Ludwig 0.19.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3de8224"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.5. Colloids" href="colloid.html" />
+    <link rel="prev" title="2.3. The free energy" href="fe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lees-edwards-spbcs">
+<h1><span class="section-number">2.4. </span>Lees Edwards SPBCs<a class="headerlink" href="#lees-edwards-spbcs" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="in-this-section">
+<p class="topic-title">In this section</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#lees-edwards-sliding-periodic-boundary-conditions" id="id1">Lees Edwards sliding periodic boundary conditions</a></p></li>
+</ul>
+</nav>
+<section id="lees-edwards-sliding-periodic-boundary-conditions">
+<h2><span class="section-number">2.4.1. </span>Lees Edwards sliding periodic boundary conditions<a class="headerlink" href="#lees-edwards-sliding-periodic-boundary-conditions" title="Permalink to this heading">¶</a></h2>
+<p>Constant uniform shear may be introduced via a number of Lees Edwards
+planes with given speed. This is appropriate for fluid-only
+systems with periodic boundaries.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>N_LE_plane               2           # Number of planes (default: 0)
+LE_plane_vel             0.05        # Constant plane speed
+</pre></div>
+</div>
+<p>The placing of the planes in the system is as follows.
+The number of planes <span class="math notranslate nohighlight">\(N\)</span> must
+divide evenly the lattice size in the <span class="math notranslate nohighlight">\(x\)</span>-direction to give an integer
+<span class="math notranslate nohighlight">\(\delta x\)</span>. Planes are then placed at
+<span class="math notranslate nohighlight">\(\delta x / 2, 3\delta x/2, \ldots\)</span>.
+All planes have the same, constant, velocity jump associated with them:
+this is positive in the positive <span class="math notranslate nohighlight">\(x\)</span>-direction. (This jump is usually
+referred to as the plane speed.) The uniform shear rate
+will be <span class="math notranslate nohighlight">\(\dot{\gamma} = N U_{LE} / L_x\)</span> where <span class="math notranslate nohighlight">\(U_{LE}\)</span>
+is the plane speed, which is always in the <span class="math notranslate nohighlight">\(y\)</span>-direction.</p>
+<p>The velocity gradient or shear direction is <span class="math notranslate nohighlight">\(x\)</span>, the flow
+direction is <span class="math notranslate nohighlight">\(y\)</span> and the vorticity direction is <span class="math notranslate nohighlight">\(z\)</span>.</p>
+<p>The spacing between planes must not be less than twice the halo size
+in lattice units; 8–16 lattice units may be the practical limit in
+many cases. In additional, the speed of the planes must not cause a
+violation of the
+Mach number constraint in the fluid velocity on the lattice, which
+will match the plane speed in magnitude directly either side of the
+planes. A value of around 0.05 should be regarded as a maximum safe
+limit for practical purposes.</p>
+<p>Additional keys associated with the Lees Edwards planes are:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>LE_init_profile          1           # Initialise u(x) (off/on)
+LE_time_offset           10000       # Offset time (default 0)
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">LE_init_profile</span></code> is set, the fluid velocity is initialised
+to reflect a steady state shear flow appropriate for the number of
+planes at the given speed (ie., shear rate). If set to zero (the default),
+the fluid is initialised with zero velocity.</p>
+<p>The code works out the current displacement of the planes by computing
+<span class="math notranslate nohighlight">\(U_{LE} t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the current time step. A shear run
+should then
+start from <span class="math notranslate nohighlight">\(t = 0\)</span>, i.e. zero plane displacement.
+It is often convenient to run an equilibration with no shear, and
+then to start an experiment after some number of steps. This
+key allows you to offset the start of the Lees-Edwards motion.
+It should then take the value of the start time (in time steps)
+corresponding to the restart at the end of the equilibration
+period.</p>
+<p>There are a couple of additional constraints to use the Lees-Edwards
+planes in parallel. In particular, the planes cannot fall at a
+processor boundary in the <span class="math notranslate nohighlight">\(x\)</span>-direction. This means you should
+arrange an integer number of planes per process in the <span class="math notranslate nohighlight">\(x\)</span>-direction.
+(For example, use one plane per process; this will also ensure the number
+of planes
+still evenly divides the total system size.)
+This will interleave the planes with the processor decomposition.
+The <span class="math notranslate nohighlight">\(y\)</span>-direction and <span class="math notranslate nohighlight">\(z\)</span>-direction may be decomposed without
+further constraint.</p>
+<p>Note that this means a simulation with one plane will only work
+if there is one process in the <span class="math notranslate nohighlight">\(x\)</span> decomposition.</p>
+<p>Some background and a tutorial example are given in the
+<a class="reference internal" href="../tutorials/lees-edwards/lees-edwards.html"><span class="doc">tutorial guides</span></a>.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openbc.html">2.8. Open boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.11. Force on the fluid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/inputs/lespc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.7. Porous Media &#8212; Ludwig 0.19.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3de8224"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.8. Open boundaries" href="openbc.html" />
+    <link rel="prev" title="2.6. Plane walls" href="walls.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="porous-media">
+<h1><span class="section-number">2.7. </span>Porous Media<a class="headerlink" href="#porous-media" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="in-this-section">
+<p class="topic-title">In this section</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#standard-porous-media-structures" id="id1">Standard porous media structures</a></p></li>
+<li><p><a class="reference internal" href="#porous-media-structures-from-file" id="id2">Porous media structures from file</a></p></li>
+</ul>
+</nav>
+<p>Porous media calculations can be undertaken when appropriate
+solid/fluid status information is supplied. A number of standard
+structures are available via the input file; more generally, a
+file with solid/fluid status and (optionally) wetting data is
+required.</p>
+<section id="standard-porous-media-structures">
+<h2><span class="section-number">2.7.1. </span>Standard porous media structures<a class="headerlink" href="#standard-porous-media-structures" title="Permalink to this heading">¶</a></h2>
+<p>Details of various structures follow. Note that uniform wetting parameters
+can be selected via the relevant free energy parameters (as discussed in
+the section on <a class="reference internal" href="walls.html"><span class="doc">Plane walls</span></a>).
+If a general wetting pattern is required, a file must be
+prepared. See below.</p>
+<section id="cylindrical-pipe">
+<h3><span class="section-number">2.7.1.1. </span>Cylindrical pipe<a class="headerlink" href="#cylindrical-pipe" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_init      circle_xy
+</pre></div>
+</div>
+<p>A cylindrical structure allowing flow in the z-direction is generated
+with diameter <span class="math notranslate nohighlight">\((L_x - 2)/2\)</span>. The dimensions <span class="math notranslate nohighlight">\(L_x\)</span> and
+<span class="math notranslate nohighlight">\(L_y\)</span> must be equal.</p>
+</section>
+<section id="rectanular-pipe">
+<h3><span class="section-number">2.7.1.2. </span>Rectanular pipe<a class="headerlink" href="#rectanular-pipe" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_init      square_xy
+</pre></div>
+</div>
+<p>A rectangular (or square) pipe allowing flow in the z-direction is
+generated with extent <span class="math notranslate nohighlight">\((L_x-2)\)</span> in the x-direction, and
+<span class="math notranslate nohighlight">\((L_y - 2)\)</span> in the y-direction.</p>
+</section>
+<section id="walls-in-one-coordinate-direction">
+<h3><span class="section-number">2.7.1.3. </span>Walls in one coordinate direction<a class="headerlink" href="#walls-in-one-coordinate-direction" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_init      wall_x
+porous_media_init      wall_y
+porous_media_init      wall_z
+</pre></div>
+</div>
+<p>Generates a structure with, e.g., solid plane walls at <span class="math notranslate nohighlight">\(x = 1\)</span>
+and <span class="math notranslate nohighlight">\(x = L_x\)</span> (channel width <span class="math notranslate nohighlight">\(L_x-2\)</span>), and periodic in the
+other two dimensions.</p>
+</section>
+<section id="simple-cubic-crystal-of-spheres">
+<h3><span class="section-number">2.7.1.4. </span>Simple cubic crystal of spheres<a class="headerlink" href="#simple-cubic-crystal-of-spheres" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_init      simple_cubic
+porous_media_acell     10
+</pre></div>
+</div>
+<p>This will initialise an array of sphere in a simple cubic array with
+lattice constant <span class="math notranslate nohighlight">\(a\)</span>. The lattice constant must exactly divide
+all three coordinate lengths (i.e., there should be an integer number
+of unit cells).</p>
+<p>The sphere radius is <span class="math notranslate nohighlight">\(a/2\)</span>, and the solid volume fraction should be
+close to the theoretical value of <span class="math notranslate nohighlight">\(\pi/6 \approx 0.52\)</span> (with
+some discretisation error).</p>
+</section>
+<section id="body-centred-cubic-crystal-of-spheres">
+<h3><span class="section-number">2.7.1.5. </span>Body centred cubic crystal of spheres<a class="headerlink" href="#body-centred-cubic-crystal-of-spheres" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_init      body_centred_cubic
+porous_media_acell     10
+</pre></div>
+</div>
+<p>As for the simple cubic case, but here body-centred cubic.
+The sphere radius is <span class="math notranslate nohighlight">\(a\sqrt{3}/4\)</span>
+The solid fraction should be close to the theoretical value of
+<span class="math notranslate nohighlight">\(\pi \sqrt{3}/8 \approx 0.68\)</span>.</p>
+</section>
+<section id="face-centred-cubic-crystal-of-spheres">
+<h3><span class="section-number">2.7.1.6. </span>Face centred cubic crystal of spheres<a class="headerlink" href="#face-centred-cubic-crystal-of-spheres" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_init      face_centred_cubic
+porous_media_acell     10
+</pre></div>
+</div>
+<p>Again, as for the simple cubic case, but here face-centred cubic.
+The sphere radius is approx <span class="math notranslate nohighlight">\(a\sqrt{2}/4\)</span>, and the
+solid fraction should be
+close to the theoretical figure of <span class="math notranslate nohighlight">\(\pi \sqrt{2}/6 \approx 0.74\)</span>.</p>
+</section>
+</section>
+<section id="porous-media-structures-from-file">
+<h2><span class="section-number">2.7.2. </span>Porous media structures from file<a class="headerlink" href="#porous-media-structures-from-file" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_file     yes            # &quot;capillary.001-001&quot; is present
+porous_media_data     no             # additional data items per site [no]
+porous_media_format   BINARY         # ASCII or BINARY
+</pre></div>
+</div>
+<p>In this case, the run time  will expect to find the file <code class="docutils literal notranslate"><span class="pre">capillary.001-001</span></code>
+in the current directory. <code class="docutils literal notranslate"><span class="pre">porous_media_format</span></code> is either <code class="docutils literal notranslate"><span class="pre">ASCII</span></code> or
+<code class="docutils literal notranslate"><span class="pre">BINARY</span></code> as appropriate. Note that in parallel, a single data file can be
+supplied, but it must be binary. The default is <code class="docutils literal notranslate"><span class="pre">BINARY</span></code>. The key
+<code class="docutils literal notranslate"><span class="pre">porous_media_data</span></code> describes the number of additional data items
+per site (typically wetting parameters); the default is zero, that is,
+only solid/fluid information is present. If additional data are present,
+they can be described by one of the following option</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>porous_media_data     yes             # additional data
+porous_media_type     status_with_c_h # Two wetting parameters C, H
+</pre></div>
+</div>
+<p>Only one <code class="docutils literal notranslate"><span class="pre">porous_media_type</span></code> can be defined at one time. The default
+is <code class="docutils literal notranslate"><span class="pre">status_only</span></code>, i.e., no wetting information.</p>
+<section id="file-format">
+<h3><span class="section-number">2.7.2.1. </span>File format<a class="headerlink" href="#file-format" title="Permalink to this heading">¶</a></h3>
+<p>In all cases the status (fluid/solid) information is represented by a
+single <code class="docutils literal notranslate"><span class="pre">char</span></code> (or integer), which must be supplied via the
+porous media file. A single file should contain data matching the
+current system size, and have the <span class="math notranslate nohighlight">\(z\)</span>-direction running fastest,
+followed by the <span class="math notranslate nohighlight">\(y\)</span>-direction. Note that in non-periodic directions,
+the structure must be ‘closed’, i.e., all the points at the edge
+should be solid.</p>
+<p>Fluid sites are designated by <code class="docutils literal notranslate"><span class="pre">0</span></code> and boundary or solid sites
+by <code class="docutils literal notranslate"><span class="pre">1</span></code>. These data should be of type <code class="docutils literal notranslate"><span class="pre">char</span></code> in binary,
+and may be integer in ASCII.</p>
+<p>Where wetting information is required, the relevant free energy parameters
+should be provided. These are of data type <cite>double</cite>. For example, in the
+symmetric free energy picture, values
+<span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(H\)</span> are required at each site. The stoarge order is
+then <span class="math notranslate nohighlight">\(s_1, c_1, h_1, s_2, c_2, h_2, \ldots\)</span>.</p>
+<p>An example of how to construct a porous media file is provided in
+<code class="docutils literal notranslate"><span class="pre">util/capillary.c</span></code>, which writes an appropriate file for
+a square or circular capillary tube. Note that as the standard
+output mechanism is used, it is only necessary to make the relevant
+assignments to the data structure.</p>
+<p>Please see the comments in
+the file for further details. Note that the allowed
+solid/fluid status values are defined in <code class="docutils literal notranslate"><span class="pre">src/map.h</span></code>.
+A solid boundary is <code class="docutils literal notranslate"><span class="pre">MAP_BOUNDARY</span></code>, while fluid is <code class="docutils literal notranslate"><span class="pre">MAP_FLUID</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openbc.html">2.8. Open boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.11. Force on the fluid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/inputs/porous.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3.1. Fluid initial conditions &#8212; Ludwig 0.19.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3de8224"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.2. Initial composition" href="composition.html" />
+    <link rel="prev" title="3. Initial Conditions" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="fluid-initial-conditions">
+<h1><span class="section-number">3.1. </span>Fluid initial conditions<a class="headerlink" href="#fluid-initial-conditions" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="this-section-describes-the-initialisation-of-quantities-including">
+<p class="topic-title">This section describes the initialisation of quantities
+           including</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#density" id="id3">Density</a></p></li>
+<li><p><a class="reference internal" href="#velocity-field" id="id4">Velocity field</a></p></li>
+</ul>
+</nav>
+<section id="density">
+<h2><span class="section-number">3.1.1. </span>Density<a class="headerlink" href="#density" title="Permalink to this heading">¶</a></h2>
+<p>The initial fluid density is always uniform and the value can be
+controlled via:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>rho0   1.0     # default value 1.0
+</pre></div>
+</div>
+<p>Some care may be required if values other than unity are used;
+some features in the code may not correctly account for general
+values.</p>
+</section>
+<section id="velocity-field">
+<h2><span class="section-number">3.1.2. </span>Velocity field<a class="headerlink" href="#velocity-field" title="Permalink to this heading">¶</a></h2>
+<p>The default initialisation for the velocity field is uniformly at
+rest. If a specific initialisation <span class="math notranslate nohighlight">\(u_\alpha (\mathbf{r}; t = 0)\)</span>
+is required, then in all cases the initial
+lattice Boltzmann distributions are taken to be the equilibrium
+values</p>
+<div class="math notranslate nohighlight">
+\[f_i^{\mathrm{eq}} (\mathbf{r}; t = 0)
+= \rho w_i \bigg( 1 + \frac{ u_\alpha c_{i\alpha}}{c_s^2}
+                        + \frac{u_\alpha u_\beta (c_{i\alpha}c_{i\beta}
+                        - c_s^2 \delta_{\alpha\beta})}{2c_s^4}  \bigg)\]</div>
+<p>where <span class="math notranslate nohighlight">\(w_i\)</span> and <span class="math notranslate nohighlight">\(c_{i\alpha}\)</span> are the relevant weights and
+discrete velocities for the model in use. The density <span class="math notranslate nohighlight">\(\rho\)</span> can
+be controlled as discussed above.</p>
+<section id="uniform">
+<h3><span class="section-number">3.1.2.1. </span>Uniform<a class="headerlink" href="#uniform" title="Permalink to this heading">¶</a></h3>
+<p>A uniform, non-zero, velocity field in three dimensions can be initialised via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>distribution_initialisation  3d_uniform_u
+distribution_uniform_u       0.002_0.003_0.004
+</pre></div>
+</div>
+<p>For two dimensions, set the <span class="math notranslate nohighlight">\(z\)</span>-component to zero.</p>
+</section>
+<section id="two-dimensional-double-shear-layer">
+<h3><span class="section-number">3.1.2.2. </span>Two-dimensional double shear layer<a class="headerlink" href="#two-dimensional-double-shear-layer" title="Permalink to this heading">¶</a></h3>
+<p>A standard test problem described by Brown and Minion <a class="reference internal" href="#brownminion1995" id="id1"><span>[BrownMinion1995]</span></a>
+initialises
+a velocity field in a system which is the unit square (length <span class="math notranslate nohighlight">\(L\)</span>) as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{eqnarray}
+  u_x &amp; = &amp; \bigg \lbrace {u_0 \tanh \kappa (y-1/4) \text{ for } y \leq 0.5
+                   \atop    u_0 \tanh \kappa (3/4-y) \text{ for } y &gt; 0.5} \\
+  u_y &amp; = &amp; u_0 \delta \sin 2\pi (x + 1/4)
+\end{eqnarray}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(u_0\)</span> sets the velocity scale,
+<span class="math notranslate nohighlight">\(\kappa\)</span> is an inverse length scale related to the
+shear layer, and <span class="math notranslate nohighlight">\(\delta\)</span> is a dimensionless perturbation parameter.</p>
+<p>In a two-dimensional system the following input key value pairs may
+be used</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>distribution_initialisation   2d_kelvin_helmholtz
+2d_kelvin_helmholtz_u0        0.01                 # Scale speed
+2d_kelvin_helmholtz_delta     0.05                 # Perturbation
+2d_kelvin_helmholtz_kappa     100.0                # inverse width
+</pre></div>
+</div>
+<section id="example-matching-units">
+<h4><span class="section-number">3.1.2.2.1. </span>Example: matching units<a class="headerlink" href="#example-matching-units" title="Permalink to this heading">¶</a></h4>
+<p>If we wish to run a problem similar to that described as a thin shear
+layer by Brown and Minion (<span class="math notranslate nohighlight">\(\kappa = 100\)</span>) and examine the
+results as a function of resolution, we need to work out the relevant
+lattice Boltzmann inputs (in lattice units) by matching some appropriate
+dimensionless groups.</p>
+<p>Brown and Minion have a fixed system size <span class="math notranslate nohighlight">\(L = 1\)</span> and increase
+the resolution by decreasing the grid spacing.
+Larger values of the grid spacing give a relative poor
+resolution of the shear layer.
+A shear layer width in reduced units would be <span class="math notranslate nohighlight">\(1/L\kappa\)</span>,
+and we can specify a reduced time <span class="math notranslate nohighlight">\(T_0 = \Delta x / u_0 \delta\)</span>.</p>
+<p>In the lattice Boltzmann, we keep the resolution <span class="math notranslate nohighlight">\(\Delta x\)</span>
+fixed and increase the system size to <span class="math notranslate nohighlight">\(L = N\)</span>, the number
+of grid points. To respect the Mach number constraint, we can set,
+e.g, <span class="math notranslate nohighlight">\(u_0 = 0.01\)</span>. To find the lattice Boltzmann viscosity,
+we can then match a Reynolds number in each case. Brown and Minion
+have, e.g., <span class="math notranslate nohighlight">\(Re = u_0 \delta L / \nu = 500\)</span> for
+<span class="math notranslate nohighlight">\(u_0 \delta = 0.05\)</span>
+and a kinematic viscosity <span class="math notranslate nohighlight">\(\nu = 1/10,000\)</span>. The lattice
+dynamic vicosity would then be <span class="math notranslate nohighlight">\(\eta\)</span> (with <span class="math notranslate nohighlight">\(\rho = 1\)</span>)
+and should then
+match <span class="math notranslate nohighlight">\(Re = \rho u_0 \delta N / \eta\)</span>.</p>
+<p>It is convenient to retain the same units for <span class="math notranslate nohighlight">\(\kappa\)</span> in the
+input and convert internally. Finally, the number of lattice Boltzmann
+time steps is fixed to match the time T = 0.8 via the reduced time
+<span class="math notranslate nohighlight">\(T/T_0\)</span>.</p>
+<p>An example input file with actual values can be found in</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>./tests/regression/d2q9/serial-2kh-bm1.inp
+</pre></div>
+</div>
+<p>A series of representative results are shown below for a number
+of different resolutions (64, 128, 256, 512 from left to right)
+and for two different relaxation time schemes.</p>
+<img alt="../_images/minion-brown.svg" src="../_images/minion-brown.svg" /><p>Broadly, the M10 scheme is more dissipative, which helps avoid the development
+of noise in the more poorly resolved cases. In the limit of high resolution
+the results are verysimilar. For a more recent discussion of this problem in
+the context of lattice Boltzmann relaxation see
+e.g., Dellar <a class="reference internal" href="#dellar2014" id="id2"><span>[Dellar2014]</span></a> and references therein.</p>
+<div role="list" class="citation-list">
+<div class="citation" id="brownminion1995" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">BrownMinion1995</a><span class="fn-bracket">]</span></span>
+<p>D.L. Brown and M.L. Minion, Performance of under-resolved
+two-dimensional incompressible flow simulations,
+<em>J. Computat. Phys.</em>, <strong>122</strong> 165-183 (1995).</p>
+</div>
+<div class="citation" id="dellar2014" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Dellar2014</a><span class="fn-bracket">]</span></span>
+<p>P.J. Dellar, Lattice Boltzmann algorithms without cubic
+defects in Galilean invariance on standard lattices,
+<em>J. Computat. Phys.</em> <strong>259</strong> 270-283 (2014).</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputs/index.html">2. Input File</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. Initial Conditions</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.1. Fluid initial conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html">3.2. Initial composition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html">3.3. Liquid crystal order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="three-phase.html">3.4. Three-phase model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/initial/fluid.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

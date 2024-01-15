@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.8. Open boundaries &#8212; Ludwig 0.19.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3de8224"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.9. Order Parameters" href="order.html" />
+    <link rel="prev" title="2.7. Porous Media" href="porous.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="open-boundaries">
+<h1><span class="section-number">2.8. </span>Open boundaries<a class="headerlink" href="#open-boundaries" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="this-section-contains-some-details-of-open-boundary-conditions-available-to-drive-channel-like-flows">
+<p class="topic-title">This section contains some details of open boundary conditions
+           available to drive channel-like flows.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#open-boundary-conditions-and-walls" id="id1">Open boundary conditions and walls</a></p></li>
+<li><p><a class="reference internal" href="#hydrodynamic-open-boundaries" id="id2">Hydrodynamic open boundaries</a></p>
+<ul>
+<li><p><a class="reference internal" href="#type-rhou-inflow" id="id3">Type <code class="docutils literal notranslate"><span class="pre">rhou</span></code> inflow</a></p></li>
+<li><p><a class="reference internal" href="#type-rhou-outflow" id="id4">Type <code class="docutils literal notranslate"><span class="pre">rhou</span></code> outflow</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#open-boundaries-for-composition" id="id5">Open boundaries for composition</a></p>
+<ul>
+<li><p><a class="reference internal" href="#type-fixed-inflow" id="id6">Type <code class="docutils literal notranslate"><span class="pre">fixed</span></code> inflow</a></p></li>
+<li><p><a class="reference internal" href="#type-free-outflow" id="id7">Type <code class="docutils literal notranslate"><span class="pre">free</span></code> outflow</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#restarting-with-open-boundary-conditions" id="id8">Restarting with open boundary conditions</a></p></li>
+</ul>
+</nav>
+<section id="open-boundary-conditions-and-walls">
+<h2><span class="section-number">2.8.1. </span>Open boundary conditions and walls<a class="headerlink" href="#open-boundary-conditions-and-walls" title="Permalink to this heading">¶</a></h2>
+<p>Open boundary conditions may be used with a number of provisos:</p>
+<ol class="arabic simple">
+<li><p>An inflow must be have a corresponding outflow, and vice-versa;</p></li>
+<li><p>The non-flow directions should have plane walls;</p></li>
+<li><p>We assume that the inflow is at the lower, or ‘left-hand’, edge
+of the domain, and the outflow is at the upper, or ‘right-hand’ end;</p></li>
+<li><p>All three dimensions must be non-periodic.</p></li>
+</ol>
+<p>At present there is an additional constraint when running in parallel
+that the flow direction must be the <span class="math notranslate nohighlight">\(x\)</span>-direction.</p>
+<p>A suitable set of input keys would therefore be, e.g.:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_walls       0_1_1
+periodicity          0_0_0
+lb_bc_open           yes
+</pre></div>
+</div>
+<p>The switch <code class="docutils literal notranslate"><span class="pre">lb_bc_open</span></code> introduces open boundary conditions of a type
+which is specified by further keys. It must be present for open
+boundaries to be recognised.</p>
+</section>
+<section id="hydrodynamic-open-boundaries">
+<h2><span class="section-number">2.8.2. </span>Hydrodynamic open boundaries<a class="headerlink" href="#hydrodynamic-open-boundaries" title="Permalink to this heading">¶</a></h2>
+<p>Hydrodynamic boundary conditions mean specifying appropriate density
+and velocities boundary conditions so that appropriate incoming
+distributions can be computed at both inflow and outflow. Outgoing
+distributions are lost.</p>
+<p>In the following, we assume that the flow direction is the
+<span class="math notranslate nohighlight">\(x\)</span>-direction. Inflow conditions are indicated by
+<span class="math notranslate nohighlight">\(x=0\)</span>, and outflow by <span class="math notranslate nohighlight">\(x=L_x\)</span>.
+Gernealisations to the
+<span class="math notranslate nohighlight">\(y\)</span>-direction or <span class="math notranslate nohighlight">\(z\)</span>-direction may be made is
+a straightforward manner.</p>
+<section id="type-rhou-inflow">
+<h3><span class="section-number">2.8.2.1. </span>Type <code class="docutils literal notranslate"><span class="pre">rhou</span></code> inflow<a class="headerlink" href="#type-rhou-inflow" title="Permalink to this heading">¶</a></h3>
+<p>The following section:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_bc_inflow_type          rhou
+lb_bc_inflow_profile       uniform
+lb_bc_inflow_rhou_u0       0.001_0.0_0.0
+</pre></div>
+</div>
+<p>will request an inflow condition which imposes a uniform velocity
+<span class="math notranslate nohighlight">\(u(0,y,z) = u_0\)</span>. The density is
+<span class="math notranslate nohighlight">\(\rho(0,y,z) = \rho(1,y,z)\)</span>. The incoming distributions
+are then computed as <span class="math notranslate nohighlight">\(f_i = f^{eq}_i (\rho, u)\)</span>. The velocity
+specified at the inflow should be in the positive <span class="math notranslate nohighlight">\(x\)</span>-direction.</p>
+</section>
+<section id="type-rhou-outflow">
+<h3><span class="section-number">2.8.2.2. </span>Type <code class="docutils literal notranslate"><span class="pre">rhou</span></code> outflow<a class="headerlink" href="#type-rhou-outflow" title="Permalink to this heading">¶</a></h3>
+<p>Corresponding outflow conditions are introduced via, e.g.:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_bc_outflow_type         rhou
+lb_bc_outflow_rhou_rho0    1.0
+</pre></div>
+</div>
+<p>Here the outflow density <span class="math notranslate nohighlight">\(\rho(L_x,y,z) = \rho_0\)</span>, and the
+velocity <span class="math notranslate nohighlight">\(u(L_x,y,z) = u(L_x-1,y,z)\)</span>; incoming distributions
+are again computed via <span class="math notranslate nohighlight">\(f_i = f^{eq}_i(\rho_0, u)\)</span>.</p>
+</section>
+</section>
+<section id="open-boundaries-for-composition">
+<h2><span class="section-number">2.8.3. </span>Open boundaries for composition<a class="headerlink" href="#open-boundaries-for-composition" title="Permalink to this heading">¶</a></h2>
+<p>Open boundary conditions (with the same provisos as mentioned above) are
+available for composition variable <span class="math notranslate nohighlight">\(\phi\)</span>, as used in symmetric
+and Brazovskii free energy models.</p>
+<p>Inflow and outflow conditions are set, e.g.,:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_bc_open                yes        # Use open boundaries for phi
+phi_bc_inflow_type         fixed      # inflow type
+phi_bc_inflow_fixed_phib   +1.0       # inflow parameter
+
+phi_bc_outflow_type        free       # outflow type
+</pre></div>
+</div>
+<p>These would typically be used with the corresponding hydrodynamic
+inflow/outflow conditions discussed above.</p>
+<section id="type-fixed-inflow">
+<h3><span class="section-number">2.8.3.1. </span>Type <code class="docutils literal notranslate"><span class="pre">fixed</span></code> inflow<a class="headerlink" href="#type-fixed-inflow" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_bc_outflow_type          fixed
+phi_bc_outflow_fixed_phib    -1.0
+</pre></div>
+</div>
+<p>A fixed boundary condition sets <span class="math notranslate nohighlight">\(\phi(x=0,y,z) = \phi_b\)</span> where
+a uniform value <span class="math notranslate nohighlight">\(\phi_b\)</span> is specified via the key
+<code class="docutils literal notranslate"><span class="pre">phi_bc_inflow_fixed_phib</span></code>.</p>
+<p>The boundary condition sets all values of <span class="math notranslate nohighlight">\(\phi\)</span> in the boundary
+region (up to the extent of the parallel halo region). This influences
+the calculation of the order parameter gradients
+<span class="math notranslate nohighlight">\(\partial_\alpha \phi\)</span> and <span class="math notranslate nohighlight">\(\partial^2_\alpha \phi\)</span> and
+hence the value of the chemical potential. The advective flux in
+the Cahn-Hilliard equation also responds to the boundary value
+appropriately in conjunction with the imposed inflow velocity.</p>
+</section>
+<section id="type-free-outflow">
+<h3><span class="section-number">2.8.3.2. </span>Type <code class="docutils literal notranslate"><span class="pre">free</span></code> outflow<a class="headerlink" href="#type-free-outflow" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_bc_outflow_type          free
+</pre></div>
+</div>
+<p>This outflow boundary condition sets
+<span class="math notranslate nohighlight">\(\phi_b (x = L+1, y, z) = \phi (L,y,z)\)</span>,
+again to the extent of the parallel halo region. There are no additional
+parameters associated with this boundary condition.</p>
+</section>
+</section>
+<section id="restarting-with-open-boundary-conditions">
+<h2><span class="section-number">2.8.4. </span>Restarting with open boundary conditions<a class="headerlink" href="#restarting-with-open-boundary-conditions" title="Permalink to this heading">¶</a></h2>
+<p>At present, there may be some small differences in results introduced
+by a restart (compared with the same run ‘straight through’). This
+relates the need for density values in the open boundary regions.
+This should not impair the overall reliability of the results.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.8. Open boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.11. Force on the fluid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/inputs/openbc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

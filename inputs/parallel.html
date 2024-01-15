@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.12. Parallelism &#8212; Ludwig 0.19.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3de8224"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Initial Conditions" href="../initial/index.html" />
+    <link rel="prev" title="2.11. Force on the fluid" href="force.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="parallelism">
+<h1><span class="section-number">2.12. </span>Parallelism<a class="headerlink" href="#parallelism" title="Permalink to this heading">¶</a></h1>
+<p>Some comments on parallelism and reporting of time taken for parallel
+overheads.</p>
+<div class="toctree-wrapper compound">
+</div>
+<p>A hierarchy of parallelism is employed in the code. At the most coarse
+grained level, domain decomposition is implemented via the message
+pessing interface (MPI). Within each subdomain, computational kernels
+are executed in a threaded model which may involve either OpenMP for
+CPU architectures, or an appropriate GPU model. This means the user
+may have a number of choices in how to deploy resources for problems
+of any given size.</p>
+<section id="distributed-memory-parallelism">
+<h2><span class="section-number">2.12.1. </span>Distributed memory parallelism<a class="headerlink" href="#distributed-memory-parallelism" title="Permalink to this heading">¶</a></h2>
+<section id="halo-swap-mechanisms">
+<h3><span class="section-number">2.12.1.1. </span>Halo swap mechanisms<a class="headerlink" href="#halo-swap-mechanisms" title="Permalink to this heading">¶</a></h3>
+<p>Under usual circumstances, it should not be necessary to select the
+type of halo swap used for the various lattice-based fields in the
+calculation. The code will select the relevant mechanism. In
+particular, relevant CPU/GPU halo swaps will be applied.</p>
+<p>If explicit control is required, one can use some of the following
+flags.</p>
+<section id="lattice-distribution-halo-swaps">
+<h4><span class="section-number">2.12.1.1.1. </span>Lattice distribution halo swaps<a class="headerlink" href="#lattice-distribution-halo-swaps" title="Permalink to this heading">¶</a></h4>
+<p>There a number of different halo swap mechaniams for the lattice Boltzmann
+distributions. One or other may be selected explicitly via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_halo_scheme          lb_halo_openmp_full       # host (full)
+lb_halo_scheme          lb_halo_openmp_reduced    # host (reduced)
+lb_halo_scheme          lb_halo_target            # target (full) [default]
+</pre></div>
+</div>
+<p>The two host options (which, despite their names, will work with or
+without OpenMP) are full or reduced. The reduced halo swap may be
+quicker as it sends only distributions propagating in the relevant
+direction. However, the reduced halo swap should not be used if
+solid objects (boundaries or colloids) are present. It is intended
+for fluid only computations. The target halo swap handles the extra
+complexity in the GPU case: this is always a ‘full’ halo swap at the
+moment.</p>
+<p>There is an additional restriction that if two distribitions are
+needed (two-distribution binary fluid case), the target halo swap
+must be used.</p>
+</section>
+<section id="halo-swaps-for-order-parameter-fields">
+<h4><span class="section-number">2.12.1.1.2. </span>Halo swaps for order parameter fields<a class="headerlink" href="#halo-swaps-for-order-parameter-fields" title="Permalink to this heading">¶</a></h4>
+<p>Order parameter fields also have halo swaps (the extent of which is
+worked out automatically). Information on the halo swap can be
+obtained to standard output via:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>field_halo_verbose      yes                     # [no] report information
+</pre></div>
+</div>
+<p>There is no concept of a reduced halo swap for these data; the full
+data are always exchanged.</p>
+</section>
+</section>
+</section>
+<section id="threaded-parallelism-via-openmp">
+<h2><span class="section-number">2.12.2. </span>Threaded parallelism via OpenMP<a class="headerlink" href="#threaded-parallelism-via-openmp" title="Permalink to this heading">¶</a></h2>
+<p>The recommended way to run the OpenMP version is to use one MPI
+task per NUMA region. Most modern machines have two sockets per
+node, and each socket may be one or more NUMA regions. The
+number of threads should be set to the number of physical cores
+per NUMA region. Many modern processors report the number of
+“CPUs” available, which is often two times the number of physical
+cores owing to the ability to run two threads in hardware per
+physical core.</p>
+<p>Typically, for 16 cores per NUMA regions, one might set</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export OMP_NUM_THREADS=16
+export OMP_PLACES=cores
+</pre></div>
+</div>
+<p>Local details may vary on how exactly to run in this hybrid MPI/OpenMP
+mode.</p>
+<p>It is possible to specify “first touch” policy for a number of data
+structures in the input file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_data_use_first_touch      yes    # lattice Boltzmann data [no]
+field_data_use_first_touch   yes    # field data: default is [no]
+hydro_data_use_first_touch   yes    # hydrodynamic quantities [no]
+</pre></div>
+</div>
+<p>The field option only refers to tensor order parameter at the moment.
+All other fields have the default setting.</p>
+</section>
+<section id="threaded-parallelism-for-gpu">
+<h2><span class="section-number">2.12.3. </span>Threaded parallelism for GPU<a class="headerlink" href="#threaded-parallelism-for-gpu" title="Permalink to this heading">¶</a></h2>
+<p>The usual mode of opertation envisaged for GPU-based architectures
+is one MPI task per GPU. The code will determine internally how to
+aportion individual GPUs to each MPI task.</p>
+<p>At the moment the code does no checking that the assumption of one
+MPI task per GPU device is valid, so some care may be required if
+running multi-GPU jobs.</p>
+</section>
+<section id="timing">
+<h2><span class="section-number">2.12.4. </span>Timing<a class="headerlink" href="#timing" title="Permalink to this heading">¶</a></h2>
+<section id="halo-swap-imbalance-time">
+<h3><span class="section-number">2.12.4.1. </span>Halo swap imbalance time<a class="headerlink" href="#halo-swap-imbalance-time" title="Permalink to this heading">¶</a></h3>
+<p>A facility is provided to report the imbalance time observed at the
+point of the lattice distribition halo swap. This introduces an
+explicit synchronisation immediately before the halo swap to
+allow the separation of load  imbalance and actually communication
+overhead.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_halo_scheme_report_imbalance    yes      # Default no
+</pre></div>
+</div>
+<p>This appears as part of the breakdown of the lattice halo swap time, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Lattice halos:      0.001      0.013     84.246   0.000842 (100000 calls)
+ -&gt; imbalance:      0.000      0.013     14.277   0.000143 (100000 calls)
+</pre></div>
+</div>
+<p>The introduction of the synchronisation itself introduces an overhead,
+so this option should not be used for production runs.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openbc.html">2.8. Open boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.11. Force on the fluid</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021-2023, The University of Edinburgh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/inputs/parallel.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
