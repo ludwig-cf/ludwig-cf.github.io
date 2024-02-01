@@ -184,7 +184,7 @@ The first is via a standard :math:`z-x-z` set of Euler angles
 
 These angles will be used to compute the initial orientation internally.
 
-The second way to be define two vectors which align along the first and
+The second way is to define two vectors which align along the first and
 second principle axis (:math:`a` and :math:`b`). This is done via
 
 .. code-block:: none
