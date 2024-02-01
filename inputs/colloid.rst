@@ -184,7 +184,7 @@ The first is via a standard :math:`z-x-z` set of Euler angles
 
 These angles will be used to compute the initial orientation internally.
 
-The second way to be define two vectors with align along the first and
+The second way to be define two vectors which align along the first and
 second principle axis (:math:`a` and :math:`b`). This is done via
 
 .. code-block:: none
@@ -193,8 +193,8 @@ second principle axis (:math:`a` and :math:`b`). This is done via
   colloid_one_elev2    1.0_0.0_0.0        # Second vector
 
 The vectors do not have to be unit vectors; they do not even have to be
-at right angles (the second will be orthogonalisated against the first).
-However, they must no be parallel (linearly dependent). Again, the
+at right angles (the second will be orthogonalised against the first).
+However, they must not be parallel (linearly dependent). Again, the
 related orientation (including the third axis) will be computed internally.
 
 Initialisation of orientation in colloid state files
