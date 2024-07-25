@@ -20,12 +20,11 @@ jobs:
     - name: Commit documentation changes
       run: |
         git clone https://github.com/ludwig-cf/ludwig-cf.github.io.git --branch gh-pages --single-branch gh-pages
-        cp -r docs/_build/html/* gh-pages/
-	cp docs/_build/html/.nojekyll gh-pages
-
-	cd gh-pages
- 	git config --local user.email "action@github.com
-  	git config --local user.name "GitHub Action"
+        cp -r docs/_build/html/* gh-pages
+        cp    docs/_build/html/.nojekyll gh-pages
+        cd gh-pages
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add .
         git commit -m "Update documentation" -a || true
 
