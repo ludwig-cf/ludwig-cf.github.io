@@ -41,6 +41,7 @@ the compiler required for MPI programs:
 
   BUILD   = parallel                # here "parallel" for message passing
   MODEL   = -D_D3Q19_               # one of _D2Q9_ _D3Q15_, _D3Q19_ or _D3Q27_
+  TARGET  =                         # Optional: for GPU builds
 
   CC      = mpicc                   # C compiler
   CFLAGS  = -O2 -DNDEBUG            # compiler flags
@@ -53,9 +54,7 @@ the compiler required for MPI programs:
   MPI_LIB_PATH      =               # path to libmpi.a (if required)
   MPI_LIB           =               # -lmpi (if required)
 
-  LAUNCH_SERIAL_CMD =               # serial launch command
-  LAUNCH_MPIRUN_CMD = mpirun        # parallel launch command
-  MPIRUN_NTASK_FLAG = -np           # flag to set number of MPI tasks
+  LAUNCH_MPIRUN_CMD = mpirun -np 2  # parallel launch command for tests
 
 
 If the MPI compiler wrapper does not require that MPI include and library
@@ -63,8 +62,8 @@ paths be explicitly defined, the relevant variables can be left blank
 (as they are in the above example).
 
 The test system requires that an MPI program can be started (often via
-``mpirun``) so relevant variables are also set. Note the number of MPI
-tasks used by the tests is not specified in the configuration.
+``mpirun``) so relevant variables are also set. The number of MPI
+tasks used by the tests must be specified in the configuration.
 
 
 Serial Build
@@ -91,6 +90,7 @@ A minimum configuration might be:
 
   BUILD   = serial                  # here "serial"
   MODEL   = -D_D3Q19_               # preprocessor macro for model
+  TARGET  =
 
   CC      = gcc                     # C compiler
   CFLAGS  = -O -g -Wall             # compiler options
@@ -102,8 +102,6 @@ A minimum configuration might be:
   MPI_INC_PATH      = ./mpi_s       # stub MPI include location
   MPI_LIB_PATH      = ./mpi_s       # stub MPI library location
   MPI_LIB           = -lmpi         # MPI library link
-
-  LAUNCH_SERIAL_CMD =               # blank
 
 
 The stub MPI library should be built before the main compilation. To do this,
@@ -220,6 +218,7 @@ An appropriate configuration file might be:
 
   BUILD   = parallel
   MODEL   = -D_D3Q19_
+  TARGET  = nvcc
 
   CC      = nvcc
   CFLAGS  = -ccbin=icpc -DADDR_SOA -DNDEBUG -arch=sm_70 -x cu -dc
@@ -232,9 +231,7 @@ An appropriate configuration file might be:
   MPI_INC_PATH = -I$(MPI_HOME)/include64
   MPI_LIB_PATH = -L$(MPI_HOME)/lib64 -lmpi
 
-  LAUNCH_SERIAL_CMD =
-  LAUNCH_MPIRUN_CMD = mpirun
-  MPIRUN_NTASK_FLAG = -np
+  LAUNCH_MPIRUN_CMD = mpirun -np 2
 
 As this is a parallel build using the ``nvcc`` compiler (with the native
 compiler being Intel ``icpc`` in this case), we specify explicitly the
@@ -257,6 +254,7 @@ might be
 
    BUILD   = parallel
    MODEL   = -D_D3Q19_
+   TARGET  = hipcc
 
    CC      = hipcc
    CFLAGS  = -x hip -O3 -fgpu-rdc --amdgpu-target=gfx90a -DADDR_SOA \

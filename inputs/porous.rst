@@ -110,24 +110,23 @@ Porous media structures from file
 
 .. code-block:: none
 
-  porous_media_file     yes            # "capillary.001-001" is present
-  porous_media_data     no             # additional data items per site [no]
-  porous_media_format   BINARY         # ASCII or BINARY
+  porous_media_file     yes            # "map-000000000.001-001" is present
+  porous_media_data     status_with_h  # file contents [status_only]
 
 
-In this case, the run time  will expect to find the file ``capillary.001-001``
-in the current directory. ``porous_media_format`` is either ``ASCII`` or
-``BINARY`` as appropriate. Note that in parallel, a single data file can be
-supplied, but it must be binary. The default is ``BINARY``. The key
-``porous_media_data`` describes the number of additional data items
-per site (typically wetting parameters); the default is zero, that is,
-only solid/fluid information is present. If additional data are present,
-they can be described by one of the following option
+In this case, the run time will expect to find the file
+``map-000000000.001-001`` in the current directory. The
+``porous_media_data`` key describes the contents of the file, with
+a number of possible values. These are illustrated below. The
+solid/fluid status must be present, while additional wetting
+information is also permitted:
+
 
 .. code-block:: none
 
-  porous_media_data     yes             # additional data
-  porous_media_type     status_with_c_h # Two wetting parameters C, H
+  porous_media_data     status_only             # solid/fluid status only
+  porous_media_data     status_with_h           # Free energy H
+  porous_media_data     status_with_c_h         # Free energy C and H
 
 Only one ``porous_media_type`` can be defined at one time. The default
 is ``status_only``, i.e., no wetting information.
