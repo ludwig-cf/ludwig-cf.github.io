@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3.4. Three-phase model &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script src="../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4. Outputs" href="../outputs/index.html" />
+    <link rel="prev" title="3.3. Liquid crystal order" href="liquid-crystal.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="three-phase-model">
+<h1><span class="section-number">3.4. </span>Three-phase model<a class="headerlink" href="#three-phase-model" title="Link to this heading">¶</a></h1>
+<nav class="contents local" id="this-section-describes-some-available-initial-coniditions-for-for-the-three-phase-model-of-semprebon2016">
+<p class="topic-title">This section describes some available initial coniditions for
+           for the three-phase model of <a class="reference internal" href="#semprebon2016" id="id1"><span>[Semprebon2016]</span></a></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#two-dimensions" id="id2">Two dimensions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#double-emulsion-in-blocks" id="id3">Double emulsion (in blocks)</a></p></li>
+<li><p><a class="reference internal" href="#double-droplet" id="id4">Double droplet</a></p></li>
+<li><p><a class="reference internal" href="#lens-in-two-dimensions" id="id5">Lens in two dimensions</a></p></li>
+<li><p><a class="reference internal" href="#t-shape-in-two-dimensions" id="id6">T-shape in two dimensions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#three-dimensions" id="id7">Three dimensions</a></p></li>
+<li><p><a class="reference internal" href="#three-phase-configuration-from-file" id="id8">Three-phase configuration from file</a></p></li>
+</ul>
+</nav>
+<p>This implementation assumes the density <span class="math notranslate nohighlight">\(\rho\)</span> is unity and two scalar
+order parameters (<span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\psi\)</span>) define the composition.
+The three phases are defined by concentrations
+<span class="math notranslate nohighlight">\(C_1 = (\rho + \phi - \psi)/2\)</span>,
+<span class="math notranslate nohighlight">\(C_2 = (\rho - \phi - \psi)/2\)</span> and <span class="math notranslate nohighlight">\(C_3 = \psi\)</span> so that we
+have:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Phase</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\rho\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\phi\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\psi\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(C_1\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(C_2\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(C_3\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>One</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Two</p></td>
+<td><p>1</p></td>
+<td><p>-1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>Three</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<div role="list" class="citation-list">
+<div class="citation" id="semprebon2016" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Semprebon2016</a><span class="fn-bracket">]</span></span>
+<p>C. Semprebon, T. Krueger, and H. Kusumaatmaja, Ternary free-energy
+lattice Boltzmann model with tunable surface tensions and
+contact angles, <em>Phys. Rev. E</em>, <strong>93</strong> 033305 (2016).</p>
+</div>
+</div>
+<section id="two-dimensions">
+<h2><span class="section-number">3.4.1. </span>Two dimensions<a class="headerlink" href="#two-dimensions" title="Link to this heading">¶</a></h2>
+<p>Note that there is currently no default initialisation of the ternary
+composition.</p>
+<section id="double-emulsion-in-blocks">
+<h3><span class="section-number">3.4.1.1. </span>Double emulsion (in blocks)<a class="headerlink" href="#double-emulsion-in-blocks" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ternary_initialisation       2d_double_emulsion   # Initialisation
+2d_double_emulsion_xf1       0.2                  # Optional: fraction x1
+2d_double_emulsion_xf2       0.5                  # Optional: fraction x2
+2d_double_emulsion_xf3       0.8                  # Optional: fraction x3
+2d_double_emulsion_yf1       0.3                  # Optional: fraction y1
+2d_double_emulsion_yf2       0.7                  # Optional: fraction y2
+</pre></div>
+</div>
+<figure class="align-right" style="width: 30%">
+<img alt="Ternary 2-dimensional block emulsion" src="../_images/ternary_2d_double_emulsion.svg" />
+</figure>
+<p>This initialises two central blocks of composition <span class="math notranslate nohighlight">\(C_1\)</span> and <span class="math notranslate nohighlight">\(C_2\)</span>
+surrounded by <span class="math notranslate nohighlight">\(C_3\)</span>. The positions of the ‘cuts’ are controlled by five
+optional parameters, which are fractions of the system length in the relevant
+dimension; the default values are shown above.</p>
+<p>It is expected that the <span class="math notranslate nohighlight">\(z\)</span>-dimension will have extent <span class="math notranslate nohighlight">\(L_z = 1\)</span>,
+but it is not enforced; the initialisation will be uniform in <span class="math notranslate nohighlight">\(z\)</span>.</p>
+</section>
+<section id="double-droplet">
+<h3><span class="section-number">3.4.1.2. </span>Double droplet<a class="headerlink" href="#double-droplet" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ternary_initialisation       2d_double_drop      # Initialisation
+ternary_2d_drop1_radius      2.0                 # radius for C_1 drop
+ternary_2d_drop1_centre      2.0_1.5             # centre for C_1 drop
+ternary_2d_drop2_radius      2.5                 # radius for C_2 drop
+ternary_2d_drop2_centre      4.0_2.0             # centre for C_2 drop
+</pre></div>
+</div>
+<figure class="align-right" style="width: 30%">
+<img alt="Ternary 2-dimensional droplet emulsion" src="../_images/ternary_2d_double_droplet.svg" />
+</figure>
+<p>This is a variation of the above using instead of rectangular blocks,
+circular droplets. All the parameters specifying the position and the
+radii of the two drops must be specified and are in absolute lattice
+units.</p>
+<p>Drop 1 has composition <span class="math notranslate nohighlight">\(C_1\)</span> and drop 2 has composition <span class="math notranslate nohighlight">\(C_2\)</span>,
+while the background is <span class="math notranslate nohighlight">\(C_3\)</span>. If the drops overlap, composition
+<span class="math notranslate nohighlight">\(C_2\)</span> will be favoured.</p>
+<p>It is expected that <span class="math notranslate nohighlight">\(L_z = 1\)</span>, although not enforced. If <span class="math notranslate nohighlight">\(L_z &gt; 1\)</span>,
+cylinders will result.</p>
+</section>
+<section id="lens-in-two-dimensions">
+<h3><span class="section-number">3.4.1.3. </span>Lens in two dimensions<a class="headerlink" href="#lens-in-two-dimensions" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ternary_initialisation     2d_lens                #
+ternary_2d_lens_centre     16.0_16.0              # Required: centre (x0, y0)
+ternary_2d_lens_radius     4.0                    # Required: radius
+</pre></div>
+</div>
+<figure class="align-right" style="width: 30%">
+<img alt="Ternary 2-dimensional lens configuration" src="../_images/ternary_2d_lens.svg" />
+</figure>
+<p>This initialises a circular droplet of phase <span class="math notranslate nohighlight">\(C_3\)</span> with its centre at the
+specified position (absolute coordinates) and with given radius. The horizontal
+interface between <span class="math notranslate nohighlight">\(C_1\)</span> and <span class="math notranslate nohighlight">\(C_2\)</span>
+is always at <span class="math notranslate nohighlight">\(L_y/2\)</span>. Such an initial condition, upon relaxation, should
+give rise to a lens shape depending on the equilibrium contact angles selected.</p>
+<p>Again, it is expected that the <span class="math notranslate nohighlight">\(z\)</span>-dimension will have extent
+<span class="math notranslate nohighlight">\(L_z = 1\)</span>,
+but it is not enforced; the initialisation will be uniform in <span class="math notranslate nohighlight">\(z\)</span>.</p>
+</section>
+<section id="t-shape-in-two-dimensions">
+<h3><span class="section-number">3.4.1.4. </span>T-shape in two dimensions<a class="headerlink" href="#t-shape-in-two-dimensions" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ternary_initialisation   2d_tee                  # initialisation
+ternary_2d_tee_xf1       0.50                    # optional: fraction of L_x
+ternary_2d_tee yf1       0.33                    # optional: fraction of L_y
+</pre></div>
+</div>
+<figure class="align-right" style="width: 35%">
+<img alt="Ternary 2-dimensional T-shaped configuration" src="../_images/ternary_2d_tee.svg" />
+</figure>
+<p>Three rectangular blocks are initialised with sharp interfaces forming
+an inverted ‘T’-shape. The default positions of the interfaces are
+shown above, with the optional parameters specifying the fractional
+position of the vertical and horizontal interfaces.
+The default parameters give roughly equal areas of the three components
+in a square system with disposition as shown in the diagram.</p>
+<p>This initialisation can be useful in, for example, assessing the wetting
+angles formed at solid boundaries at each side of the box.</p>
+</section>
+</section>
+<section id="three-dimensions">
+<h2><span class="section-number">3.4.2. </span>Three dimensions<a class="headerlink" href="#three-dimensions" title="Link to this heading">¶</a></h2>
+<p>Details on three-dimensional configurations are pending.</p>
+</section>
+<section id="three-phase-configuration-from-file">
+<h2><span class="section-number">3.4.3. </span>Three-phase configuration from file<a class="headerlink" href="#three-phase-configuration-from-file" title="Link to this heading">¶</a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ternary_initialisation      from_file        # Request from single file
+ternary_file_stub           ternary.init     # This is the default
+</pre></div>
+</div>
+<p>Arbitrary composition fields may be supplied from file of appropriate
+format. This file must contain exactly two scalar fields <span class="math notranslate nohighlight">\(\phi\)</span>
+and <span class="math notranslate nohighlight">\(\psi\)</span> (<span class="math notranslate nohighlight">\(\rho\)</span> does not appear and is dealt with
+via the lattice Boltzmann distributions).</p>
+<p>The file stub name can be set with the key <code class="docutils literal notranslate"><span class="pre">ternary_file_stub</span></code>. Other
+I/O parameters are currently dealt with via keys prefixed <code class="docutils literal notranslate"><span class="pre">phi_</span></code>.
+See sections on I/O for details.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputs/index.html">2. Input File</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. Initial Conditions</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fluid.html">3.1. Fluid initial conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html">3.2. Initial composition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html">3.3. Liquid crystal order</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.4. Three-phase model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/initial/three-phase.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>5.4. Colloid Postprocessing &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=92945a19" />
+    <script src="../../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="5.5. Lees Edwards BCs" href="../lees-edwards/lees-edwards.html" />
+    <link rel="prev" title="5.3. Liquid Crystal Output" href="../liquid-crystal/liquid-crystal.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="colloid-postprocessing">
+<h1><span class="section-number">5.4. </span>Colloid Postprocessing<a class="headerlink" href="#colloid-postprocessing" title="Link to this heading">¶</a></h1>
+<nav class="contents local" id="some-details-of-how-to-visualise-colloid-data">
+<p class="topic-title">Some details of how to visualise colloid data</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#colloid-output-formats" id="id1">Colloid output formats</a></p></li>
+<li><p><a class="reference internal" href="#visualising-colloid-positions" id="id2">Visualising colloid positions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#generating-a-csv-file" id="id3">Generating a CSV file</a></p></li>
+<li><p><a class="reference internal" href="#viewing-the-positions-in-isolation" id="id4">Viewing the positions in isolation</a></p></li>
+<li><p><a class="reference internal" href="#adding-lattice-information" id="id5">Adding lattice information</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="colloid-output-formats">
+<h2><span class="section-number">5.4.1. </span>Colloid output formats<a class="headerlink" href="#colloid-output-formats" title="Link to this heading">¶</a></h2>
+<p>Colloid output can be either in ASCII or raw binary format. A simple
+example can be found at <code class="docutils literal notranslate"><span class="pre">docs/tutorial/colloid-test1</span></code>. Copy the
+input file to a suitable location with name <code class="docutils literal notranslate"><span class="pre">input</span></code> and run the code:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ ./Ludwig.exe
+...
+</pre></div>
+</div>
+<p>A single colloid configuration in ASCII format should be generated at
+the end of this short run of 1000 time steps with name
+<code class="docutils literal notranslate"><span class="pre">config.cds00001000.001-001</span></code>. The file can be inspected
+with a suitable utility.</p>
+<p>These files are used for the purposes of restarting the computation,
+but are not particularly convenient for visualisation. An extra
+post-processing step is typically required.</p>
+</section>
+<section id="visualising-colloid-positions">
+<h2><span class="section-number">5.4.2. </span>Visualising colloid positions<a class="headerlink" href="#visualising-colloid-positions" title="Link to this heading">¶</a></h2>
+<section id="generating-a-csv-file">
+<h3><span class="section-number">5.4.2.1. </span>Generating a CSV file<a class="headerlink" href="#generating-a-csv-file" title="Link to this heading">¶</a></h3>
+<p>One way to manipulate the colloid data to produce a format suitable for
+visualisation is to use the <code class="docutils literal notranslate"><span class="pre">extract_colloids</span></code> utility found in the
+<code class="docutils literal notranslate"><span class="pre">util</span></code> directory. This will reform the output file (either ASCII or
+binary) to a comma-separated-values (CSV) file. In its most simple
+form:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ ./extract_colloids config.cds00001000.001-001
+...
+Wrote 10 colloids to colloids-00001000.csv
+</pre></div>
+</div>
+<p>This CSV file holds (by default) the position and velocity of each
+particle.</p>
+</section>
+<section id="viewing-the-positions-in-isolation">
+<h3><span class="section-number">5.4.2.2. </span>Viewing the positions in isolation<a class="headerlink" href="#viewing-the-positions-in-isolation" title="Link to this heading">¶</a></h3>
+<p>The new CSV file can be read into, e.g., Paraview.</p>
+<ol class="arabic simple">
+<li><p>Open the <code class="docutils literal notranslate"><span class="pre">colloids-00001000.csv</span></code> file and read in using the CSV reader.
+(This will open a “spreadsheet” view in Paraview, which can be dismissed.)</p></li>
+<li><p>The first operation to perform is to add a <code class="docutils literal notranslate"><span class="pre">TableToPoints</span></code> filter
+(<code class="docutils literal notranslate"><span class="pre">Filters-&gt;Alphabetical-&gt;TableToPoints</span></code> from the pull-down menus).</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">Properties</span></code> section of <code class="docutils literal notranslate"><span class="pre">TableToPoints</span></code> set the <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">Column</span></code>
+to <code class="docutils literal notranslate"><span class="pre">x</span></code> from the pull-down menu, and likewise for <code class="docutils literal notranslate"><span class="pre">Y</span></code> and <code class="docutils literal notranslate"><span class="pre">Z</span></code>.
+This associates the coordinates in the output data with the relevant
+columns in the CSV data.</p></li>
+<li><p>We will represent each colloid with a sphere. Add a <code class="docutils literal notranslate"><span class="pre">Glyph</span></code> filter to
+the output of <code class="docutils literal notranslate"><span class="pre">TableToPoints</span></code>. In the <code class="docutils literal notranslate"><span class="pre">Glyph</span></code> properties:
+for <code class="docutils literal notranslate"><span class="pre">Glyph</span> <span class="pre">Source</span></code> select <code class="docutils literal notranslate"><span class="pre">Sphere</span></code> from the pull-down menu;
+for <code class="docutils literal notranslate"><span class="pre">Scale</span></code> select <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">scalae</span> <span class="pre">array</span></code>;
+from the <code class="docutils literal notranslate"><span class="pre">Masking</span></code> section, select <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">points</span></code> for <code class="docutils literal notranslate"><span class="pre">Glyph</span> <span class="pre">mode</span></code>.</p></li>
+</ol>
+<p>This should provide a very simple picture of the relative positions of
+the colloids. The pipeline is set out below.</p>
+<figure class="align-center" style="width: 80%">
+<img alt="Paraview pipeline including TableToPoints filter" src="../../_images/pipeline1.png" />
+</figure>
+</section>
+<section id="adding-lattice-information">
+<h3><span class="section-number">5.4.2.3. </span>Adding lattice information<a class="headerlink" href="#adding-lattice-information" title="Link to this heading">¶</a></h3>
+<p>This simple picture does not contain any information about the size of
+the system, or the associated lattice quantities. This is most simply
+done by reading one of the associated lattice quantities produced at
+the same time (in this case the density and the velocity are
+available). This will automatically set the extents of the system
+in each co-ordinate direction.</p>
+<p>One should then set the <code class="docutils literal notranslate"><span class="pre">Scale</span> <span class="pre">factor</span></code> in the <code class="docutils literal notranslate"><span class="pre">Glyph</span></code> properaties
+to the appropriate colloid size (in this example, the radius is 2.3
+lattice units).</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inputs/index.html">2. Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">5. Tutorial guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../poiseuille-flow/simple-flow.html">5.1. Poisseuille Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simple-spinodal/spinodal.html">5.2. Spinodal Decomposition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../liquid-crystal/liquid-crystal.html">5.3. Liquid Crystal Output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.4. Colloid Postprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lees-edwards/lees-edwards.html">5.5. Lees Edwards BCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../electrokinetics/electrokinetics.html">5.6. Electrokinetics</a></li>
+</ul>
+</li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../../_sources/tutorials/colloid-postprocessing/colloid.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

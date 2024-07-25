@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.11. Force on the fluid &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script src="../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.12. Parallelism" href="parallel.html" />
+    <link rel="prev" title="2.10. Viscosity Models" href="visc.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="force-on-the-fluid">
+<h1><span class="section-number">2.11. </span>Force on the fluid<a class="headerlink" href="#force-on-the-fluid" title="Link to this heading">¶</a></h1>
+<p>Forces on the fluid fall into a number of categories which are discussed
+in this section.</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="body-forces">
+<h2><span class="section-number">2.11.1. </span>Body forces<a class="headerlink" href="#body-forces" title="Link to this heading">¶</a></h2>
+<p>The momentum equation may include a term which is a local body force
+density. The origin of such a force will depend on context, but may
+include uniform external forces, or local forces arising
+from the thermodynamic sector. An example of the former would be
+gravity, while an example of the latter would include bending forces
+at the interface arising from interfacial tension in the case of a
+symmetric binary fluid.</p>
+</section>
+<section id="constant-body-forces">
+<h2><span class="section-number">2.11.2. </span>Constant body forces<a class="headerlink" href="#constant-body-forces" title="Link to this heading">¶</a></h2>
+<p>If a constant body force density on the fluid is required, this may be
+included via:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>force fx_fy_fz
+</pre></div>
+</div>
+<p>where the three components are defined in the usual way. This force density
+is applied per fluid site per time step, so there must be some
+counter-balancing mechanism to prevent the fluid accelerating
+indefinitely. This counter-balancing force might be provided by,
+e.g., drag at external walls.</p>
+</section>
+<section id="local-forces-from-the-thermodynamic-sector">
+<h2><span class="section-number">2.11.3. </span>Local forces from the thermodynamic sector<a class="headerlink" href="#local-forces-from-the-thermodynamic-sector" title="Link to this heading">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>As of version 0.19.0 the input key switches <code class="docutils literal notranslate"><span class="pre">fd_force_divergence</span></code> and
+<code class="docutils literal notranslate"><span class="pre">fe_use_stress_divergence</span></code> have been replaced by those described
+below. If the keys are present in the input, an error will occur;
+the old key value pairs should be replaced with the corresponding
+new single key <code class="docutils literal notranslate"><span class="pre">fe_force_method</span></code>.</p>
+</div>
+<p>The choice of free energy determines the form of chemical potential
+(and analogous quantities for more complex order parameters), and
+the form of the thermodynamic stress exerted locally on the fluid.
+There are a number of ways to implement how the force is computed
+and how it is applied to the fluid.</p>
+<p>The list of available keys is as follows. Not all choices are
+relevant for all free energy selections. See the selections
+below for further details.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_force_method          no_force
+fe_force_method          stress_divergence
+fe_force_method          phi_gradmu
+fe_force_method          phi_gradmu_correction
+fe_force_method          relaxation_symmetric
+fe_force_method          relaxation_antisymmetric
+</pre></div>
+</div>
+<section id="generic-cases">
+<h3><span class="section-number">2.11.3.1. </span>Generic cases<a class="headerlink" href="#generic-cases" title="Link to this heading">¶</a></h3>
+<p>All free energies define a “thermodynamic” stress <span class="math notranslate nohighlight">\(P_{\alpha\beta}\)</span>
+which acts on the fluid. There are a number of methods to implement the
+resulting force on the fluid. The first is to compute the divergence of
+the stress via a finite difference expression, which results in a local
+body force density</p>
+<div class="math notranslate nohighlight">
+\[f_\alpha (\mathbf{r}; t) = \partial_\beta P_{\alpha\beta}.\]</div>
+<p>The local body force density then enters the hydrodynamics at the lattice
+Boltzmann collision stage. This method has the advantage that it is
+by construction a divergence in the finite difference picture, and
+so momentum is conserved both locally, and therefore globally.</p>
+<p>A second approach is to add the thermodynamic stress to the equilibrium
+stress <span class="math notranslate nohighlight">\(S_{\alpha\beta}^{eq}\)</span> at the lattice Boltzmann collision
+stage:</p>
+<div class="math notranslate nohighlight">
+\[S_{\alpha\beta}^{eq} = u_\alpha u_\beta + P_{\alpha\beta}.\]</div>
+<p>The current stress is then relaxed toward the equilibrium at a rate
+determined by the viscosity, and we refer to this as the relaxation
+method. It requires that the thermodynamic contribution to the stress
+is symmetric. The relaxation approach results in an effective
+divergence of a stress, which again conserves momentum.</p>
+<p>These options are enabled by selections <code class="docutils literal notranslate"><span class="pre">stress_divergence</span></code> and
+<code class="docutils literal notranslate"><span class="pre">relaxation_symmetric</span></code>, respectively.
+If the option <code class="docutils literal notranslate"><span class="pre">no_force</span></code> is selected, no force from the thermodynamic
+sector will enter the hydrodynamics. This differs from setting no
+hydrodynamics at all in that with <code class="docutils literal notranslate"><span class="pre">no_force</span></code>, forces may still enter
+the hydrodynamics from elsewhere (e.g., from external gravity).</p>
+</section>
+<section id="scalar-order-parameters-and-cahn-hilliard">
+<h3><span class="section-number">2.11.3.2. </span>Scalar order parameters and Cahn Hilliard<a class="headerlink" href="#scalar-order-parameters-and-cahn-hilliard" title="Link to this heading">¶</a></h3>
+<p>For scalar order parameters <span class="math notranslate nohighlight">\(\phi(\mathbf{r}; t)\)</span> with Cahn-Hilliard
+dynamics such as the composition in the symmetric free energy, it is
+possible to relate the local body force on the fluid to the gradient of
+the chemical potential <span class="math notranslate nohighlight">\(\mu(\mathbf{r};t)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[f_\alpha (\mathbf{r};t) =
+- \phi(\mathbf{r};t) \partial_\alpha\mu(\mathbf{r};t).\]</div>
+<p>Formally, this expression is the same as the divergence of the corresponding
+stress (as seen above). However, in the finite difference picture, their
+discrete analogues do not behave in the same way. Specifically, the
+gradient of the chemical potential is not a divergence and therefore
+does not, by construction, result in a net force of zero and so
+does not conserve momentum.</p>
+<p>However, the calculation does have the advantage that it admits an
+equilibrium. This is related to the fact that a consistent finite
+difference approach to the body force, and the diffusive fluxes
+in the Cahn-Hilliard equation <span class="math notranslate nohighlight">\(-M\partial_\alpha\mu(\mathbf{r};t)\)</span>
+where <span class="math notranslate nohighlight">\(M\)</span> is a uniform mobility, can be adopted. In this way,
+with a uniform chemical potential both the force in momentum equation
+and diffusive fluxes in the Cahn-Hilliard equation are simultaneously
+zero. This admits a state
+of no flow where the total flux in the Cahn-Hilliard equation</p>
+<div class="math notranslate nohighlight">
+\[\phi u_\alpha + M \partial_\alpha \mu = 0.\]</div>
+<p>This is in contrast to the computation of the force based
+on <span class="math notranslate nohighlight">\(\partial_\beta P_{\alpha\beta}\)</span>, where a uniform chemical
+does not correspond to zero force in the finite difference picture.
+This often results in the generation of residual flows
+(“spurious currents”) in situations where an equilibrium might be
+expected.</p>
+<p>For scalar order parameters one can choose</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_force_method          phi_gradmu
+fe_force_method          phi_gradmu_correction
+</pre></div>
+</div>
+<p>The first option computes and applies the local force
+<span class="math notranslate nohighlight">\(-\phi(\mathbf{r};t) \partial_\alpha \mu(\mathbf{r};t)\)</span>
+without additional action.
+The second option computes the same force, but then applies a correction
+at every time step based on the current global force on the fluid. Any net
+force is subtracted uniformly from fluid sites to enforce global
+conservation of momentum before the force is applied.</p>
+</section>
+<section id="external-chemical-potential-gradient">
+<h3><span class="section-number">2.11.3.3. </span>External chemical potential gradient<a class="headerlink" href="#external-chemical-potential-gradient" title="Link to this heading">¶</a></h3>
+<p>For Cahn-Hilliard dynamics, it is also possible to add a fixed external
+chemical potential gradient <span class="math notranslate nohighlight">\(\partial_\alpha \mu^\textrm{ex}\)</span>
+which generates an additional diffusive flux</p>
+<div class="math notranslate nohighlight">
+\[\partial_t \phi + \partial_\alpha \phi u_\alpha =
+-\partial_\alpha (M\partial_\alpha \mu + M \partial_\alpha \mu^\textrm{ex}),\]</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the mobility.
+The addition chemical potential gradient also leads to a contribution to the
+body force on the fluid which
+is locally <span class="math notranslate nohighlight">\(-\phi \partial_\alpha \mu^\textrm{ex}\)</span>. The external
+potential chemical gradient is a vector which may be defined in the
+input file as, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>grad_mu                  0.00001_0.0_0.0   # x-direction only
+</pre></div>
+</div>
+<p>The additional force on the fluid may lead to a permanent acceleration
+of the fluid, so it may make sense to use this option only when walls
+are present, or some other mechanism is present to limit fluid motion.</p>
+<p>Note this option is independent of the choice of <code class="docutils literal notranslate"><span class="pre">fe_force_method</span></code>.</p>
+</section>
+<section id="vector-order-parameter">
+<h3><span class="section-number">2.11.3.4. </span>Vector order parameter<a class="headerlink" href="#vector-order-parameter" title="Link to this heading">¶</a></h3>
+<p>For vector order parameters involving the Leslie-Erickson equation,
+there are currently no options for <code class="docutils literal notranslate"><span class="pre">fe_force_method</span></code>: the stress
+divergence method is the default.</p>
+</section>
+<section id="forces-for-tensor-order-parameter">
+<h3><span class="section-number">2.11.3.5. </span>Forces for tensor order parameter<a class="headerlink" href="#forces-for-tensor-order-parameter" title="Link to this heading">¶</a></h3>
+<p>The liquid crystal tensor order parameter <span class="math notranslate nohighlight">\(Q_{\alpha\beta}\)</span> gives
+rise to a stress which may be written in three parts:</p>
+<div class="math notranslate nohighlight">
+\[P_{\alpha\beta} =
+P^\mathrm{symm}_{\alpha\beta} + P^\mathrm{anti}_{\alpha\beta}
+- \partial_\alpha Q_{\pi\nu}
+  \frac{\delta \cal{F}}{\delta \partial_\beta Q_{\pi\nu}}.\]</div>
+<p>Here the first two parts are related to the molecular field
+<span class="math notranslate nohighlight">\(H_{\alpha\beta}\)</span> and are symmetric and antisymmetric
+contributions, respectively. The third part, related
+to the functional derivative of the free energy density with
+respect to the order parameter gradient, is symmetric.
+In this case, the stress divergence may be computed to give a body
+force. However, as the stress relaxation requires a symmetric stress,
+only <span class="math notranslate nohighlight">\(P^\mathrm{symm}_{\alpha\beta}\)</span> and the third term may
+enter. The remaining
+antisymmetric must be treated via the divergence approach
+<span class="math notranslate nohighlight">\(\partial_\beta P^\mathrm{anti}_{\alpha\beta}\)</span>.</p>
+<p>For the bare liquid crystal free energy there is currently no
+implementation to compute the force via a term of the form</p>
+<div class="math notranslate nohighlight">
+\[f_\gamma(\mathbf{r};t) =
+-H_{\alpha\beta}(\mathbf{r};t)\partial_\gamma Q_{\alpha\beta}(\mathbf{r};t),\]</div>
+<p>which is the expression analogous to that involving the chemical potential
+in the scalar order parameter case.</p>
+<p>Relevant choices of <code class="docutils literal notranslate"><span class="pre">fe_force_method</span></code> for the bare liquid crystal
+free energy are therefore:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_force_method          stress_divergence
+fe_force_method          relaxation_antisymmetric
+</pre></div>
+</div>
+<p>For the liquid crystal emulsion free energy there is both a chemical
+potential and a molecular field. Again, the stress from the
+thermodynamic sector may be decomposed into three parts</p>
+<div class="math notranslate nohighlight">
+\[P_{\alpha\beta} = P^\mathrm{symm}_{\alpha\beta}
+                + P^\mathrm{anti}_{\alpha\beta}
+                + P^\mathrm{drop}_{\alpha\beta}\]</div>
+<p>where the symmetric and antisymmetric parts are treated in the same
+way as the bare liquid crystal case (the same input keys are
+relevant).</p>
+<p>The <em>additional</em> contribution <span class="math notranslate nohighlight">\(P^\mathrm{drop}_{\alpha\beta}\)</span>
+arising from the functional derivative of the free energy, gives
+rise to a force:</p>
+<div class="math notranslate nohighlight">
+\[f_\alpha = - H_{\pi\nu} \partial_\alpha Q_{\pi\nu}
+           - \phi \partial_\alpha \mu.\]</div>
+<p>This is always computed separately and subject to a correction to
+conserve momentum.</p>
+</section>
+<section id="forces-in-the-electrokinetic-picture">
+<h3><span class="section-number">2.11.3.6. </span>Forces in the electrokinetic picture<a class="headerlink" href="#forces-in-the-electrokinetic-picture" title="Link to this heading">¶</a></h3>
+<p>For free energies involving electrokinetics and the Nernst-Planck
+equation, there are two available options:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_force_method           stress_divergence
+fe_force_method           phi_gradmu_correction
+</pre></div>
+</div>
+<p>The details of the computation in this case a slightly different to
+other free energies (the <code class="docutils literal notranslate"><span class="pre">phi</span></code> in <code class="docutils literal notranslate"><span class="pre">phi_gradmu_correction</span></code> is a
+slight misnomer in the context of electrokinetics).</p>
+</section>
+<section id="force-near-stationary-solid-objects-walls">
+<h3><span class="section-number">2.11.3.7. </span>Force near stationary solid objects (walls)<a class="headerlink" href="#force-near-stationary-solid-objects-walls" title="Link to this heading">¶</a></h3>
+<p>The following methods are available in the case of a static wall:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_force_method           no_force
+fe_force_method           stress_divergence
+fe_force_method           phi_gradmu
+fe_force_method           phi_gradmu_correction
+</pre></div>
+</div>
+<p>In the stress divergence approach, the stress acting on the wall does
+is accounted for as momentum lost by the fluid. If using the chemical
+potential, the approximation is made that the normal component of
+the gradient of the chemical potential at the wall is zero. Either
+the <code class="docutils literal notranslate"><span class="pre">phi_gradmu</span></code> or the <code class="docutils literal notranslate"><span class="pre">phi_gramu_correction</span></code> with no momentum
+conservation or with the correction to conserve momentum, respectively.</p>
+</section>
+<section id="force-near-moving-solid-objects">
+<h3><span class="section-number">2.11.3.8. </span>Force near moving solid objects<a class="headerlink" href="#force-near-moving-solid-objects" title="Link to this heading">¶</a></h3>
+<p>For moving colloids, the following methods are available:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fe_force_method           no_force
+fe_force_method           stress_divergence
+fe_force_method           phi_gradmu_correction
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">no_force</span></code> there will be no force on the colloids from the
+thermodynamic sector. In the <code class="docutils literal notranslate"><span class="pre">stress_divergence</span></code> case, the net
+force on the colloid arising from the divergence of the thermodynamic
+stress is computed by accumulating the sum of the stress on the
+solid-fluid interfaces that make up the colloid at any given instant.
+This gives a body force on each colloid which goes into the dynamic
+update of their velocities. This conserves momentum.</p>
+<p>In contrast, if the gradient of the chemical potential is used, there
+is no direct force on the colloids from the thermodynamic sector. Any
+influence comes indirectly through the hydrodynamic boundary conditions
+at the colloid surface in response to the local fluid velocities.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openbc.html">2.8. Open boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.11. Force on the fluid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/inputs/force.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

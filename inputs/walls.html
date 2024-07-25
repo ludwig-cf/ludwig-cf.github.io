@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.6. Plane walls &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script src="../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.7. Porous Media" href="porous.html" />
+    <link rel="prev" title="2.5. Colloids" href="colloid.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="plane-walls">
+<h1><span class="section-number">2.6. </span>Plane walls<a class="headerlink" href="#plane-walls" title="Link to this heading">¶</a></h1>
+<nav class="contents local" id="this-section-contains-some-details-of-plane-walls-which-differ-from-general-porous-media-in-that-they-support-presence-of-colloids">
+<p class="topic-title">This section contains some details of plane walls, which
+           differ from general porous media in that they support
+           presence of colloids.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#plane-boundary-walls" id="id3">Plane boundary walls</a></p>
+<ul>
+<li><p><a class="reference internal" href="#moving-wall" id="id4">Moving wall</a></p></li>
+<li><p><a class="reference internal" href="#slip-and-no-slip" id="id5">Slip and no-slip</a></p></li>
+<li><p><a class="reference internal" href="#colloids-and-plane-walls" id="id6">Colloids and plane walls</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#wetting-at-plane-boundary-walls" id="id7">Wetting at plane boundary walls</a></p>
+<ul>
+<li><p><a class="reference internal" href="#wetting-for-the-symmetric-free-energy" id="id8">Wetting for the symmetric free energy</a></p></li>
+<li><p><a class="reference internal" href="#wetting-for-the-ternary-free-energy" id="id9">Wetting for the ternary free energy</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#anchoring-for-liquid-crystals-at-plane-walls" id="id10">Anchoring for liquid crystals at plane walls</a></p>
+<ul>
+<li><p><a class="reference internal" href="#normal-or-homoetropic-anchoring-at-walls" id="id11">Normal or homoetropic anchoring at walls</a></p></li>
+<li><p><a class="reference internal" href="#planar-or-degenerate-anchoring-at-walls" id="id12">Planar (or degenerate) anchoring at walls</a></p></li>
+<li><p><a class="reference internal" href="#fixed-anchoring-direction-at-walls" id="id13">Fixed anchoring direction at walls</a></p></li>
+<li><p><a class="reference internal" href="#gradient-computation-for-anchoring-at-walls" id="id14">Gradient computation for anchoring at walls</a></p></li>
+<li><p><a class="reference internal" href="#anchoring-with-both-walls-and-colloids" id="id15">Anchoring with both walls and colloids</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="plane-boundary-walls">
+<h2><span class="section-number">2.6.1. </span>Plane boundary walls<a class="headerlink" href="#plane-boundary-walls" title="Link to this heading">¶</a></h2>
+<p>As a convenience, it is possible to specify that sets of plane walls
+are present in the system in one or more co-ordinate directions. For
+example, a set of walls in the <span class="math notranslate nohighlight">\(y-z\)</span> plane are placed at each end
+of the system in positions
+<span class="math notranslate nohighlight">\(x = 0.5\Delta x\)</span> and <span class="math notranslate nohighlight">\(x = L + 0.5\Delta x\)</span> if the input
+file contains</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_walls       1_0_0
+</pre></div>
+</div>
+<p>The extent of the system <span class="math notranslate nohighlight">\(L_x\)</span> is then just the number of points in
+the x-direction as specified by key <code class="docutils literal notranslate"><span class="pre">size</span></code>. By default, walls have
+no-slip boundary conditions implemented via bounce-back on links.</p>
+<p>It is usual, although not strictly necessary, to declare that the relevant
+direction is not periodic. It should not make
+any difference to the result of the computation.</p>
+<p>Walls may be specified in two dimensions to form a rectangular
+“duct”, or in all three dimensions to form an enclosed box.
+For example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_walls       1_1_0     # open in z-direction
+boundary_walls       1_1_1     # enclosed box
+</pre></div>
+</div>
+<section id="moving-wall">
+<h3><span class="section-number">2.6.1.1. </span>Moving wall<a class="headerlink" href="#moving-wall" title="Link to this heading">¶</a></h3>
+<p>If one set of walls (only) is present, is possible to specify
+a boundary speed (in the positive <span class="math notranslate nohighlight">\(x\)</span>-direction) which will impart
+momemtum to the fluid. Use, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_walls          0_0_1
+boundary_speed_bottom  -0.001
+boundary_speed_top     +0.001
+</pre></div>
+</div>
+<p>will set the corresponding speed of the wall <span class="math notranslate nohighlight">\(u_x\)</span> at the lower
+at upper ends of the system,
+respectively. Note that these speeds should be selected with reference
+to the Mach number constraint <span class="math notranslate nohighlight">\(u &lt; c_s\)</span>. Momentum transfer here
+is again implemented via a no-slip condition via bounce-back on links.</p>
+<p>Note the wall speed has only one non-zero component <span class="math notranslate nohighlight">\(u_x\)</span>, which
+should be tangential to the place of the wall (i.e., moving walls
+should be in either <span class="math notranslate nohighlight">\(y\)</span> or <span class="math notranslate nohighlight">\(z\)</span> dimensions).
+It is erroneous to specify a moving wall if the wall is in the
+the <span class="math notranslate nohighlight">\(x\)</span> dimension.</p>
+</section>
+<section id="slip-and-no-slip">
+<h3><span class="section-number">2.6.1.2. </span>Slip and no-slip<a class="headerlink" href="#slip-and-no-slip" title="Link to this heading">¶</a></h3>
+<p>It is possible to specify a linear combination of slip and no-slip
+conditions on a per-wall basis. The fraction of slip is specified.
+E.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_walls                    0_0_1
+boundary_walls_slip_active        yes
+boundary_walls_slip_fraction_bot  0.0_0.0_0.0
+boundary_walls_slip_fraction_top  0.0_0.0_1.0
+</pre></div>
+</div>
+<p>gives a no-slip condition at the lower wall and a free-slip condition
+at the top wall (walls in the <span class="math notranslate nohighlight">\(x-y\)</span> plane). Values of the slip
+<span class="math notranslate nohighlight">\(s\)</span> must satisfy <span class="math notranslate nohighlight">\(0 \leq s \leq 1\)</span> for all six faces.
+If slip is active, no moving walls can be used.</p>
+</section>
+<section id="colloids-and-plane-walls">
+<h3><span class="section-number">2.6.1.3. </span>Colloids and plane walls<a class="headerlink" href="#colloids-and-plane-walls" title="Link to this heading">¶</a></h3>
+<p>Systems with colloids and walls can be accommodated. To prevent colloids
+impinging on the plane walls, a lubrication correction can be added by
+setting</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>boundary_lubrication_rcnormal   0.25
+</pre></div>
+</div>
+<p>For surface-surface separations below this cut-off value specified in
+lattice units, a normal lubrication correction based on the analytical
+expression for the lubrication force between a sphere (of the appropriate
+hydrodynamic radius) and a plane wall is added to the force on
+the colloid.</p>
+<p>If the colloid is an ellipsoid, then the lubrication correction is based
+on the normal separation of the surface at closest approach, and the
+plane wall surface. The magnitude of the lubrication correction is
+determined as for a sphere of radius equal to the semi-major axis of
+the ellipsoid. There is no associated torque at the present time.</p>
+</section>
+</section>
+<section id="wetting-at-plane-boundary-walls">
+<h2><span class="section-number">2.6.2. </span>Wetting at plane boundary walls<a class="headerlink" href="#wetting-at-plane-boundary-walls" title="Link to this heading">¶</a></h2>
+<section id="wetting-for-the-symmetric-free-energy">
+<h3><span class="section-number">2.6.2.1. </span>Wetting for the symmetric free energy<a class="headerlink" href="#wetting-for-the-symmetric-free-energy" title="Link to this heading">¶</a></h3>
+<p>The presence of a surface free energy area density term</p>
+<div class="math notranslate nohighlight">
+\[f_s = {\scriptsize\frac{1}{2}} C \phi_s^2 + H \phi_s\]</div>
+<p>where <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(H\)</span> are uniform constants is available. This may
+be set is one of two ways. One may either set, explicitly, the value of
+one or both <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(H\)</span>, along with the other free energy
+parameters:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>symmetric_a        -0.00625     # A &lt; 0
+symmetric_b         0.00625     # B &gt; 0
+symmetric_kappa     0.004       # kappa &gt; 0
+symmetric_c         0.0         # Default value zero
+symmetric_h         0.002       # Default value zero
+</pre></div>
+</div>
+<p>Consider the case <span class="math notranslate nohighlight">\(C=0\)</span>. If <span class="math notranslate nohighlight">\(h = H\sqrt{1/\kappa B}\)</span>
+then the wetting angle will, in theory,
+satisfy</p>
+<div class="math notranslate nohighlight">
+\[\cos\theta = {\scriptsize\frac{1}{2}} \Big[-(1-h)^{3/2} + (1+h)^{3/2}\Big].\]</div>
+<p>The value of <span class="math notranslate nohighlight">\(h\)</span> must be such that
+<span class="math notranslate nohighlight">\(|h| &lt; (2\sqrt{3} - 3)^{1/2} \approx 0.68\)</span> to
+obtain a real wetting angle. From the free energy it can be seen that
+positive <span class="math notranslate nohighlight">\(H\)</span> will favour negative <span class="math notranslate nohighlight">\(\phi\)</span> at the solid surface,
+and vice-versa. In terms of angle, positive <span class="math notranslate nohighlight">\(H\)</span> gives rise to
+<span class="math notranslate nohighlight">\(0 \leq \theta \leq 90\)</span>; negative <span class="math notranslate nohighlight">\(H\)</span> gives rise to
+<span class="math notranslate nohighlight">\(90 \leq \theta \leq 180\)</span> (all degrees). Larger <span class="math notranslate nohighlight">\(|h|\)</span>
+will give rise to a situation where one phase or other completely wets
+the surface.</p>
+<p>Alternatively, on can set a desired wetting
+angle, which will cause the relevant value of <span class="math notranslate nohighlight">\(H\)</span> to be determined
+internally (again, <span class="math notranslate nohighlight">\(C=0\)</span>). E.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>symmetric_theta    45.0         # Angle in degrees.
+</pre></div>
+</div>
+<p>The sign of <span class="math notranslate nohighlight">\(H\)</span> will be set to reflect the sign of <span class="math notranslate nohighlight">\(\cos\theta\)</span>.</p>
+<p>If non-uniform values of <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(H\)</span> are required, a porous
+media file must be prepared.</p>
+<p>The wetting is implemented <a class="reference internal" href="#desplat2001" id="id1"><span>[Desplat2001]</span></a>
+by adjusting the gradient computation near the surface. This means</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fd_gradient_calculation 3d_27pt_solid
+</pre></div>
+</div>
+<p>is required.</p>
+<div role="list" class="citation-list">
+<div class="citation" id="desplat2001" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Desplat2001</a><span class="fn-bracket">]</span></span>
+<p>J.-C. Desplat, I. Pagonabarraga, and P. Bladon,
+A parallel lattice Boltzmann code for complex fluids,
+<em>Comput. Phys. Comm.</em> <strong>134</strong> 273-290 (2001).</p>
+</div>
+</div>
+</section>
+<section id="wetting-for-the-ternary-free-energy">
+<h3><span class="section-number">2.6.2.2. </span>Wetting for the ternary free energy<a class="headerlink" href="#wetting-for-the-ternary-free-energy" title="Link to this heading">¶</a></h3>
+<p>For the three phase fluid free energy, specify the interfacial width and
+interfacial tension parameters in the usual way:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ternary_alpha         1.0
+ternary_kappa1        0.01
+ternary_kappa2        0.02
+ternary_kappa3        0.05
+ternary_h1           -0.001
+ternary_h2           +0.002
+</pre></div>
+</div>
+<p>We allow the specification of two independent uniform surface wetting
+parameters <span class="math notranslate nohighlight">\(h_1\)</span> and <span class="math notranslate nohighlight">\(h_2\)</span> with the third being determined
+by the constraint</p>
+<div class="math notranslate nohighlight">
+\[\frac{h_1}{\kappa_1} + \frac{h_2}{\kappa_2} + \frac{h_3}{\kappa_3} = 0.\]</div>
+<figure class="align-right" style="width: 30%">
+<img alt="Ternary surface wetting contact angles" src="../_images/walls_wet_ternary.svg" />
+</figure>
+<p>There are then three contact angles <span class="math notranslate nohighlight">\(\theta_{12}\)</span>, <span class="math notranslate nohighlight">\(\theta_{23}\)</span>
+and <span class="math notranslate nohighlight">\(\theta_{31}\)</span>. These are illustrated in the diagram on the right
+where the rectangular box represents a solid surround.</p>
+<p>The contact angles depend on the interfacial and surface tensions as,
+following the notation of Semprebon 2016:</p>
+<div class="math notranslate nohighlight">
+\[\cos\theta_{ij} =
+\frac{(\alpha\kappa_i + 4h_i)^{3/2} - (\alpha\kappa_i - 4h_i)^{3/2}}
+     {2(\kappa_i + \kappa_j)(\alpha \kappa_i)^{1/2}}
+-
+\frac{(\alpha\kappa_j + 4h_j)^{3/2} - (\alpha\kappa_j - 4h_j)^{3/2}}
+     {2(\kappa_i + \kappa_j)(\alpha \kappa_j)^{1/2}}.\]</div>
+<p>The gradient computation must be one of</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fd_gradient_calculation     2d_ternary_solid
+fd_gradient_calculation     3d_ternary_solid
+</pre></div>
+</div>
+<p>for the three phase model with wetting in either two dimensions
+or three dimensions, as required.</p>
+</section>
+</section>
+<section id="anchoring-for-liquid-crystals-at-plane-walls">
+<h2><span class="section-number">2.6.3. </span>Anchoring for liquid crystals at plane walls<a class="headerlink" href="#anchoring-for-liquid-crystals-at-plane-walls" title="Link to this heading">¶</a></h2>
+<p>The preferred orientation of the liquid crystal director at a solid
+surface is usually referred to as the surface anchoring.
+For liquid crystal order there are three possibilities for anchoring
+conditions at a plane wall:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lc_anchoring_wall           fixed
+lc_anchoring_wall           planar
+lc_anchoring_wall           normal
+</pre></div>
+</div>
+<p>For all cases, the conidition applies at all sides of the system. It is
+not possible to have different coniditions at different walls at the
+moment.</p>
+<p>The liquid crystal anchoring boundary condition is implemented via the
+calculation of the order parameter gradients near the walls. We assume
+there is a surface free energy (density per unit area)</p>
+<div class="math notranslate nohighlight">
+\[f_s = f_s(Q_{\alpha\beta}, Q^0_{\alpha\beta})\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q_{\alpha\beta}\)</span> is adjacent fluid order parameter, and
+<span class="math notranslate nohighlight">\(Q^0_{\alpha\beta}\)</span> is some preferred order parameter at the
+surface determined by the type of anchoring.</p>
+<p>The boundary condition is derived from the Euler-Lagrange equation,
+and contains the gradient terms in the bulk free energy density and
+the surface free energy <span class="math notranslate nohighlight">\(f\)</span> and
+<span class="math notranslate nohighlight">\(f_s\)</span>, along with the unit outward normal at the surface
+<span class="math notranslate nohighlight">\(\hat{n}_\gamma\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\hat{n}_\gamma \frac{\partial f}{\partial Q_{\alpha\beta,\gamma}}
++ \frac{\partial f_s}{\partial Q_{\alpha\beta}} = 0.\]</div>
+<p>A suitable gradient computation must be selected (see below).</p>
+<p>Only the values above are valid (normal, planar, or fixed); any other value
+will generate a run time error. We consider the three cases in turn.</p>
+<section id="normal-or-homoetropic-anchoring-at-walls">
+<h3><span class="section-number">2.6.3.1. </span>Normal or homoetropic anchoring at walls<a class="headerlink" href="#normal-or-homoetropic-anchoring-at-walls" title="Link to this heading">¶</a></h3>
+<p>The preferred direction of the surface order here is, as the name suggests,
+normal to the surface. We can write the surface free energy density (per
+unit area):</p>
+<div class="math notranslate nohighlight">
+\[f_s = \textstyle{\frac{1}{2}} w_1 (Q_{\alpha\beta} - Q^0_{\alpha\beta})^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(w_1\)</span> is a constant, and <span class="math notranslate nohighlight">\(Q_{\alpha\beta}\)</span> is the local
+fluid order parameter. The preferred orientation is based on the
+unit outward normal at the relevant wall <span class="math notranslate nohighlight">\(\hat{n}_\gamma\)</span>, and is
+computed via the uniaxial approximation</p>
+<div class="math notranslate nohighlight">
+\[Q^0_{\alpha\beta} = \textstyle{\frac{1}{2}}
+                    A(3\hat{n}_\alpha \hat{n}_\beta - \delta_{\alpha\beta}).\]</div>
+<p>The value of <span class="math notranslate nohighlight">\(A\)</span> is dependent on the bulk free energy constant
+<span class="math notranslate nohighlight">\(\gamma\)</span> and is fixed by
+assuming <span class="math notranslate nohighlight">\(Q^0_{\alpha\beta}\)</span> minimes the bulk free energy.
+Note that the preferred outward normal where two or three walls meet
+at an edge or at a corner, is <span class="math notranslate nohighlight">\(45^\circ\)</span> outward (see example
+below).
+The full boundary condition for the order parameter gradient at the solid
+fluid boundary then contains the term</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial f_s}{\partial Q_{\alpha\beta}} =
+-w_1 (Q_{\alpha\beta} - Q^0_{\alpha\beta}).\]</div>
+<p>The relevant input key/value pairs are:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lc_wall_anchoring      normal      # anchoring
+lc_wall_anchoring_w1   0.01        # free energy parameter
+</pre></div>
+</div>
+<p>It can be appropriate to set the value of the free energy parameter
+in the context of the bulk fluid elastic constant, e.g., by considering
+the dimensionless group <span class="math notranslate nohighlight">\(w_1 / \kappa L\)</span>, where <span class="math notranslate nohighlight">\(L\)</span> is an
+appropriate length scale for the problem. An example is shown in
+the following illustration.</p>
+<figure class="align-center" style="width: 100%">
+<img alt="Example normal anchoring for a two-dimensional nematic" src="../_images/wall-anchor-normal.svg" />
+</figure>
+<p>The above results represent a two-dimensional nemetic in
+a square system of size <span class="math notranslate nohighlight">\(L^2\)</span> surrounded by plane walls
+(only the top half of
+the system is shown). An initial random nematic director
+configuration is allowed to relax with no hydrodynamics, and the
+resulting patterns are observed for the three different normal
+anchoring strengths shown. Note that the preferred angle in the
+corners is <span class="math notranslate nohighlight">\(45^\circ\)</span> outwards.</p>
+</section>
+<section id="planar-or-degenerate-anchoring-at-walls">
+<h3><span class="section-number">2.6.3.2. </span>Planar (or degenerate) anchoring at walls<a class="headerlink" href="#planar-or-degenerate-anchoring-at-walls" title="Link to this heading">¶</a></h3>
+<p>For planar anchoring, the preferred orientation is in the local tangent
+plane at the surface: this is a degenerate case as any orientation in
+the plane is energetically equivalent. An appropriate boundary
+condition is described by Fournier and Galatola <a class="reference internal" href="#fourniergalatola2005" id="id2"><span>[FournierGalatola2005]</span></a>,
+which we write as</p>
+<div class="math notranslate nohighlight">
+\[f_s = \textstyle{\frac{1}{2}}
+      w_1 (\tilde{Q}_{\alpha\beta} - \tilde{Q}^\perp_{\alpha\beta})^2
+    + \textstyle{\frac{1}{2}}
+      w_2 (\tilde{Q}^2 - S_0^2)^2.\]</div>
+<p>To compute this term we take the local fluid order parameter
+<span class="math notranslate nohighlight">\(Q_{\alpha\beta}\)</span>, form the quantity</p>
+<div class="math notranslate nohighlight">
+\[\tilde{Q} = Q_{\alpha\beta} + \textstyle{\frac{1}{2}} A \delta_{\alpha\beta}\]</div>
+<p>which is then projected onto the tangent plane via
+<span class="math notranslate nohighlight">\(\tilde{Q}^\perp_{\alpha\beta} = P_{\alpha\gamma} \tilde{Q}_{\gamma\sigma} P_{\sigma\beta}\)</span>
+with the local surface normal entering through
+<span class="math notranslate nohighlight">\(P_{\alpha\beta} = \delta_{\alpha\beta} - \hat{n}_\alpha \hat{n}_\beta\)</span>.
+The full boundary condition arising from the surface free energy contains
+the terms</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial f_s}{\partial Q_{\alpha\beta}} =
+- w_1(\tilde{Q}_{\alpha\beta} - \tilde{Q}^\perp_{\alpha\beta})
+- 2w_2(\tilde{Q}^2_{\alpha\beta} - S_0^2) \tilde{Q}_{\alpha\beta}.\]</div>
+<p>The term <span class="math notranslate nohighlight">\(S_0 = 3A/2\)</span>, with amplitude <span class="math notranslate nohighlight">\(A\)</span> as described
+above for normal anchoring.</p>
+<p>Relevant input parameters are:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lc_wall_anchoring      planar
+lc_wall_anchoring_w1   0.01        # both w1 and w2 must be present
+lc_wall_anchoring_w2   0.005
+</pre></div>
+</div>
+<p>For the same two-dimensional nematic example discussed for normal
+anchoring above, initialised with the same random configuration,
+the corresponding results for planar anchoring are:</p>
+<figure class="align-center" style="width: 100%">
+<img alt="Example planar anchoring for a two-dimensional nematic" src="../_images/wall-anchor-planar.svg" />
+</figure>
+<p>All simulations used <span class="math notranslate nohighlight">\(w_1 = w_2\)</span> (although experience suggests the
+value of <span class="math notranslate nohighlight">\(w_2\)</span> does not have a strong influence on the result).
+Note again that the preferred angle at the corners is at <span class="math notranslate nohighlight">\(45^\circ\)</span>
+(visible in the strong anchoring case on the right).</p>
+<div role="list" class="citation-list">
+<div class="citation" id="fourniergalatola2005" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">FournierGalatola2005</a><span class="fn-bracket">]</span></span>
+<p>J.-B. Fournier and P. Galatola, Modeling planar
+degenerate wetting and anchoring in nematic
+liquid crystals,
+<em>Europhys. Lett.</em> <strong>72</strong> 403-409 (2005).</p>
+</div>
+</div>
+</section>
+<section id="fixed-anchoring-direction-at-walls">
+<h3><span class="section-number">2.6.3.3. </span>Fixed anchoring direction at walls<a class="headerlink" href="#fixed-anchoring-direction-at-walls" title="Link to this heading">¶</a></h3>
+<p>Relevant input parameters are:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lc_anchoring_wall           fixed         # anchoring
+lc_anchoring_wall_w1        0.01          # free energy parameter
+lc_wall_fixed_orientation   1.0_0.0_0.0   # the vector \hat{n}
+</pre></div>
+</div>
+<p>This choice sets a uniform preferred director <span class="math notranslate nohighlight">\(\hat{n}_\alpha\)</span>
+which gives rise to a preferred order parameter at the fluid next to the
+wall of <span class="math notranslate nohighlight">\(Q^0_{\alpha\beta}\)</span> based on the uniaxial approximation.
+The treatment then follows that of normal anchoring as described above.</p>
+<p>If the vector supplied in the input is not a unit vector, it will be
+adjusted to make it so at run time.</p>
+<p>The example again uses the same random initial nemetic configuration in
+two dimensions, and the fixed anchoring orientation is along the
+<span class="math notranslate nohighlight">\(x\)</span>-direction (the horizontal here). In this case there is no
+distinction between
+the “weak” and “strong” cases, as the orientation can be accommodated
+everywhere for a nematic.</p>
+<figure class="align-center" style="width: 100%">
+<img alt="Example fixed anchoring for a two-dimensional nematic" src="../_images/wall-anchor-fixed.svg" />
+</figure>
+</section>
+<section id="gradient-computation-for-anchoring-at-walls">
+<h3><span class="section-number">2.6.3.4. </span>Gradient computation for anchoring at walls<a class="headerlink" href="#gradient-computation-for-anchoring-at-walls" title="Link to this heading">¶</a></h3>
+<p>For the gradient computation it is recommended to use</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fd_gradient_calculation      s7_anchoring
+</pre></div>
+</div>
+<p>This uses a 7-point stencil in three dimensions to compute the gradient
+terms, and can be used for any combination of place walls and colloids.</p>
+<p>Note that the alternative anchoring gradient computation</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fd_gradient_calculation      3d_7pt_solid
+</pre></div>
+</div>
+<p>should not be used if walls meeting at edges or corners are required
+(as in the above examples). For single plane walls they are the same.</p>
+</section>
+<section id="anchoring-with-both-walls-and-colloids">
+<h3><span class="section-number">2.6.3.5. </span>Anchoring with both walls and colloids<a class="headerlink" href="#anchoring-with-both-walls-and-colloids" title="Link to this heading">¶</a></h3>
+<p>If both plane walls and colloids are present, the surface normal will
+become poorly defined if colloid and wall sites are adjacant. In such
+cases, the wall anchoring will take precedence. The
+advice would be to try to avoid such situations by using the
+boundary lubrication correction to maintain a clear separation
+between any colloids and the boundary wall. “A clear separation”
+here means at least half a lattice unit, which will ensure there is
+always a fluid site adjcaent to the walls. See the section on
+colloid lubrication corrections for further details.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openbc.html">2.8. Open boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="order.html">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.11. Force on the fluid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/inputs/walls.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

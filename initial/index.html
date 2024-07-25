@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3. Initial Conditions &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script src="../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.1. Fluid initial conditions" href="fluid.html" />
+    <link rel="prev" title="2.12. Parallelism" href="../inputs/parallel.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="initial-conditions">
+<h1><span class="section-number">3. </span>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">¶</a></h1>
+<p>The following sections provide some details and examples of initial
+conditions available for the fluid and various order parameters.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fluid.html">3.1. Fluid initial conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fluid.html#density">3.1.1. Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fluid.html#velocity-field">3.1.2. Velocity field</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="composition.html">3.2. Initial composition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#uniform-composition">3.2.1. Uniform composition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#spherical-droplet">3.2.2. Spherical droplet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#emulsion-droplets">3.2.3. Emulsion droplets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#block-structure">3.2.4. Block structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#layer-structure">3.2.5. Layer structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#single-interface">3.2.6. Single interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#random-noise">3.2.7. Random noise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#random-patches">3.2.8. Random patches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html#composition-from-file">3.2.9. Composition from file</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="liquid-crystal.html">3.3. Liquid crystal order</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html#nematic-initialisation">3.3.1. Nematic initialisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html#cholesteric-initialisation">3.3.2. Cholesteric initialisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html#blue-phase-initialisations">3.3.3. Blue phase initialisations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html#miscellaneous-liquid-crystal-initialisations">3.3.4. Miscellaneous liquid crystal initialisations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="three-phase.html">3.4. Three-phase model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="three-phase.html#two-dimensions">3.4.1. Two dimensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="three-phase.html#three-dimensions">3.4.2. Three dimensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="three-phase.html#three-phase-configuration-from-file">3.4.3. Three-phase configuration from file</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputs/index.html">2. Input File</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Initial Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fluid.html">3.1. Fluid initial conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition.html">3.2. Initial composition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquid-crystal.html">3.3. Liquid crystal order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="three-phase.html">3.4. Three-phase model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/initial/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

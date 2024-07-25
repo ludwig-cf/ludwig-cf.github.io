@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4.3. Colloid Output &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script src="../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. Tutorial guides" href="../tutorials/index.html" />
+    <link rel="prev" title="4.2. Fluid Output" href="fluid.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="colloid-output">
+<h1><span class="section-number">4.3. </span>Colloid Output<a class="headerlink" href="#colloid-output" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="colloid-file-i-o">
+<h2><span class="section-number">4.3.1. </span>Colloid file I/O<a class="headerlink" href="#colloid-file-i-o" title="Link to this heading">¶</a></h2>
+<p>If colloids are present, information can be saved at the required
+interval for analysis, and for the purposes of restarting the
+calculation.</p>
+<p>Two input key/value pairs of interest are:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_freq          1000     # every 1000 time steps
+colloid_io_format        BINARY   # ASCII or BINARY (default is BINARY)
+</pre></div>
+</div>
+<p>If necessary, different input and output formats may be specified</p>
+</section>
+<section id="colloid-file-format">
+<h2><span class="section-number">4.3.2. </span>Colloid file format<a class="headerlink" href="#colloid-file-format" title="Link to this heading">¶</a></h2>
+<p>The form of the file is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;integer&gt;      # 4-byte integer number of colloids in file: 0 or more
+&lt;colloid&gt;
+&lt;colloid&gt;
+...
+</pre></div>
+</div>
+<p>The information for each colloid follows the same pattern (whether
+ASCII or binary). Not all the information is
+relevant in all cases; however, the format is the same in all
+cases.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int index;            /* Unique global index for colloid */
+int rebuild;          /* Rebuild flag */
+int nbonds;           /* Number of bonds e.g. fene (to NBOND_MAX) */
+int nangles;          /* Number of angles, e.g., fene (1 at the moment) */
+
+int isfixedr;         /* Set to 1 for no position update */
+int isfixedv;         /* Set to 1 for no velocity update */
+int isfixedw;         /* Set to 1 for no angular velocity update */
+int isfixeds;         /* Set to zero for no s, m update */
+
+int type;             /* Particle type NO LONGER USED; see &quot;shape&quot; etc */
+int bond[2]        ;  /* Bonded neighbours ids (index) */
+
+int rng;              /* Random number state */
+
+int isfixedrxyz[3];   /* Position update in specific coordinate directions */
+int isfixedvxyz[3];   /* Velocity update in specific coordinate directions */
+
+int inter_type;       /* Interaction type of a particle */
+
+int ioversion;        /* For internal use */
+int bc;               /* Broadly, boundary condition (bbl, subgrid) */
+int shape;            /* Particle shape (2d disk, sphere, ellipsoid) */
+int active;           /* Particle is active */
+int magnetic;         /* Particle is magnetic */
+int attr;             /* Additional attributes bitmask */
+
+int intpad[7];        /* Unused */
+
+double a0;            /* Input radius (lattice units) */
+double ah;            /* Hydrodynamic radius (from calibration) */
+double r[3];          /* Position */
+double v[3];          /* Velocity */
+double w[3];          /* Angular velocity omega */
+double s[3];          /* Magnetic dipole, or spin */
+double m[3];          /* Current direction of motion vector (squirmer) */
+double b1;            /* squirmer active parameter b1 */
+double b2;            /* squirmer active parameter b2 */
+double c;             /* Wetting free energy parameter C */
+double h;             /* Wetting free energy parameter H */
+double dr[3];         /* r update (pending refactor of move/build process) */
+double deltaphi;      /* order parameter bbl net; required to restart */
+
+double q0;            /* magnitude charge 0 */
+double q1;            /* magnitude charge 1 */
+double epsilon;       /* permittivity */
+
+double deltaq0;       /* surplus/deficit of charge 0 at change of shape */
+double deltaq1;       /* surplus/deficit of charge 1 at change of shape */
+double sa;            /* surface area (finite difference) */
+double saf;           /* surface area to fluid (finite difference grid) */
+
+double al;            /* Offset parameter used for subgrid particles */
+
+                      /* Ellipsoids */
+double elabc[3];      /* Semi principal axes a,b,c */
+double quat[4];       /* Quaternion describing current orientation */
+double quatold[4];    /* Quaternion at previous time step */
+
+double dpad[4];       /* Unused */
+</pre></div>
+</div>
+<p>Note that the bare colloid output files may be converted to different
+format (csv) with a subset of useful information if required. See
+<code class="docutils literal notranslate"><span class="pre">util/extract_colloid.c</span></code>.</p>
+<section id="formats-for-versions-before-0-21-0">
+<h3><span class="section-number">4.3.2.1. </span>Formats for versions before 0.21.0<a class="headerlink" href="#formats-for-versions-before-0-21-0" title="Link to this heading">¶</a></h3>
+<p>Version 0.21.0 introduced ellipsoids, which required the replacement
+of the <code class="docutils literal notranslate"><span class="pre">type</span></code> entry in the colloid structure by separate entries to
+describe different properties.</p>
+<p>However, it should still be possible to read older colloid state files
+as the old <code class="docutils literal notranslate"><span class="pre">type</span></code> entry can be translated to the new structure in
+most cases. This is done automatically when the file is read at run
+time. Ellipsoids must follow the new structure.</p>
+</section>
+</section>
+<section id="colloid-parallel-output">
+<h2><span class="section-number">4.3.3. </span>Colloid parallel output<a class="headerlink" href="#colloid-parallel-output" title="Link to this heading">¶</a></h2>
+<p>For very large systems, it may be necessary to use the parallel output
+facility to prevent performance and/or memory bottlenecks. The parallel
+output writes a number of different files (all of the format discussed
+above), based on a decomposition of the domain.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_grid      2_2_2    # default is 1_1_1
+</pre></div>
+</div>
+<p>This I/O grid will produce 8 files based on a Cartesian decomposition
+of the system. Each file may contain different numbers of colloids
+depending on the current distribution in space.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">extract_colloid</span></code> utility may be used to reconstitute such a
+set into a single file if required.</p>
+<p>Such a set of files may be used as a restart providing the I/O is
+the same.</p>
+<p>Independently of any choice of I/O grid, colloid input (e.g., initial
+conditions) may be read from a single file via either</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_format_input     ASCII_SERIAL
+colloid_io_format_input     BINARY_SERIAL
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inputs/index.html">2. Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. Outputs</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="diagnostic.html">4.1. Diagnostic Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fluid.html">4.2. Fluid Output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.3. Colloid Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/outputs/colloid.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.9. Order Parameters &#8212; Ludwig 0.22.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
+    <script src="../_static/documentation_options.js?v=5686f5df"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.10. Viscosity Models" href="visc.html" />
+    <link rel="prev" title="2.8. Open boundaries" href="openbc.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="order-parameters">
+<h1><span class="section-number">2.9. </span>Order Parameters<a class="headerlink" href="#order-parameters" title="Link to this heading">¶</a></h1>
+<nav class="contents local" id="in-this-section">
+<p class="topic-title">In this section</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#order-parameter-initialisations" id="id1">Order parameter initialisations</a></p></li>
+<li><p><a class="reference internal" href="#tensor-order-parameter" id="id2">Tensor order parameter</a></p></li>
+<li><p><a class="reference internal" href="#order-parameter-gradients" id="id3">Order parameter gradients</a></p></li>
+</ul>
+</nav>
+<section id="order-parameter-initialisations">
+<h2><span class="section-number">2.9.1. </span>Order parameter initialisations<a class="headerlink" href="#order-parameter-initialisations" title="Link to this heading">¶</a></h2>
+<section id="composition-phi">
+<h3><span class="section-number">2.9.1.1. </span>Composition <span class="math notranslate nohighlight">\(\phi\)</span><a class="headerlink" href="#composition-phi" title="Link to this heading">¶</a></h3>
+<p>The following initialisations are available.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_initialisation          spinodal    # spinodal
+phi0                        0.0         # mean
+noise                       0.05        # noise amplitude
+random_seed                 102839      # +ve integer
+</pre></div>
+</div>
+<p>Suitable for initialising isothermal spinodal decomposition, the order
+parameter may be set at random at each position via
+<span class="math notranslate nohighlight">\(\phi = \phi_0 + A(\phi_r - 1/2)\)</span> with the random variate
+<span class="math notranslate nohighlight">\(\phi_r\)</span> selected uniformly on the interval <span class="math notranslate nohighlight">\([0,1)\)</span>. For symmetric
+quenches (mean order parameter <span class="math notranslate nohighlight">\(\phi_0 = 0\)</span> and
+<span class="math notranslate nohighlight">\(\phi^\star = \pm 1\)</span>),
+a value of <span class="math notranslate nohighlight">\(A\)</span> in the range 0.05-0.1 is usually appropriate.</p>
+<p>For off-symmetric quenches, larger patches of fluid may be required to
+initiate decomposition:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_initialisation          patches     # patches of phi = +/- 1
+phi_init_patch_size         2           # patch size
+phi_init_patch_vol          0.1         # volume fraction phi = -1 phase
+random_seed                 13          # +ve integer
+</pre></div>
+</div>
+<p>The initialises cubics patches of fluid of given size with <span class="math notranslate nohighlight">\(\phi= \pm 1\)</span>
+at random. The requested overall volume fractions may be met approximately.</p>
+<p>A uniform value of the order parameter may be apprpropriate for
+some situations. This is arranged using a single value <span class="math notranslate nohighlight">\(\phi_0\)</span>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_initialisation          uniform     # same everywhere
+phi0                        0.2         # the uniform value
+</pre></div>
+</div>
+<p>A spherical drop can be initialised at the centre of the system.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_initialisation          drop        # spherical droplet
+phi_init_drop_radius        16.0        # radius
+phi_init_drop_amplitude    -1.0         # phi value inside
+</pre></div>
+</div>
+<p>The drop is initialised with a <span class="math notranslate nohighlight">\(\tanh(r/\xi)\)</span> profile where the
+interfacial width <span class="math notranslate nohighlight">\(\xi\)</span> is computed via the current free energy
+parameters.</p>
+<p>A pair of plane interfaces at <span class="math notranslate nohighlight">\(z = L_z/4\)</span> and <span class="math notranslate nohighlight">\(z=3L_z/4\)</span> may
+be initialised via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_initialisation          block
+</pre></div>
+</div>
+<p>The interfacial width is again set via the current free energy parameters.
+The centre of the system has order parameter <span class="math notranslate nohighlight">\(\phi = +\phi^\star\)</span>.</p>
+<p>For restarted simulations, the default position is to read order
+parameter information from file</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_initialisation          from_file
+</pre></div>
+</div>
+<p>in which case a file or files for the appropriate time step should
+be present in the working directory.</p>
+</section>
+</section>
+<section id="tensor-order-parameter">
+<h2><span class="section-number">2.9.2. </span>Tensor order parameter<a class="headerlink" href="#tensor-order-parameter" title="Link to this heading">¶</a></h2>
+<p>A number of different initialisations are available for the liquid
+crystal order parameter <span class="math notranslate nohighlight">\(Q_{\alpha\beta}\)</span>. Some care may be required
+to ensure consistency between the choice and the free energy
+parameters, the system size, and so on (particularly for the blue phases).</p>
+<p>A summary of choices is:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lc_q_initialisation   nematic          # uniform nematic...
+lc_init_nematic       1.0_0.0_0.0      # ...with given director
+
+lc_q_initialisation   cholesteric_x    # cholesteric with helical axis x
+lc_q_initialisation   cholesteric_y    # cholesteric with helical axis y
+lc_q_initialisation   cholesteric_z    # cholesteric with helical axis z
+
+lc_q_initialisation   o8m              # BPI high chirality limit
+lc_q_initialisation   o2               # BPII high chirality limit
+lc_q_initialisation   o5
+lc_q_initialisation   h2d              # 2d hexagonal
+lc_q_initialisation   h3da             # 3d hexagonal BP A
+lc_q_initialisation   h3db             # 3d hexagonal BP B
+lc_q_initialisation   dtc              # double twist cylinders
+
+lc_q_initialisation   bp3
+
+lc_q_initialisation   cf1_x            # cholesteric ``finger&#39;&#39; axis x
+lc_q_initialisation   cf1_y            # cholesteric ``finger&#39;&#39; axis y
+lc_q_initialisation   cf1_z            # cholesteric ``finger&#39;&#39; axis z
+
+lc_q_initialisation   cf1_fluc_x       # as cf1_x with random perterbations
+lc_q_initialisation   cf1_fluc_y       # as cf1_y with random perturbations
+lc_q_initialisation   cf1_flux_z       # as cf1_z with random perturbations
+
+lc_q_initialisation   random           # with randomly chosen unit director
+lc_q_initialisation   random_xy        # random nematic in (x,y) plane
+</pre></div>
+</div>
+<p>Note many of the initialiations require an initial amplitude of order,
+which should be set via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lc_q_init_amplitude   0.01             # initial amplitude of order A
+</pre></div>
+</div>
+<p>For example, if an initial uniform nematic is requested with
+unit director <span class="math notranslate nohighlight">\(n_\alpha\)</span>, the corresponding initial tensor will be</p>
+<div class="math notranslate nohighlight">
+\[Q_{\alpha\beta} =
+{\textstyle \frac{1}{2}} A (3 n_\alpha n_\beta - \delta_{\alpha\beta}).\]</div>
+</section>
+<section id="order-parameter-gradients">
+<h2><span class="section-number">2.9.3. </span>Order parameter gradients<a class="headerlink" href="#order-parameter-gradients" title="Link to this heading">¶</a></h2>
+<p>Free energies involving an order parameter typically require computing
+the spatial gradients of that order parameter. There are various
+different stencils available for this computation.</p>
+<p>If surface wetting (binary/ternary fluids) or anchoring (liquid crystals)
+are required, the gradient computation must take account of the surface.
+A particular gradient computation will be necessary.</p>
+<p>If Lees-Edwards sliding periodic boundary conditions are required, the
+gradient computation must again take account of the co-ordinate
+transformations involved. A subset of the available stencils
+support the Lees-Edwards transformation.</p>
+<p>If a two-dimensional system is used with <span class="math notranslate nohighlight">\(L_z = 1\)</span>, it is
+recommended to use a
+two-dimensional gradient stencil (usually with “2d” in the name).
+This may become mandatory in the future.</p>
+<p>More generally, the width of the system  should be at least twice the
+halo width required for the free energy to ensure correct operation.
+This is generally computed internally, so should be correct. However,
+care may be required for “thin” three-dimensional systems.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ludwig</a></h1>
+
+
+
+
+
+
+
+
+<h2>Contents</h2>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../building/index.html">1. Building and Testing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Input File</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="format.html">2.1. The input file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">2.2. Simulation parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fe.html">2.3. The free energy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lespc.html">2.4. Lees Edwards SPBCs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="colloid.html">2.5. Colloids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walls.html">2.6. Plane walls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous.html">2.7. Porous Media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openbc.html">2.8. Open boundaries</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.9. Order Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visc.html">2.10. Viscosity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">2.11. Force on the fluid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">2.12. Parallelism</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../initial/index.html">3. Initial Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../outputs/index.html">4. Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">5. Tutorial guides</a></li>
+</ul>
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2021-2024, The University of Edinburgh.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/inputs/order.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
