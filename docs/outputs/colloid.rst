@@ -150,7 +150,7 @@ the same.
 
 
 Colloid initialisation from a single file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Independently of any choice of I/O grid, colloid input (e.g., initial
 conditions) may be read from a single file via either
