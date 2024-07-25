@@ -1,12 +1,6 @@
 # ludwig-cf.github.io
 
-[![Web pages](https://travis-ci.com/ludwig-cf/ludwig-cf.github.io.svg?branch=develop)](https://travis-ci.com/ludwig-cf/ludwig-cf.github.io)
-
-
 This is the repository for the Ludwig static web site.
-
-All commits should be made to the `develop` branch, i.e., make a branch
-based on `develop` and then make a pull request to `develop`.
 
 ## Local preview
 
