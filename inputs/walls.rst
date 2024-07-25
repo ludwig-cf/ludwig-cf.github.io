@@ -103,6 +103,12 @@ expression for the lubrication force between a sphere (of the appropriate
 hydrodynamic radius) and a plane wall is added to the force on
 the colloid.
 
+If the colloid is an ellipsoid, then the lubrication correction is based
+on the normal separation of the surface at closest approach, and the
+plane wall surface. The magnitude of the lubrication correction is
+determined as for a sphere of radius equal to the semi-major axis of
+the ellipsoid. There is no associated torque at the present time.
+
 
 Wetting at plane boundary walls
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -180,26 +180,12 @@ a per-lattice site basis in the following order:
   x_1 y_2 z_1   ...
   ...
 
+Files written in parallel automatically follow this order.
 
 
 Older-style I/O mode
 ^^^^^^^^^^^^^^^^^^^^
 
-Users of versions older than v0.19.0 will have used an older I/O mode
-which can be retained by using
-
-.. code-block:: none
-
-   default_io_mode           ansi     # use "old" mode
-
-There is no reason to prefer the old style I/O, except for the casae that
-older files are used for input. One can use
-
-.. code-block:: none
-
-   default_input_io_mode     ansi
-   default_output_io_mode    mpiio
-
-which would enable reading of "old" style input data files and writing of
-"new" style outputs. Note that in serial, the organisation of the data in
-the files is actually the same in both cases.
+The "ansi" I/O mechanism was removed at Revision 0.22.0 in favour of
+the MPI/IO mechanism as the default. Serial files written with the
+old mechanism can be read by the MPI/IO mechanism.
