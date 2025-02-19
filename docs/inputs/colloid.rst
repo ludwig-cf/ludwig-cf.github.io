@@ -219,7 +219,7 @@ determines the total number of particles to be placed in
 the system. To prevent particles being initialised very
 close together, which can cause problems in the first few
 time steps if strong potential interactions are present,
-a ``grace'' distance or minimum surface-surface separation
+a grace distance or minimum surface-surface separation
 may also be specified (``colloid_random_dh``).
 
 The following example asks for 100 colloids to be initialised
@@ -231,7 +231,7 @@ spacing.
   colloid_init              input_random
 
   colloid_random_no         100             # Total number of colloids
-  colloid_random_dh         0.5             # ``Grace'' distance
+  colloid_random_dh         0.5             # "Grace" distance
 
   colloid_random_a0         2.30
   colloid_random_ah         2.40
