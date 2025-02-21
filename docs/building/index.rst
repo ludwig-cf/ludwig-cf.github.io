@@ -218,7 +218,7 @@ An appropriate configuration file might be:
 
   BUILD   = parallel
   MODEL   = -D_D3Q19_
-  TARGET  = nvcc
+  TARGET  = nvcc         # Must be specified in addition to CC
 
   CC      = nvcc
   CFLAGS  = -ccbin=icpc -DADDR_SOA -DNDEBUG -arch=sm_70 -x cu -dc
@@ -257,8 +257,7 @@ might be
    TARGET  = hipcc
 
    CC      = hipcc
-   CFLAGS  = -x hip -O3 -fgpu-rdc --amdgpu-target=gfx90a -DADDR_SOA \
-             -DAMD_GPU_WORKAROUND
+   CFLAGS  = -x hip -O3 -fgpu-rdc --amdgpu-target=gfx90a -DADDR_SOA
 
    AR      = ar
    ARFLAGS = -cr
@@ -269,20 +268,29 @@ might be
    MPI_LIB_PATH = -L$(MPI_HOME)/lib -lmpi
 
 The option ``-fgpu-rdc`` requests relocatable device code so that device
-code from different translation units (aka. files) can be called.
+code from different translation units (aka source files) can be called.
 It is the equivalent of ``nvcc -dc`` for NVIDIA platforms.
 
 The current GPU architecture is specified with the ``--amdgpu-target`` option;
 this will vary between platforms.
 
-The ``-DAMD_GPU_WORK_AROUND`` definition is required at the time of
-writing to allow the liquid crystal stress to be computed correctly.
+Note that ROCM Version 6 is required for Ludwig. ROCM Version 5 is known not
+to work.
 
-Note that without the ``-DNDEBUG`` flag (as above) the time taken at the link
-stage can be around 30 minutes. (The reason appears to be that device code
-generation is deferred until link time, and more time is needed to
-expand the array address functions present in array references.)
-With ``-DNDEBUG`` the link time should be reasonable.
+GPU-aware MPI
+"""""""""""""
+
+If GPU aware MPI is available, it should be used to improve performance
+of GPU to GPU MPI transfers. This must be described
+at compile time using the preprocessor option
+
+.. code-block:: bash
+
+  CFLAGS += -DHAVE_GPU_AWARE_MPI
+
+If this option is specified erroneously, the code will fail at run time
+with a segmentation violation (SEGV). Consult local documentation to find
+out whether GPU aware MPI is available.
 
 
 Electrokinetics and using PETSc
