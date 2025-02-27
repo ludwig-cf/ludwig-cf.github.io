@@ -30,33 +30,27 @@ type of halo swap used for the various lattice-based fields in the
 calculation. The code will select the relevant mechanism. In
 particular, relevant CPU/GPU halo swaps will be applied.
 
-If explicit control is required, one can use some of the following
-flags.
 
 Lattice distribution halo swaps
 """""""""""""""""""""""""""""""
 
-There a number of different halo swap mechaniams for the lattice Boltzmann
-distributions. One or other may be selected explicitly via
+The halo swap for the lattice Boltzmann distributions can be either
+a "full" halo wsap, in which all elements of the distribution are
+communicated to neighbouring sub-domains, or a "reduced" version
+in which only elements propagating in a ertain direction are
+communicated in that direction (with consequent saving in message
+size).
 
 .. code-block:: none
 
-  lb_halo_scheme          lb_halo_openmp_full       # host (full)
-  lb_halo_scheme          lb_halo_openmp_reduced    # host (reduced)
-  lb_halo_scheme          lb_halo_target            # target (full) [default]
+  lb_halo_scheme          lb_halo_full              # full
+  lb_halo_scheme          lb_halo_reduced           # reduced
 
-The two host options (which, despite their names, will work with or
-without OpenMP) are full or reduced. The reduced halo swap may be
-quicker as it sends only distributions propagating in the relevant
-direction. However, the reduced halo swap should not be used if
-solid objects (boundaries or colloids) are present. It is intended
-for fluid only computations. The target halo swap handles the extra
-complexity in the GPU case: this is always a 'full' halo swap at the
-moment.
+The default option is "full". For fluid only problems it may give
+a performance inprovement to use "reduced".
+However, the reduced halo swap should not be used if
+solid objects (boundaries or colloids) are present.
 
-There is an additional restriction that if two distribitions are
-needed (two-distribution binary fluid case), the target halo swap
-must be used.
 
 Halo swaps for order parameter fields
 """""""""""""""""""""""""""""""""""""

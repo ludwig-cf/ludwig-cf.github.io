@@ -109,7 +109,7 @@ length scale in the problem, and in the examples below, :math:`l_B` is
 usually set to something just under one lattice unit :math:`\Delta x`.
 The means appropriate choices for the temperature and dielectric
 permittivity should be made. We usually chose a temperature to be in the
-same range as would be adopted for isotheraml fluctuations in the fluid,
+same range as would be adopted for isothermal fluctuations in the fluid,
 but the two temperatures should not be conflated: the temperature in the
 context of the electrokinetic free energy is a separate concern. This
 sets the choice for the dielectric permittivity.
