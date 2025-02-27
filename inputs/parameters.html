@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>2.2. Simulation parameters &#8212; Ludwig 0.22.0 documentation</title>
+    <title>2.2. Simulation parameters &#8212; Ludwig 0.23.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
-    <script src="../_static/documentation_options.js?v=5686f5df"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=2753bf86"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -93,8 +94,6 @@ run a further 400 cycles, i.e., to time step 500.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fluid_rho0                 1.0
 viscosity                  0.166666666666666
 viscosity_bulk             0.166666666666666
-isothermal_fluctuations    off
-temperature                0.0
 </pre></div>
 </div>
 <p>The mean fluid density is <span class="math notranslate nohighlight">\(\rho_0\)</span> (key <code class="docutils literal notranslate"><span class="pre">fluid_rho0</span></code>) which
@@ -112,12 +111,31 @@ viscosity has been selected. Higher values of the bulk viscosity
 may be set independently and can help to suppress large deviations
 from incompressibility and maintain numerical stability
 in certain situations.</p>
-<p>If fluctuating hydrodynamics is wanted, set the value of the switch
-<code class="docutils literal notranslate"><span class="pre">isothermal_fluctuations</span></code> to <code class="docutils literal notranslate"><span class="pre">on</span></code>. The associated
+<section id="fluctuating-hydrodynamics">
+<h3><span class="section-number">2.2.3.1. </span>Fluctuating hydrodynamics<a class="headerlink" href="#fluctuating-hydrodynamics" title="Link to this heading">¶</a></h3>
+<p>If fluctuating hydrodynamics is wanted, set the switch
+<code class="docutils literal notranslate"><span class="pre">lb_fluctuations</span></code> to <code class="docutils literal notranslate"><span class="pre">on</span></code> or <code class="docutils literal notranslate"><span class="pre">yes</span></code>. The associated
 temperature is in lattice units: reasonable values (at <span class="math notranslate nohighlight">\(\rho_0 = 1\)</span>)
 are <span class="math notranslate nohighlight">\(0 &lt; kT &lt; 0.0001\)</span>. If the temperature is too high, local
 velocities will rapidly exceed the Mach number constraint and
 the simulation will be unstable.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_fluctuations            yes        # fluctuations on
+temperature                0.00001    # &quot;kT&quot;
+</pre></div>
+</div>
+<p>Note this “temperature” is the thermal energy per dimension, so
+that <span class="math notranslate nohighlight">\(&lt;u_x^2&gt; = kT\)</span> etc. Statistics on the equipartition
+of energy will be reported if the fluctuations are present, e.g..</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Isothermal fluctuations
+[eqipart.]  9.9477576e-06  9.9684327e-06  9.9476364e-06
+[measd/kT]  2.9863827e-05  3.0000000e-05
+</pre></div>
+</div>
+<p>The first line gives the values of <span class="math notranslate nohighlight">\(&lt;u_x^2&gt;\)</span>,
+<span class="math notranslate nohighlight">\(&lt;u_y^2&gt;\)</span>, and <span class="math notranslate nohighlight">\(&lt;u_z^2&gt;\)</span> averaged over the whole system.
+The second line gives the total measured for all three dimensions, and
+the expected value (<span class="math notranslate nohighlight">\(3kT\)</span>) based on the input temperature.</p>
+</section>
 </section>
 </section>
 
@@ -176,11 +194,11 @@ the simulation will be unstable.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2021-2024, The University of Edinburgh.
+      &#169;2021-2025, The University of Edinburgh.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.1</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/inputs/parameters.rst.txt"

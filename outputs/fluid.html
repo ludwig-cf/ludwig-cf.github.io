@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>4.2. Fluid Output &#8212; Ludwig 0.22.0 documentation</title>
+    <title>4.2. Fluid Output &#8212; Ludwig 0.23.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
-    <script src="../_static/documentation_options.js?v=5686f5df"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=2753bf86"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -42,6 +43,11 @@ for output. The fluid quantities include the lattice Boltzmann distributions,
 density and velocity, and order parameters if relevant. Output for some
 quantities is optional, while output for quantities required for restart
 will always be enabled automatically.</p>
+<p>All files will appear in the current working directory. Files to be read
+are expected to exist in the current working directory at run time.
+Note that existing output files may be “clobbered” (overwritten) by new
+files of the same name if the code is run twice in the same location
+with the same input options.</p>
 <section id="i-o-for-all-lattice-quantities">
 <h2><span class="section-number">4.2.1. </span>I/O for all lattice quantities<a class="headerlink" href="#i-o-for-all-lattice-quantities" title="Link to this heading">¶</a></h2>
 <p>There are a significant number of options related to the input and
@@ -58,7 +64,8 @@ recommended mode is MPI-IO, which will always work and produce the
 same file irrespective of the number of MPI tasks.
 The <code class="docutils literal notranslate"><span class="pre">format</span></code> refers to the representation of data in files: either
 binary or ASCII is available. Binary format is recommended for reasons
-of speed and file size; for these reasons it is also the default.</p>
+of speed and file size; for these reasons it is also the default. The
+report gives details on the performance of the output at each episode.</p>
 <section id="control-for-specific-lattice-quantities">
 <h3><span class="section-number">4.2.1.1. </span>Control for specific lattice quantities<a class="headerlink" href="#control-for-specific-lattice-quantities" title="Link to this heading">¶</a></h3>
 <p>Input and output for different quantities are controlled by specific
@@ -72,32 +79,113 @@ rho_input_io_format       ascii    # overrides rho_io_mode
 rho_output_io_format      binary   # overrides default
 </pre></div>
 </div>
-<p>where``rho`` has replaced <code class="docutils literal notranslate"><span class="pre">default</span></code> in each case. Available lattice
+<p>where <code class="docutils literal notranslate"><span class="pre">rho</span></code> has replaced <code class="docutils literal notranslate"><span class="pre">default</span></code> in each case. Available lattice
 quantities include (using mode as an example):</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_io_mode                          # LB distributions
-rho_io_mode                         # density field (scalar)
-vel_io_mode                         # velocity field (vector)
-phi_io_mode                         # order parameters
+</section>
+<section id="available-fluid-quantities-for-output">
+<h3><span class="section-number">4.2.1.2. </span>Available fluid quantities for output<a class="headerlink" href="#available-fluid-quantities-for-output" title="Link to this heading">¶</a></h3>
+<p>The following lattice-based quantities are relevant.</p>
+<section id="fluid-distribution-output">
+<h4><span class="section-number">4.2.1.2.1. </span>Fluid distribution output<a class="headerlink" href="#fluid-distribution-output" title="Link to this heading">¶</a></h4>
+<p>The lattice Boltzmann distributions respond to the keys:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dist_io_mode              mpiio    # overrides default_io_mode
+dist_io_format            binary   # overrides default_io_format
+dist_io_report            yes      # overrides default_io_report
 </pre></div>
 </div>
-<p>Note that all order parameter fields are treated on the same basis
-including scalar order parameters <code class="docutils literal notranslate"><span class="pre">phi</span></code>, vector order parameters <code class="docutils literal notranslate"><span class="pre">p</span></code>,
-and tensor order parameter <code class="docutils literal notranslate"><span class="pre">q</span></code>. The format of these files for different
-numbers of scalar or vector components is discussed below.</p>
+<p>The resulting file names begin with <code class="docutils literal notranslate"><span class="pre">dist</span></code>, and their size is
+proportional to the number of distributions in the lattice Boltzmann
+model.</p>
+</section>
+<section id="fluid-density-output">
+<h4><span class="section-number">4.2.1.2.2. </span>Fluid density output<a class="headerlink" href="#fluid-density-output" title="Link to this heading">¶</a></h4>
+<p>For the fluid density, the keys are as above:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>rho_io_mode               mpiio    # overrides default_io_mode
+rho_io_format             binary   # overrides default_io_format
+rho_io_report             yes      # overrides default_io_report
+</pre></div>
+</div>
+<p>The density is scalar field with file names starting in <code class="docutils literal notranslate"><span class="pre">rho-</span></code>.</p>
+</section>
+<section id="fluid-velocity-output">
+<h4><span class="section-number">4.2.1.2.3. </span>Fluid velocity output<a class="headerlink" href="#fluid-velocity-output" title="Link to this heading">¶</a></h4>
+<p>The hydrodynamic velcoity field is available via:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>vel_io_mode               mpiio    # overrides default_io_mode
+vel_io_format             binary   # overrides default_io_format
+vel_io_report             yes      # overrides default_io_report
+</pre></div>
+</div>
+<p>This is a vector <span class="math notranslate nohighlight">\((u_x, u_y, u_z)\)</span> at each lattice site and
+files are prefixed  <code class="docutils literal notranslate"><span class="pre">vel-</span></code>.</p>
+</section>
+<section id="scalar-order-parameter-output">
+<h4><span class="section-number">4.2.1.2.4. </span>Scalar order parameter output<a class="headerlink" href="#scalar-order-parameter-output" title="Link to this heading">¶</a></h4>
+<p>For free energies where there is a composition variable <span class="math notranslate nohighlight">\(\phi\)</span> use:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_io_mode               mpiio    # overrides default_io_mode
+phi_io_format             binary   # overrides default_io_format
+phi_io_report             yes      # overrides default_io_report
+</pre></div>
+</div>
+<p>Corresponding files srat with <code class="docutils literal notranslate"><span class="pre">phi-</span></code>.</p>
+</section>
+<section id="tensor-order-parameter-output">
+<h4><span class="section-number">4.2.1.2.5. </span>Tensor order parameter output<a class="headerlink" href="#tensor-order-parameter-output" title="Link to this heading">¶</a></h4>
+<p>For liquid crystal problems use:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>q_io_mode                 mpiio    # overrides default_io_mode
+q_io_format               binary   # overrides default_io_format
+q_io_report               yes      # overrides default_io_report
+</pre></div>
+</div>
+<p>Corresponding files start with <code class="docutils literal notranslate"><span class="pre">q-</span></code>.</p>
+</section>
+<section id="electrokinetic-quantity-output">
+<h4><span class="section-number">4.2.1.2.6. </span>Electrokinetic quantity output<a class="headerlink" href="#electrokinetic-quantity-output" title="Link to this heading">¶</a></h4>
+<p>Electrokinetic quantities are controlled by the single key</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>psi_io_mode               mpiio    # overrides default_io_mode
+psi_io_format             binary   # overrides default_io_format
+psi_io_report             yes      # overrides default_io_report
+</pre></div>
+</div>
+<p>Two sets of files will be produced. The first is a scalar field which
+is the electric potential with files named <code class="docutils literal notranslate"><span class="pre">psi-</span></code>. The second is a
+vector of charge densities (always positive) with files name <code class="docutils literal notranslate"><span class="pre">qsi-</span></code>
+(the name <code class="docutils literal notranslate"><span class="pre">rho</span></code> being reserved for the fluid density).</p>
+</section>
 </section>
 <section id="frequency-of-i-o">
-<h3><span class="section-number">4.2.1.2. </span>Frequency of I/O<a class="headerlink" href="#frequency-of-i-o" title="Link to this heading">¶</a></h3>
-<p>The following types of output may be requested at regular intervals</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>freq_rho         # fluid density
-freq_vel         # fluid velocity
-freq_phi         # order parameter
-freq_config      # Full configuration output for restart
+<h3><span class="section-number">4.2.1.3. </span>Frequency of I/O<a class="headerlink" href="#frequency-of-i-o" title="Link to this heading">¶</a></h3>
+<p>The frequency of output for particular quantities can be controlled by,
+e.g., for fluid density</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>rho_io_freq    100     # Output every 100 time steps
+</pre></div>
+</div>
+<p>If this key does not appear, no output will occur (other than required
+for full confiuration/restart; see below). The frequency must not be
+negative; if the frequency is set to zero, this is interpreted as
+“never”. Frequency is not relevant for input.</p>
+<p>Note there is no default frequency. Frequecies for different lattice
+quantities should be set with the appropriate name, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phi_io_freq    100     # Compositional order parameter
+psi_io_freq    100     # Electrokinetic quantities
+</pre></div>
+</div>
+</section>
+<section id="configuration-output">
+<h3><span class="section-number">4.2.1.4. </span>Configuration output<a class="headerlink" href="#configuration-output" title="Link to this heading">¶</a></h3>
+<p>Fields required for configuration output - that required for restart - are
+determined internally by the code depending on the details of the
+simulation requested. The frequency of this output can be set via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>freq_config    10000   # Full configuration output for restart
 </pre></div>
 </div>
 <p>Full configuration output includes the lattice Boltzmann distributions,
 the density and velocity fields, and order parameters as required. The
 density and velocity fields are required in addition to the lattice
-Boltzmann distributions to ensure reproducibility at restarts.</p>
+Boltzmann distributions to ensure reproducibility at restarts. If
+isothermal fluctuations are present, the state of the lattice random
+number generator is also saved to file to take part in restart.</p>
+<p>If a configuration output step co-incides with a “normal” output step
+for a particular quantity, output only occurs once.</p>
 <p>If a full configuration is not required at the end of the run, one can
 set</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>config_at_end          no      # default is &quot;yes&quot;
@@ -105,8 +193,8 @@ set</p>
 </div>
 <p>The default is that configuration output should be produced at the end.</p>
 </section>
-<section id="meta-data-and-data">
-<h3><span class="section-number">4.2.1.3. </span>Meta data and data<a class="headerlink" href="#meta-data-and-data" title="Link to this heading">¶</a></h3>
+<section id="meta-data-and-data-file-names">
+<h3><span class="section-number">4.2.1.5. </span>Meta data and data file names<a class="headerlink" href="#meta-data-and-data-file-names" title="Link to this heading">¶</a></h3>
 <p>Requests for file output will always create a relevant <cite>metadata</cite> file
 for the type of output requested. For example, a request for order
 parameter output will generate a single JSON file</p>
@@ -127,7 +215,7 @@ producing output at each 20,000 steps. The file
 extension <code class="docutils literal notranslate"><span class="pre">.001-001</span></code> indicates this is one file in a set of one.</p>
 </section>
 <section id="multiple-file-output">
-<h3><span class="section-number">4.2.1.4. </span>Multiple file output<a class="headerlink" href="#multiple-file-output" title="Link to this heading">¶</a></h3>
+<h3><span class="section-number">4.2.1.6. </span>Multiple file output<a class="headerlink" href="#multiple-file-output" title="Link to this heading">¶</a></h3>
 <p>For the largest systems (probably larger than <span class="math notranslate nohighlight">\(512^3\)</span>) run on very large
 numbers of MPI tasks, it may be favourable to ask for output to be
 written to more than one file. This allows a larger overall bandwidth
@@ -231,11 +319,11 @@ old mechanism can be read by the MPI/IO mechanism.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2021-2024, The University of Edinburgh.
+      &#169;2021-2025, The University of Edinburgh.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.1</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/outputs/fluid.rst.txt"

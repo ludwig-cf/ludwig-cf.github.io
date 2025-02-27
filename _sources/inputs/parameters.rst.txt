@@ -77,8 +77,6 @@ Control parameters for a Newtonian fluid include:
   fluid_rho0                 1.0
   viscosity                  0.166666666666666
   viscosity_bulk             0.166666666666666
-  isothermal_fluctuations    off
-  temperature                0.0
 
 The mean fluid density is :math:`\rho_0` (key ``fluid_rho0``) which
 defaults to unity in lattice units; it is not usually necessary to
@@ -97,9 +95,32 @@ from incompressibility and maintain numerical stability
 in certain situations.
 
 
-If fluctuating hydrodynamics is wanted, set the value of the switch
-``isothermal_fluctuations`` to ``on``. The associated
+Fluctuating hydrodynamics
+"""""""""""""""""""""""""
+
+If fluctuating hydrodynamics is wanted, set the switch
+``lb_fluctuations`` to ``on`` or ``yes``. The associated
 temperature is in lattice units: reasonable values (at :math:`\rho_0 = 1`)
 are :math:`0 < kT < 0.0001`. If the temperature is too high, local
 velocities will rapidly exceed the Mach number constraint and
 the simulation will be unstable.
+
+.. code-block:: none
+
+  lb_fluctuations            yes        # fluctuations on
+  temperature                0.00001    # "kT"
+
+Note this "temperature" is the thermal energy per dimension, so
+that :math:`<u_x^2> = kT` etc. Statistics on the equipartition
+of energy will be reported if the fluctuations are present, e.g..
+
+.. code-block:: none
+
+  Isothermal fluctuations
+  [eqipart.]  9.9477576e-06  9.9684327e-06  9.9476364e-06
+  [measd/kT]  2.9863827e-05  3.0000000e-05
+
+The first line gives the values of :math:`<u_x^2>`,
+:math:`<u_y^2>`, and :math:`<u_z^2>` averaged over the whole system.
+The second line gives the total measured for all three dimensions, and
+the expected value (:math:`3kT`) based on the input temperature.

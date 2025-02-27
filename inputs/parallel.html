@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>2.12. Parallelism &#8212; Ludwig 0.22.0 documentation</title>
+    <title>2.12. Parallelism &#8212; Ludwig 0.23.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
-    <script src="../_static/documentation_options.js?v=5686f5df"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=2753bf86"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,28 +54,22 @@ of any given size.</p>
 type of halo swap used for the various lattice-based fields in the
 calculation. The code will select the relevant mechanism. In
 particular, relevant CPU/GPU halo swaps will be applied.</p>
-<p>If explicit control is required, one can use some of the following
-flags.</p>
 <section id="lattice-distribution-halo-swaps">
 <h4><span class="section-number">2.12.1.1.1. </span>Lattice distribution halo swaps<a class="headerlink" href="#lattice-distribution-halo-swaps" title="Link to this heading">¶</a></h4>
-<p>There a number of different halo swap mechaniams for the lattice Boltzmann
-distributions. One or other may be selected explicitly via</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_halo_scheme          lb_halo_openmp_full       # host (full)
-lb_halo_scheme          lb_halo_openmp_reduced    # host (reduced)
-lb_halo_scheme          lb_halo_target            # target (full) [default]
+<p>The halo swap for the lattice Boltzmann distributions can be either
+a “full” halo wsap, in which all elements of the distribution are
+communicated to neighbouring sub-domains, or a “reduced” version
+in which only elements propagating in a ertain direction are
+communicated in that direction (with consequent saving in message
+size).</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>lb_halo_scheme          lb_halo_full              # full
+lb_halo_scheme          lb_halo_reduced           # reduced
 </pre></div>
 </div>
-<p>The two host options (which, despite their names, will work with or
-without OpenMP) are full or reduced. The reduced halo swap may be
-quicker as it sends only distributions propagating in the relevant
-direction. However, the reduced halo swap should not be used if
-solid objects (boundaries or colloids) are present. It is intended
-for fluid only computations. The target halo swap handles the extra
-complexity in the GPU case: this is always a ‘full’ halo swap at the
-moment.</p>
-<p>There is an additional restriction that if two distribitions are
-needed (two-distribution binary fluid case), the target halo swap
-must be used.</p>
+<p>The default option is “full”. For fluid only problems it may give
+a performance inprovement to use “reduced”.
+However, the reduced halo swap should not be used if
+solid objects (boundaries or colloids) are present.</p>
 </section>
 <section id="halo-swaps-for-order-parameter-fields">
 <h4><span class="section-number">2.12.1.1.2. </span>Halo swaps for order parameter fields<a class="headerlink" href="#halo-swaps-for-order-parameter-fields" title="Link to this heading">¶</a></h4>
@@ -203,11 +198,11 @@ so this option should not be used for production runs.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2021-2024, The University of Edinburgh.
+      &#169;2021-2025, The University of Edinburgh.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.1</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/inputs/parallel.rst.txt"

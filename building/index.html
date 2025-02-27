@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>1. Building and Testing &#8212; Ludwig 0.22.0 documentation</title>
+    <title>1. Building and Testing &#8212; Ludwig 0.23.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=92945a19" />
-    <script src="../_static/documentation_options.js?v=5686f5df"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=2753bf86"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -54,15 +55,16 @@ C compiler.</p>
 <li><p><a class="reference internal" href="#using-openmp" id="id7">Using OpenMP</a></p></li>
 <li><p><a class="reference internal" href="#using-cuda" id="id8">Using CUDA</a></p></li>
 <li><p><a class="reference internal" href="#using-hip" id="id9">Using HIP</a></p></li>
+<li><p><a class="reference internal" href="#gpu-aware-mpi" id="id10">GPU-aware MPI</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#electrokinetics-and-using-petsc" id="id10">Electrokinetics and using PETSc</a></p></li>
+<li><p><a class="reference internal" href="#electrokinetics-and-using-petsc" id="id11">Electrokinetics and using PETSc</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#testing" id="id11">Testing</a></p>
+<li><p><a class="reference internal" href="#testing" id="id12">Testing</a></p>
 <ul>
-<li><p><a class="reference internal" href="#unit-tests" id="id12">Unit tests</a></p></li>
-<li><p><a class="reference internal" href="#regression-tests" id="id13">Regression tests</a></p></li>
+<li><p><a class="reference internal" href="#unit-tests" id="id13">Unit tests</a></p></li>
+<li><p><a class="reference internal" href="#regression-tests" id="id14">Regression tests</a></p></li>
 </ul>
 </li>
 </ul>
@@ -226,7 +228,7 @@ thread model available.</p>
 <p>An appropriate configuration file might be:</p>
 <div class="highlight-make notranslate"><div class="highlight"><pre><span></span><span class="nv">BUILD</span><span class="w">   </span><span class="o">=</span><span class="w"> </span>parallel
 <span class="nv">MODEL</span><span class="w">   </span><span class="o">=</span><span class="w"> </span>-D_D3Q19_
-<span class="nv">TARGET</span><span class="w">  </span><span class="o">=</span><span class="w"> </span>nvcc
+<span class="nv">TARGET</span><span class="w">  </span><span class="o">=</span><span class="w"> </span>nvcc<span class="w">         </span><span class="c1"># Must be specified in addition to CC</span>
 
 <span class="nv">CC</span><span class="w">      </span><span class="o">=</span><span class="w"> </span>nvcc
 <span class="nv">CFLAGS</span><span class="w">  </span><span class="o">=</span><span class="w"> </span>-ccbin<span class="o">=</span>icpc<span class="w"> </span>-DADDR_SOA<span class="w"> </span>-DNDEBUG<span class="w"> </span>-arch<span class="o">=</span>sm_70<span class="w"> </span>-x<span class="w"> </span>cu<span class="w"> </span>-dc
@@ -260,8 +262,7 @@ might be</p>
 <span class="nv">TARGET</span><span class="w">  </span><span class="o">=</span><span class="w"> </span>hipcc
 
 <span class="nv">CC</span><span class="w">      </span><span class="o">=</span><span class="w"> </span>hipcc
-<span class="nv">CFLAGS</span><span class="w">  </span><span class="o">=</span><span class="w"> </span>-x<span class="w"> </span>hip<span class="w"> </span>-O3<span class="w"> </span>-fgpu-rdc<span class="w"> </span>--amdgpu-target<span class="o">=</span>gfx90a<span class="w"> </span>-DADDR_SOA<span class="w"> </span><span class="se">\</span>
-<span class="w">          </span>-DAMD_GPU_WORKAROUND
+<span class="nv">CFLAGS</span><span class="w">  </span><span class="o">=</span><span class="w"> </span>-x<span class="w"> </span>hip<span class="w"> </span>-O3<span class="w"> </span>-fgpu-rdc<span class="w"> </span>--amdgpu-target<span class="o">=</span>gfx90a<span class="w"> </span>-DADDR_SOA
 
 <span class="nv">AR</span><span class="w">      </span><span class="o">=</span><span class="w"> </span>ar
 <span class="nv">ARFLAGS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>-cr
@@ -273,17 +274,24 @@ might be</p>
 </pre></div>
 </div>
 <p>The option <code class="docutils literal notranslate"><span class="pre">-fgpu-rdc</span></code> requests relocatable device code so that device
-code from different translation units (aka. files) can be called.
+code from different translation units (aka source files) can be called.
 It is the equivalent of <code class="docutils literal notranslate"><span class="pre">nvcc</span> <span class="pre">-dc</span></code> for NVIDIA platforms.</p>
 <p>The current GPU architecture is specified with the <code class="docutils literal notranslate"><span class="pre">--amdgpu-target</span></code> option;
 this will vary between platforms.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">-DAMD_GPU_WORK_AROUND</span></code> definition is required at the time of
-writing to allow the liquid crystal stress to be computed correctly.</p>
-<p>Note that without the <code class="docutils literal notranslate"><span class="pre">-DNDEBUG</span></code> flag (as above) the time taken at the link
-stage can be around 30 minutes. (The reason appears to be that device code
-generation is deferred until link time, and more time is needed to
-expand the array address functions present in array references.)
-With <code class="docutils literal notranslate"><span class="pre">-DNDEBUG</span></code> the link time should be reasonable.</p>
+<p>Note that ROCM Version 6 is required for Ludwig. ROCM Version 5 is known not
+to work.</p>
+</section>
+<section id="gpu-aware-mpi">
+<h4><span class="section-number">1.2.2.4. </span>GPU-aware MPI<a class="headerlink" href="#gpu-aware-mpi" title="Link to this heading">¶</a></h4>
+<p>If GPU aware MPI is available, it should be used to improve performance
+of GPU to GPU MPI transfers. This must be described
+at compile time using the preprocessor option</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CFLAGS</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span>-DHAVE_GPU_AWARE_MPI
+</pre></div>
+</div>
+<p>If this option is specified erroneously, the code will fail at run time
+with a segmentation violation (SEGV). Consult local documentation to find
+out whether GPU aware MPI is available.</p>
 </section>
 </section>
 <section id="electrokinetics-and-using-petsc">
@@ -389,11 +397,11 @@ The default tests should be run in serial.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2021-2024, The University of Edinburgh.
+      &#169;2021-2025, The University of Edinburgh.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.1</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/building/index.rst.txt"
