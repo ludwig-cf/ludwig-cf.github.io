@@ -283,7 +283,7 @@ and fluid viscosity :math:`\eta` if exact results are important.
 
 The form of the lubrication correction for a colloid of hydrodynamic
 radius :math:`a_h` and velocity :math:`U_\alpha` is based on the
-analytical expression for the lubrication force between a place wall and
+analytical expression for the lubrication force between a plane wall and
 a sphere:
 
 .. math::
@@ -296,7 +296,7 @@ centre of the colloid. The correction is zero for :math:`h > h_c`.
 The surface-surface separation is :math:`h` and
 the cut off is :math:`h_c` as illustrated in the following diagram on the
 left. In this illustration, the wall position (full line) is at the default
-value of :math:`x = 0.5`for the lower end of the system in the
+value of :math:`x = 0.5` for the lower end of the system in the
 :math:`x`-direction.
 
 .. figure:: lubrication-wall-colloid.svg
@@ -720,3 +720,38 @@ is set to zero in the boundary condition. The advice here is to prevent
 close approaches between colloids by means of, e.g., a soft-sphere
 potential. This should ensure that fluid sites are always present in
 the gap.
+
+Colloid initial conditions from file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Initial colloid state may be read from an appropriately formatted file
+when using the key
+
+.. code-block:: none
+
+  colloid_init             from_file
+
+when the initial time is zero. A restart file will be expected if the
+initial time is not zero.
+
+A short utility program ``util/colloid_init.c`` is provided as an example
+of how to produce a file in the correct format. The program can be
+edited to set up the relevant configuration (e.g., system size, etc)
+and recompiled using ``make``.
+
+A number of options for generating random sphere packings are available
+depending on the solid volume fraction needed. These random packings are
+intended for spheres. Additional steps would be required to generate a
+random packing of ellipsoids. Generating such a sphere packing can done
+effectively in serial.
+
+The colloid indices specified in this file must be unique, and be
+integers in the range 1 to the total number of colloids. Each colloid
+should have
+at least an index, a position, a shape specificer, and a boundary
+condition specifier. All other properties default to zero. See
+the Section on :ref:`Colloid Output` for further details on the format
+of this file.
+
+The file must have the name ``config.cds.init.001-001`` in the current
+working directory at run time.
