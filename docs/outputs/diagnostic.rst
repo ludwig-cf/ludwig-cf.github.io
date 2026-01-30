@@ -91,6 +91,27 @@ should be robust to parallel decomposition. Other contributions to the
 total momumtum (e.g., from colloids) are not currently treated in the
 same way.
 
+Density and momentum diagnostic options
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The method used to compute the mean and variance of the density can be
+controlled via
+
+.. code-block:: none
+
+  lb_data_stat_rho        default       # Conpensated sum
+  lb_data_stat_rho        float         # Standard floating point sum
+
+If no option is specified the default is to use the compensated sum.
+The corresponding options for the total momentum are:
+
+.. code-block:: none
+
+  lb_data_stat_momentum   default       # Compensated sum
+  lb_data_stat_momentum   float         # Standard floating point sum
+
+
+
 
 Conserved order parameter
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,6 +148,18 @@ time step. These options may be of interest if strict conservation at
 machine precision is wanted. This may be most noticeable if the total
 is exactly zero or very close to zero. For most purposes, the default
 should be acceptable.
+
+Order parameter diagnostics can use either a compensated sum or a simple
+floating point sum for the mean and variance. This option can be controlled
+with
+
+.. code-block:: none
+
+  field_options_stat         default  # compensated sum
+  field_options_stat         float    # conventional floating point sum
+
+For GPU platforms, the default is the simple sum for performance reasons.
+
 
 
 Timing and performance

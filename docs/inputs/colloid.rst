@@ -753,5 +753,29 @@ condition specifier. All other properties default to zero. See
 the Section on :ref:`Colloid Output` for further details on the format
 of this file.
 
-The file must have the name ``config.cds.init.001-001`` in the current
-working directory at run time.
+The file must have the name ``colloids-000000000.dat`` (9 zeros) in the
+current working directory at run time.
+
+Colloid files from versions before v0.24.0 had a different file name
+convention (e.g., `config.cds.init.001-001` for an initial condition).
+However, files have the same format and can be read by ensuring that
+
+.. code-block:: none
+
+  colloid_io_options_mode       ansi
+  colloid_io_options_format     ascii     # or "binary" as appropriate
+
+is set in the input file. A copy with the correct file name (or a symbolic
+link) must be created in the working directory. The format of the file
+name must be `colloids-%9.9d.dat` where the `%9.9d` is the integer time
+step.
+
+The recommended mode for new files is:
+
+.. code-block:: none
+
+  colloid_io_options_mode       mpiio
+  colloid_io_options_format     ascii     # or "binary" as appropriate
+
+which has the advantage of being quicker, and produces
+decomposition-independent files.
