@@ -20,7 +20,7 @@ Colloid output frequency is controlled by the input key/value
 
   colloid_io_freq          1000     # every 1000 time steps
 
-There are two modes of output: `ansi` and `mpiio`. The former is an older
+There are two modes of output: ``ansi`` and ``mpiio``. The former is an older
 method which produces decomposition-dependent files. The MPI/IO method is
 preferred, and should be selected via
 
@@ -28,12 +28,12 @@ preferred, and should be selected via
 
   colloid_io_options_mode      mpiio    # note two `i`s in mpiio
 
-For backwards compatibility, the default mode is `ansi`, which will
+For backwards compatibility, the default mode is ``ansi``, which will
 ensure older colloid files (produced by version before 0.24.0) can
 be read correctly.
 
-For each mode, for record formats are available: `ascii` and `binary`.
-The default is `ascii`. The record format can be set using, e.g.,
+For each mode, for record formats are available: ``ascii`` and ``binary``.
+The default is ``ascii``. The record format can be set using, e.g.,
 
 .. code-block: none
 
