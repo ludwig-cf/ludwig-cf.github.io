@@ -14,19 +14,30 @@ If colloids are present, information can be saved at the required
 interval for analysis, and for the purposes of restarting the
 calculation.
 
-Two input key/value pairs of interest are:
+Colloid output frequency is controlled by the input key/value
 
 .. code-block:: none
 
   colloid_io_freq          1000     # every 1000 time steps
-  colloid_io_format        BINARY   # ASCII or BINARY (default is BINARY)
 
-If necessary, different input and output formats may be specified
+There are two modes of output: ``ansi`` and ``mpiio``. The former is an older
+method which produces decomposition-dependent files. The MPI/IO method is
+preferred, and should be selected via
 
 .. code-block: none
 
-  colloid_io_format_input  ASCII
-  colloid_io_format_output BINARY
+  colloid_io_options_mode      mpiio    # note two `i`s in mpiio
+
+For backwards compatibility, the default mode is ``ansi``, which will
+ensure older colloid files (produced by version before 0.24.0) can
+be read correctly.
+
+For each mode, for record formats are available: ``ascii`` and ``binary``.
+The default is ``ascii``. The record format can be set using, e.g.,
+
+.. code-block: none
+
+  colloid_io_options_format    binary
 
 
 Colloid file format
@@ -126,36 +137,18 @@ as the old ``type`` entry can be translated to the new structure in
 most cases. This is done automatically when the file is read at run
 time. Ellipsoids must follow the new structure.
 
+Support for files generated before version 0.21.0 will be removed at
+the next release (0.25.0).
+
 Colloid parallel output
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 For very large systems, it may be necessary to use the parallel output
-facility to prevent performance and/or memory bottlenecks. The parallel
-output writes a number of different files (all of the format discussed
-above), based on a decomposition of the domain.
+facility to prevent performance and/or memory bottlenecks. Use
 
-.. code-block:: none
+.. code-block: none
 
-  colloid_io_grid      2_2_2    # default is 1_1_1
+  colloid_io_options_mode      mpiio
+  colloid_io_options_format    binary
 
-This I/O grid will produce 8 files based on a Cartesian decomposition
-of the system. Each file may contain different numbers of colloids
-depending on the current distribution in space.
-
-The ``extract_colloid`` utility may be used to reconstitute such a
-set into a single file if required.
-
-Such a set of files may be used as a restart providing the I/O is
-the same.
-
-
-Colloid initialisation from a single file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Independently of any choice of I/O grid, colloid input (e.g., initial
-conditions) may be read from a single file via either
-
-.. code-block:: none
-
-  colloid_io_format_input     ASCII_SERIAL
-  colloid_io_format_input     BINARY_SERIAL
+This always produces a single file which is decomposition-independent.
