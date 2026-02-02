@@ -43,17 +43,23 @@
 interval for analysis, and for the purposes of restarting the
 calculation.</p>
 <p>Colloid output frequency is controlled by the input key/value</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_freq          1000     # every 1000 time steps
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_freq             1000     # every 1000 time steps
 </pre></div>
 </div>
 <p>There are two modes of output: <code class="docutils literal notranslate"><span class="pre">ansi</span></code> and <code class="docutils literal notranslate"><span class="pre">mpiio</span></code>. The former is an older
 method which produces decomposition-dependent files. The MPI/IO method is
 preferred, and should be selected via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_options_mode     mpiio    # note two `i`s in mpiio
+</pre></div>
+</div>
 <p>For backwards compatibility, the default mode is <code class="docutils literal notranslate"><span class="pre">ansi</span></code>, which will
 ensure older colloid files (produced by version before 0.24.0) can
 be read correctly.</p>
 <p>For each mode, for record formats are available: <code class="docutils literal notranslate"><span class="pre">ascii</span></code> and <code class="docutils literal notranslate"><span class="pre">binary</span></code>.
 The default is <code class="docutils literal notranslate"><span class="pre">ascii</span></code>. The record format can be set using, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_options_format   binary
+</pre></div>
+</div>
 </section>
 <section id="colloid-file-format">
 <h2><span class="section-number">4.3.2. </span>Colloid file format<a class="headerlink" href="#colloid-file-format" title="Link to this heading">¶</a></h2>
@@ -150,6 +156,10 @@ the next release (0.25.0).</p>
 <h2><span class="section-number">4.3.3. </span>Colloid parallel output<a class="headerlink" href="#colloid-parallel-output" title="Link to this heading">¶</a></h2>
 <p>For very large systems, it may be necessary to use the parallel output
 facility to prevent performance and/or memory bottlenecks. Use</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>colloid_io_options_mode      mpiio
+colloid_io_options_format    binary
+</pre></div>
+</div>
 <p>This always produces a single file which is decomposition-independent.</p>
 </section>
 </section>
