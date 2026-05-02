@@ -618,11 +618,11 @@ The relevant input key/value pairs for normal colloid anchoring are:
 .. code-block:: none
 
    lc_coll_anchoring      normal     # anchoring type
-   lc_coll_anchoring_w1   0.002      # free energy parameter w_1
+   lc_coll_anchoring_w1   0.0014     # free energy parameter w_1
 
 It is often appropriate to set the value of the surface free energy
 parameter in the context of the bulk elastic constant, e.g., by
-considering the dimensionless group :math:`w_1/\kappa a`, where
+considering the dimensionless group :math:`w_1 a/\kappa`, where
 :math:`a` is the radius of the colloid.
 
 As an example, an ordinary nematic is initialised with the

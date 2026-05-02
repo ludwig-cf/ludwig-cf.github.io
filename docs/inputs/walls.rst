@@ -328,7 +328,7 @@ The relevant input key/value pairs are:
 
 It can be appropriate to set the value of the free energy parameter
 in the context of the bulk fluid elastic constant, e.g., by considering
-the dimensionless group :math:`w_1 / \kappa L`, where :math:`L` is an
+the dimensionless group :math:`w_1 L / \kappa`, where :math:`L` is an
 appropriate length scale for the problem. An example is shown in
 the following illustration.
 
